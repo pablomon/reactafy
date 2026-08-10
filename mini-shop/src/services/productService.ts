@@ -5,6 +5,15 @@ import type {
 
 const API_URL =
   '/api/wp-json/reactafy/v1/products'
+const AUTH_TOKEN_KEY = 'reactafy.authToken'
+
+function getAuthHeaders(): HeadersInit {
+  const token = sessionStorage.getItem(AUTH_TOKEN_KEY)
+
+  return token
+    ? { Authorization: `Bearer ${token}` }
+    : {}
+}
 
 type GetProductsParams = {
   page: number
@@ -16,7 +25,10 @@ export async function getProduct(
   id: string
 ): Promise<Product> {
   const response = await fetch(
-    `${API_URL}/${id}`
+    `${API_URL}/${id}`,
+    {
+      headers: getAuthHeaders(),
+    }
   )
 
   if (!response.ok) {
@@ -50,7 +62,10 @@ export async function getProducts({
   }
 
   const response = await fetch(
-    `${API_URL}?${params}`
+    `${API_URL}?${params}`,
+    {
+      headers: getAuthHeaders(),
+    }
   )
 
   if (!response.ok) {
