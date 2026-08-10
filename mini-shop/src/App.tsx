@@ -1,6 +1,13 @@
+import { Routes, Route } from 'react-router'
+import Home from './pages/Home'
+import Shop from './pages/Shop'
+
 function App() {
   return (
-    <h1>Mini Shop</h1>
+    <Routes>
+      <Route path="/" element={<Home />} />
+      <Route path="/tienda" element={<Shop />} />
+    </Routes>
   )
 }
 
