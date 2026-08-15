@@ -1,1 +1,1 @@
-React Front end replacing Wordpress for a headless architectured ecommerce
+React Frontend replacing Wordpress for a headless architectured ecommerce
