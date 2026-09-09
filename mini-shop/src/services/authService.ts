@@ -1,3 +1,5 @@
+import { API_BASE } from './apiBase'
+
 export interface AuthUser {
   id: number
   name: string
@@ -11,8 +13,8 @@ export interface LoginResponse {
   user_display_name: string
 }
 
-const AUTH_URL = '/api/wp-json/jwt-auth/v1/token'
-const CURRENT_USER_URL = '/api/wp-json/wp/v2/users/me'
+const AUTH_URL = `${API_BASE}/wp-json/jwt-auth/v1/token`
+const CURRENT_USER_URL = `${API_BASE}/wp-json/wp/v2/users/me`
 
 export async function login(
   username: string,

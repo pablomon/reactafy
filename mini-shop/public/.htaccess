@@ -1,0 +1,32 @@
+# SPA: cualquier ruta que no sea un fichero o carpeta reales se
+# resuelve con index.html, y react-router decide qué pintar.
+# Sin esto, entrar directo a /tienda devuelve un 404 de Apache.
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+  RewriteRule ^index\.html$ - [L]
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule . /index.html [L]
+</IfModule>
+
+# Compresión. Si el servidor no la aplica, los 190 KB de React
+# viajan sin comprimir y la nota de PageSpeed lo nota.
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/css text/javascript application/javascript application/json image/svg+xml
+</IfModule>
+
+# Los ficheros de assets llevan hash en el nombre, así que se pueden
+# cachear para siempre: si cambia el contenido, cambia el nombre.
+# El index.html no, porque es el que apunta a los hashes nuevos.
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresByType text/css "access plus 1 year"
+  ExpiresByType application/javascript "access plus 1 year"
+  ExpiresByType image/svg+xml "access plus 1 year"
+  ExpiresByType image/webp "access plus 1 year"
+</IfModule>
+
+<FilesMatch "index\.html$">
+  Header set Cache-Control "no-cache, must-revalidate"
+</FilesMatch>

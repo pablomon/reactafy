@@ -1,10 +1,39 @@
 <!doctype html>
-<html lang="en">
+<html lang="es">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>mini-shop</title>
+
+    <!-- Abre la conexión (DNS + TCP + TLS) antes de necesitarla. -->
+    <link rel="preconnect" href="%VITE_API_BASE%" />
+
+    <!--
+      Lanza la petición del catálogo mientras se descarga el
+      JavaScript, en vez de esperar a que React monte y ejecute su
+      useEffect. Las dos cosas viajan en paralelo y el fetch de la app
+      encuentra la respuesta ya lista.
+
+      Se precarga la PETICIÓN, no la imagen: esta URL no depende de
+      qué productos devuelva ni de su orden, así que sigue siendo
+      válida aunque en el backend reordenen el catálogo.
+
+      La URL tiene que coincidir EXACTAMENTE con la que construye
+      productService.ts, incluido el orden de los parámetros. Por eso
+      ambas salen de las mismas variables de entorno.
+    -->
+    <link
+      rel="preload"
+      as="fetch"
+      crossorigin
+      href="%VITE_API_BASE%/wp-json/reactafy/v1/products?page=1&perPage=%VITE_PRODUCTS_PER_PAGE%"
+    />
+
+    <title>Tienda - Aguafy</title>
+    <meta
+      name="description"
+      content="Agua embotellada de las mejores marcas con reparto especializado en CDMX y alrededores."
+    />
   </head>
   <body>
     <div id="root"></div>

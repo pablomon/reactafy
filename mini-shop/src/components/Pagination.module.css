@@ -1,0 +1,53 @@
+/* ---------------------------------------------------------------
+   Paginación
+
+   Aguafy no tiene: muestra 10 productos de 103 sin forma de ver más.
+   Así que esta usa su mismo lenguaje visual (píldoras de acento)
+   pero el diseño es nuestro.
+   --------------------------------------------------------------- */
+
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-lg);
+  padding-block: var(--spacing-3xl);
+}
+
+.button {
+  border: 0;
+  border-radius: 9999px;
+  background-color: var(--color-acento);
+  color: #fff;
+  font: inherit;
+  padding: var(--spacing-sm) var(--spacing-xl);
+  cursor: pointer;
+  transition: opacity 150ms ease;
+}
+
+.button:hover:not(:disabled) {
+  opacity: 0.85;
+}
+
+.button:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.button:focus-visible {
+  outline: 2px solid var(--color-navy);
+  outline-offset: 2px;
+}
+
+/* `tabular-nums` fija el ancho de los dígitos: sin esto, el texto
+   se mueve unos píxeles al pasar de la página 9 a la 10. */
+.status {
+  font-size: var(--text-sm);
+  font-variant-numeric: tabular-nums;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .button {
+    transition: none;
+  }
+}

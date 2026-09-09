@@ -1,0 +1,71 @@
+/* ---------------------------------------------------------------
+   Barra de herramientas de la tienda
+
+   Aguafy coloca "Marcas" centrada y "Filtros" pegada a la derecha.
+   Con `1fr auto 1fr` el elemento del medio queda centrado respecto
+   a la página, no respecto al espacio que le sobra a los lados —
+   que es lo que pasaría con un simple `space-between`.
+   --------------------------------------------------------------- */
+
+.toolbar {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+
+  max-width: var(--container-tienda);
+  margin-inline: auto;
+  padding-inline: var(--spacing-lg);
+  padding-block: var(--spacing-xl);
+}
+
+/* Tercera columna: empuja su contenido al borde derecho. */
+.end {
+  grid-column: 3;
+  justify-self: end;
+}
+
+.field {
+  position: relative;
+  display: inline-flex;
+}
+
+/* `appearance: none` quita el estilo nativo del sistema operativo
+   para poder pintar la píldora. A cambio desaparece también la
+   flecha, que hay que dibujar aparte. */
+.select {
+  appearance: none;
+  border: 0;
+  border-radius: 9999px;
+  background-color: var(--color-acento);
+  color: #fff;
+  font: inherit;
+  cursor: pointer;
+
+  /* Más padding a la derecha para dejar sitio a la flecha. */
+  padding: var(--spacing-sm) var(--spacing-3xl) var(--spacing-sm) var(--spacing-xl);
+}
+
+.select:focus-visible {
+  outline: 2px solid var(--color-navy);
+  outline-offset: 2px;
+}
+
+/* El desplegable abierto lo pinta el sistema operativo, no nosotros:
+   sin esto, en algunas plataformas saldría texto blanco sobre blanco. */
+.select option {
+  background-color: #fff;
+  color: var(--color-navy);
+}
+
+/* `pointer-events: none` deja que el clic atraviese la flecha y
+   llegue al select que hay debajo. */
+.chevron {
+  position: absolute;
+  top: 50%;
+  right: var(--spacing-lg);
+  translate: 0 -50%;
+  width: var(--spacing-lg);
+  height: var(--spacing-lg);
+  color: #fff;
+  pointer-events: none;
+}

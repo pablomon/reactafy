@@ -1,3 +1,90 @@
-body {
-  margin: 0;
+@import "tailwindcss";
+
+@theme {
+  /* ---------------------------------------------------------------
+     Colores
+     Medidos del CSS en vivo de aguafy.com/tienda.
+     No cerramos el namespace: la paleta de Tailwind sigue disponible
+     para prototipar. Añade `--color-*: initial;` aquí arriba si
+     prefieres que solo existan estos tres.
+     --------------------------------------------------------------- */
+  --color-navy: #000d39;      /* texto de la tarjeta y fondo de los badges */
+  --color-acento: #208bee;    /* icono +, botones de Marcas y Filtros */
+  --color-agua: #ebf3ff;      /* fondo de la caja de producto */
+
+  /* ---------------------------------------------------------------
+     Tipografía
+     Aguafy no carga ninguna webfont: usa la del sistema. 0 KB.
+     --------------------------------------------------------------- */
+  --font-sistema: -apple-system, system-ui, "Segoe UI", Roboto,
+                  Helvetica, Arial, sans-serif;
+
+  /* Escala cerrada: fuera la de Tailwind, solo estos tamaños. */
+  --text-*: initial;
+
+  --text-xs: 12px;            /* badge de categoría, "(IVA inc.)" */
+  --text-xs--line-height: 1.4;
+
+  --text-sm: 15px;            /* cantidad y volumen, marca */
+  --text-sm--line-height: 1.5;
+
+  --text-base: 17px;          /* nombre del producto y precio */
+  --text-base--line-height: 1.5;
+
+  --text-lg: 20px;
+  --text-lg--line-height: 1.4;
+
+  --text-xl: 24px;
+  --text-xl--line-height: 1.25;
+
+  --text-2xl: 32px;           /* título "Tienda" */
+  --text-2xl--line-height: 1.15;
+
+  /* ---------------------------------------------------------------
+     Espaciado — escala cerrada
+     `--spacing: initial` elimina la escala numérica: `p-4` y `p-13`
+     dejan de existir y solo valen los nombres de abajo.
+     Ojo: al eliminarla, `var(--spacing)` queda indefinida, así que
+     los valores tienen que ser literales y no derivados con calc().
+     Rejilla de 4 px.
+     --------------------------------------------------------------- */
+  --spacing: initial;
+
+  --spacing-xs: 4px;          /* entre líneas de la tarjeta */
+  --spacing-sm: 8px;
+  --spacing-md: 12px;         /* gap de columnas en móvil */
+  --spacing-lg: 16px;         /* gap de columnas en escritorio */
+  --spacing-xl: 24px;         /* padding horizontal del badge */
+  --spacing-2xl: 32px;
+  --spacing-3xl: 48px;        /* aire de la imagen, gap de filas */
+
+  /* ---------------------------------------------------------------
+     Radios
+     `rounded-full` no sale de aquí (usa un valor infinito interno),
+     así que sobrevive al reset.
+     --------------------------------------------------------------- */
+  --radius-*: initial;
+
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-2xl: 32px;         /* caja de imagen de la tarjeta */
+
+  /* ---------------------------------------------------------------
+     Contenedor
+     --------------------------------------------------------------- */
+  --container-tienda: 1280px;
+}
+
+@layer base {
+  body {
+    font-family: var(--font-sistema);
+    font-size: var(--text-base);
+    line-height: var(--text-base--line-height);
+    color: var(--color-navy);
+
+    /* Imprescindible: sin fondo explícito el body es transparente y el
+       navegador pinta su lienzo por defecto, que en modo oscuro es
+       negro. El texto navy se volvería ilegible. */
+    background-color: #fff;
+  }
 }

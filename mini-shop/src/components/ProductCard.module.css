@@ -1,0 +1,212 @@
+/* ---------------------------------------------------------------
+   Tarjeta de producto
+
+   Los valores no se escriben a mano: salen de los tokens que define
+   el bloque @theme de index.css. Tailwind los emite como custom
+   properties reales, así que están disponibles desde CSS normal.
+
+   Al ser un CSS Module, estos nombres se reescriben en el build
+   (.card → _card_1a2b3) y no pueden colisionar con los de otro
+   componente. Por eso no hacen falta prefijos tipo BEM.
+   --------------------------------------------------------------- */
+
+.card {
+  display: flex;
+  flex-direction: column;
+}
+
+/* --- Caja de imagen -------------------------------------------- */
+
+/* `position: relative` no mueve nada: crea el contexto de
+   posicionamiento para el botón y los distintivos.
+   `overflow: hidden` recorta la imagen contra el redondeo. */
+.box {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius-2xl);
+  background-color: var(--color-agua);
+  padding-block: var(--spacing-3xl);
+}
+
+/* `aspect-ratio` reserva el alto antes de que la imagen cargue.
+   Sin esto, todo lo de abajo salta cuando llega la foto (CLS).
+   `contain` la mete entera sin deformarla — el original usa `fill`,
+   que estira las que no son cuadradas. */
+.image {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: contain;
+}
+
+/* Mismo hueco cuando el producto no tiene foto, para que la fila
+   no se descoloque. */
+.placeholder {
+  width: 100%;
+  aspect-ratio: 1;
+}
+
+/* --- Distintivos sobre la imagen -------------------------------- */
+
+.flags {
+  position: absolute;
+  top: var(--spacing-md);
+  left: var(--spacing-md);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--spacing-xs);
+}
+
+.flag {
+  border-radius: 9999px;
+  background-color: #fff;
+  padding: var(--spacing-xs) var(--spacing-md);
+  font-size: var(--text-xs);
+}
+
+/* --- Botón de añadir -------------------------------------------- */
+
+.add {
+  position: absolute;
+  right: var(--spacing-md);
+  bottom: var(--spacing-md);
+  display: grid;
+  place-items: center;
+  width: var(--spacing-2xl);
+  height: var(--spacing-2xl);
+  border-radius: 9999px;
+  background-color: #fff;
+  color: var(--color-acento);
+  transition: transform 150ms ease;
+}
+
+.add:hover {
+  transform: scale(1.1);
+}
+
+/* `focus-visible` en vez de `focus`: el anillo aparece al navegar
+   con teclado, pero no al hacer clic con el ratón. */
+.add:focus-visible {
+  outline: 2px solid var(--color-acento);
+  outline-offset: 2px;
+}
+
+.add svg {
+  width: var(--spacing-lg);
+  height: var(--spacing-lg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .add {
+    transition: none;
+  }
+  .add:hover {
+    transform: none;
+  }
+}
+
+/* --- Bloque de información -------------------------------------- */
+
+.info {
+  margin-top: var(--spacing-lg);
+}
+
+.badgeRow {
+  margin-bottom: var(--spacing-lg);
+}
+
+/* Cuando el producto no trae categoría se pinta el badge igualmente
+   pero invisible. `visibility: hidden` mantiene la caja y su altura;
+   `display: none` la eliminaría y la tarjeta encogería. Así la
+   altura la define siempre el propio badge, sin números mágicos. */
+.badgeEmpty {
+  visibility: hidden;
+}
+
+.badge {
+  display: inline-block;
+  border-radius: 9999px;
+  background-color: var(--color-navy);
+  color: #fff;
+  padding: var(--spacing-xs) var(--spacing-xl);
+  font-size: var(--text-xs);
+}
+
+.text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+/* Dos líneas siempre: reserva el hueco para los nombres largos y
+   recorta los que se pasen. Sin esto, una tarjeta con nombre de dos
+   líneas es 25px más alta que las demás y la rejilla baila. */
+.name {
+  font-size: var(--text-base);
+  font-weight: 700;
+
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+
+  min-height: calc(var(--text-base) * var(--text-base--line-height) * 2);
+}
+
+.meta {
+  font-size: var(--text-sm);
+}
+
+.tax {
+  font-size: var(--text-xs);
+}
+
+/* La fila existe siempre para mantener la altura constante, pero el
+   subrayado va en el span interior: si estuviera en el <p>, un
+   producto sin marca mostraría una rayita sobre el espacio duro. */
+.brand {
+  font-size: var(--text-sm);
+}
+
+.brandName {
+  text-decoration: underline;
+}
+
+/* --- Esqueleto de carga ------------------------------------------
+   Reutiliza las clases de arriba para que la altura coincida al
+   píxel con la tarjeta real. Cada línea lleva un &nbsp; para que
+   genere su caja de línea, y el fondo se pinta encima.
+   Si las alturas no coincidieran, el esqueleto no evitaría el salto
+   sino que lo movería a otro sitio.
+   ------------------------------------------------------------------ */
+
+.skeletonLine {
+  background-color: currentColor;
+  opacity: 0.09;
+  border-radius: 4px;
+}
+
+.skeletonBox {
+  opacity: 0.55;
+}
+
+.w80 { width: 80%; }
+.w60 { width: 60%; }
+.w45 { width: 45%; }
+.w30 { width: 30%; }
+
+.pulse {
+  animation: pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pulse {
+    animation: none;
+  }
+}
