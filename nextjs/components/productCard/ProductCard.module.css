@@ -1,0 +1,80 @@
+.card {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.imageBox {
+    position: relative;
+    aspect-ratio: 1 / 1;
+    background-color: var(--color-surface);
+    border-radius: var(--radius-2xl);
+    overflow: hidden;
+}
+
+.image {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.category {
+    align-self: flex-start;
+    margin-top: var(--spacing-md);
+    padding: 4px 12px;
+    border-radius: 999px;
+    background-color: var(--color-main);
+    color: var(--color-background);
+    font-size: var(--text-xs);
+    line-height: var(--line-height-xs);
+}
+
+.name {
+    margin: var(--spacing-sm) 0 0;
+    color: var(--color-accent);
+    font-size: var(--text-base);
+    line-height: var(--line-height-base);
+    font-weight: 600;
+}
+
+.meta {
+    margin: var(--spacing-xs) 0 0;
+    color: var(--color-text);
+    font-size: var(--text-sm);
+    line-height: var(--line-height-sm);
+}
+
+.price {
+    margin: var(--spacing-xs) 0 0;
+    color: var(--color-accent);
+    font-size: var(--text-base);
+    line-height: var(--line-height-base);
+    font-weight: 300;
+}
+
+.tax {
+    margin: 0;
+    color: var(--color-text);
+    font-size: var(--text-xs);
+    line-height: var(--line-height-xs);
+}
+
+.brand {
+    margin: var(--spacing-xs) 0 0;
+    color: var(--color-text);
+    font-size: var(--text-sm);
+    line-height: var(--line-height-sm);
+}
+
+.card button {
+    margin-top: var(--spacing-sm);
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid var(--color-main);
+    border-radius: 4px;
+    background: var(--color-background);
+    color: var(--color-main);
+    font: inherit;
+    cursor: pointer;
+}
