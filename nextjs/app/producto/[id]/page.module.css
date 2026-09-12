@@ -69,3 +69,14 @@
     font: inherit;
     cursor: pointer;
 }
+
+@media (max-width: 768px) {
+    .product {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-xl);
+    }
+
+    .info {
+        padding-top: 0;
+    }
+}

@@ -1,6 +1,8 @@
 import { getProducts } from "@/services/productService";
 import ProductCard from "@/components/productCard/ProductCard";
 import styles from "./page.module.css";
+import AuthTest from "@/components/test/AuthTest";
+import CartTest from "@/components/test/CartTest";
 
 export default async function Tienda() {
     const data = await getProducts();
@@ -9,6 +11,9 @@ export default async function Tienda() {
         <main>
             <h1>Tienda</h1>
 
+            <AuthTest />
+            <CartTest />
+            
             <p>
                 Productos encontrados: {data.pagination.total}
             </p>

@@ -1,5 +1,6 @@
 import { getProduct } from "@/services/productService";
 import styles from "./page.module.css";
+import AddToCartButton from "@/components/productCard/AddToCartButton";
 
 type ProductPageProps = {
     params: Promise<{ id: string }>;
@@ -52,12 +53,7 @@ export default async function ProductPage(
                         SKU: {product.sku}
                     </p>
 
-                    <button
-                        className={styles.button}
-                        type="button"
-                    >
-                        Añadir al carrito
-                    </button>
+                    <AddToCartButton />
                 </div>
             </div>
         </main>

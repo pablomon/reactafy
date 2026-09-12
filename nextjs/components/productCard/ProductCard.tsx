@@ -1,6 +1,7 @@
 import type { Product } from "@/types/product";
 import styles from "./ProductCard.module.css";
 import Link from "next/link";
+import AddToCartButton from "@/components/productCard/AddToCartButton";
 
 interface ProductCardProps {
     product: Product;
@@ -71,9 +72,7 @@ export default function ProductCard({ product }: ProductCardProps) {
                 </p>
             )}
 
-            <button type="button">
-                Añadir al carrito
-            </button>
+            <AddToCartButton />
         </article>
     );
 }
