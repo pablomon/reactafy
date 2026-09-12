@@ -72,7 +72,7 @@ export default function ProductCard({ product }: ProductCardProps) {
                 </p>
             )}
 
-            <AddToCartButton />
+            <AddToCartButton productId={product.id} />
         </article>
     );
 }

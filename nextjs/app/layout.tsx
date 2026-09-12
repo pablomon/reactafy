@@ -1,5 +1,5 @@
 import AuthProvider from "./auth/AuthContext";
-import CartProvider from "./cart/CartContext";
+import CartProvider from "./carrito/CartContext";
 import "./globals.css";
 
 export default function RootLayout({

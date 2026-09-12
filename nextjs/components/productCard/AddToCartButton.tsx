@@ -1,17 +1,24 @@
 "use client";
 
-import { useState } from "react";
+import { useContext } from "react";
+import { CartContext } from "@/app/carrito/CartContext";
 
-export default function AddToCartButton() {
-    const [quantity, setQuantity] = useState(0);
+type AddToCartButtonProps = {
+    productId: number;
+};
+
+export default function AddToCartButton(
+    props: AddToCartButtonProps
+) {
+    const context = useContext(CartContext);
+
+    const addItem = context.addItem;
 
     return (
         <div>
-            <p>Productos: {quantity}</p>
-
             <button
                 type="button"
-                onClick={() => setQuantity(quantity + 1)}
+                onClick={() => addItem(props.productId, 1)}
             >
                 Añadir
             </button>
