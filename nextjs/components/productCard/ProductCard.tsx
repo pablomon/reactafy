@@ -1,5 +1,6 @@
 import type { Product } from "@/types/product";
 import styles from "./ProductCard.module.css";
+import Link from "next/link";
 
 interface ProductCardProps {
     product: Product;
@@ -43,9 +44,11 @@ export default function ProductCard({ product }: ProductCardProps) {
                 </span>
             )}
 
-            <h2 className={styles.name}>
-                {product.title}
-            </h2>
+            <Link href={`/producto/${product.id}`}>
+                <h2 className={styles.name}>
+                    {product.title}
+                </h2>
+            </Link>
 
             {quantity && volume && (
                 <p className={styles.meta}>
