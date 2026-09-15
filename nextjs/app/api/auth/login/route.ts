@@ -43,8 +43,16 @@ export async function POST(request: Request) {
         }
     );
 
+    const payload = JSON.parse(
+        Buffer.from(
+            data.token.split(".")[1],
+            "base64url"
+        ).toString()
+    );
+
     return Response.json({
-        user_email: data.user_email,
-        user_display_name: data.user_display_name,
+        id: Number(payload.data.user.id),
+        email: data.user_email,
+        name: data.user_display_name,
     });
 }

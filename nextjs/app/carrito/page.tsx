@@ -5,6 +5,7 @@ import { formatPrice } from "@/utils/formatPrice";
 
 import { useContext } from "react";
 import { CartContext } from "@/app/carrito/CartContext";
+import CheckoutButton from "@/components/CheckoutButton";
 
 export default function CartPage() {
     const context = useContext(CartContext);
@@ -134,12 +135,7 @@ export default function CartPage() {
                         </strong>
                     </div>
 
-                    <button
-                        type="button"
-                        className={styles.checkout}
-                    >
-                        Continuar al pago
-                    </button>
+                    <CheckoutButton />
                 </aside>
             </div>
         </main>

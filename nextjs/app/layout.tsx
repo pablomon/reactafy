@@ -1,6 +1,7 @@
 import AuthProvider from "./auth/AuthContext";
 import CartProvider from "./carrito/CartContext";
 import "./globals.css";
+import Header from "@/components/header/Header";
 
 export default function RootLayout({
                                        children,
@@ -12,6 +13,7 @@ export default function RootLayout({
         <body>
         <AuthProvider>
             <CartProvider>
+                <Header />
                 {children}
             </CartProvider>
         </AuthProvider>

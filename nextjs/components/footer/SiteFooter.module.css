@@ -1,0 +1,130 @@
+/* ---------------------------------------------------------------
+   Pie de página
+
+   Versión reducida del de Aguafy (789px de alto, fondo navy, tres
+   franjas). Mantiene el bloque navy y el peso visual; el contenido
+   que no tenemos —rutas, clientes, distintivos— se omite en vez de
+   inventarse.
+   --------------------------------------------------------------- */
+
+.footer {
+  background-color: var(--color-navy);
+  color: #fff;
+  margin-top: var(--spacing-3xl);
+}
+
+.inner {
+  max-width: var(--container-tienda);
+  margin-inline: auto;
+  padding-inline: var(--spacing-lg);
+}
+
+/* --- Franja de argumentos ---------------------------------------- */
+
+.features {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--spacing-3xl);
+  padding-block: var(--spacing-3xl);
+}
+
+.featureTitle {
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 1.15;
+  margin-bottom: var(--spacing-md);
+}
+
+.featureText {
+  font-size: var(--text-sm);
+  opacity: 0.75;
+}
+
+/* --- Franja de enlaces -------------------------------------------- */
+
+.columns {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: var(--spacing-3xl);
+  padding-block: var(--spacing-3xl);
+  border-top: 1px solid rgb(255 255 255 / 0.15);
+}
+
+.columnTitle {
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 1.15;
+}
+
+.columnHeading {
+  font-size: var(--text-sm);
+  font-weight: 700;
+  margin-bottom: var(--spacing-lg);
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.link {
+  font-size: var(--text-sm);
+  color: #fff;
+  text-decoration: none;
+  opacity: 0.75;
+}
+
+.link:hover {
+  opacity: 1;
+}
+
+/* --- Franja legal -------------------------------------------------- */
+
+.legal {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-lg);
+  padding-block: var(--spacing-xl);
+  border-top: 1px solid rgb(255 255 255 / 0.15);
+  font-size: var(--text-xs);
+}
+
+.social {
+  display: flex;
+  gap: var(--spacing-lg);
+}
+
+.socialLink {
+  display: grid;
+  place-items: center;
+  width: var(--spacing-2xl);
+  height: var(--spacing-2xl);
+  border-radius: 9999px;
+  border: 1px solid rgb(255 255 255 / 0.3);
+  color: #fff;
+}
+
+.socialLink svg {
+  width: 16px;
+  height: 16px;
+}
+
+.socialLink:hover {
+  border-color: #fff;
+}
+
+@media (max-width: 900px) {
+  .features,
+  .columns {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-xl);
+  }
+
+  .featureTitle,
+  .columnTitle {
+    font-size: 24px;
+  }
+}

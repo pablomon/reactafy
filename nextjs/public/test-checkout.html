@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Test checkout</title>
+</head>
+<body>
+
+<form
+    id="checkout-form"
+    method="POST"
+    action="https://staging.aguafy.com/wp-json/reactafy/v1/checkout-session"
+>
+    <input
+        type="hidden"
+        name="code"
+        value="4fc106a805df558ece9fe7b8c198d00f7e708f8cf1fafb0cde550c907dbbdd41"
+    >
+
+    <input
+        type="hidden"
+        name="cart_token"
+        value="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoidF85ZGU3NjdiMjgxOTBhZDc3NTdhZjcwYmVlYzRlYmQiLCJleHAiOjE3ODk1NDU1MTEsImlzcyI6InN0b3JlLWFwaSIsImlhdCI6MTc4OTM3MjcxMX0.2FwGfh47mTWf_t-elF_H-vwaB1SIoZRZZ0FmAfsT1Yg"
+    >
+</form>
+
+<script>
+    document.getElementById("checkout-form").submit();
+</script>
+
+</body>
+</html>

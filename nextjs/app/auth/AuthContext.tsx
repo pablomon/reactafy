@@ -15,6 +15,11 @@ type User = {
 
 type AuthContextType = {
     user: User | null;
+    login: (
+        username: string,
+        password: string
+    ) => Promise<void>;
+    logout: () => Promise<void>;
 };
 
 type AuthProviderProps = {
@@ -23,6 +28,8 @@ type AuthProviderProps = {
 
 export const AuthContext = createContext<AuthContextType>({
     user: null,
+    login: async () => {},
+    logout: async () => {},
 });
 
 export default function AuthProvider(
@@ -51,8 +58,59 @@ export default function AuthProvider(
 
     }, []);
 
+    async function login(
+        username: string,
+        password: string
+    ) {
+        const response = await fetch("/api/auth/login", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                username,
+                password,
+            }),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            const data = await response.json();
+
+            throw new Error(
+                data.message ?? "Login failed"
+            );
+        }
+
+        setUser(data);
+    }
+
+    async function logout() {
+        const response = await fetch(
+            "/api/auth/logout",
+            {
+                method: "POST",
+            }
+        );
+
+        if (!response.ok) {
+            throw new Error(
+                "Logout failed"
+            );
+        }
+
+        setUser(null);
+    }
+
     return (
-        <AuthContext.Provider value={{ user }}>
+        <AuthContext.Provider
+            value={{
+                user,
+                login,
+                logout,
+            }}
+        >
             {props.children}
         </AuthContext.Provider>
     );
