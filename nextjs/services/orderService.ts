@@ -1,7 +1,9 @@
 import type { Order } from "@/types/order";
 
+import { WORDPRESS_URL } from "@/services/wordpress";
+
 const API_URL =
-    "https://staging.aguafy.com/wp-json/reactafy/v1";
+    `${WORDPRESS_URL}/wp-json/reactafy/v1`;
 
 export async function getOrder(
     id: string,

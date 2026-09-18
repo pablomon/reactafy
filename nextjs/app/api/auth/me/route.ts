@@ -1,7 +1,6 @@
 import { cookies } from "next/headers";
 
-const WORDPRESS_URL =
-    "https://staging.aguafy.com";
+import { WORDPRESS_URL } from "@/services/wordpress";
 
 export async function GET() {
 

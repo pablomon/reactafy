@@ -1,7 +1,7 @@
 "use client";
 
 import { useContext } from "react";
-import { AuthContext } from "@/app/auth/AuthContext";
+import { AuthContext } from "@/app/context/AuthContext";
 
 export default function AuthTest() {
 

@@ -1,5 +1,7 @@
 "use client";
 
+import { WORDPRESS_URL } from "@/services/wordpress";
+
 export default function CheckoutButton() {
 
     async function handleCheckout() {
@@ -13,33 +15,43 @@ export default function CheckoutButton() {
 
         if (!response.ok) {
             console.error(
-                "Checkout handoff failed"
+                "Checkout failed"
             );
 
             return;
         }
 
-        const data = await response.json();
+        const data =
+            await response.json();
 
-        const form =
-            document.createElement("form");
+        if (data.code) {
 
-        form.method = "POST";
-        form.action =
-            "https://staging.aguafy.com/wp-json/reactafy/v1/checkout-session";
+            const form =
+                document.createElement("form");
 
-        const codeInput =
-            document.createElement("input");
+            form.method = "POST";
 
-        codeInput.type = "hidden";
-        codeInput.name = "code";
-        codeInput.value = data.code;
+            form.action =
+                `${WORDPRESS_URL}/wp-json/reactafy/v1/checkout-session`;
 
-        form.appendChild(codeInput);
+            const codeInput =
+                document.createElement("input");
 
-        document.body.appendChild(form);
+            codeInput.type = "hidden";
+            codeInput.name = "code";
+            codeInput.value = data.code;
 
-        form.submit();
+            form.appendChild(codeInput);
+
+            document.body.appendChild(form);
+
+            form.submit();
+
+            return;
+        }
+
+        window.location.href =
+            data.checkoutUrl;
     }
 
     return (

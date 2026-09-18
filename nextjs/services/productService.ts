@@ -1,6 +1,8 @@
 import type {Product, ProductsResponse} from "@/types/product";
 
-const API_URL = "https://staging.aguafy.com/wp-json/reactafy/v1";
+import { WORDPRESS_URL } from "@/services/wordpress";
+
+const API_URL = `${WORDPRESS_URL}/wp-json/reactafy/v1`;
 
 export async function getProducts(): Promise<ProductsResponse> {
     const response = await fetch(

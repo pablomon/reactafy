@@ -1,10 +1,12 @@
 "use client";
 
 import { useContext, useState } from "react";
-import { AuthContext } from "@/app/auth/AuthContext";
+import { AuthContext } from "@/app/context/AuthContext";
+import { CartContext } from "../context/CartContext";
 
 export default function LoginPage() {
     const { user, login, logout } = useContext(AuthContext);
+    const { refreshCart } = useContext(CartContext);
 
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
@@ -19,6 +21,7 @@ export default function LoginPage() {
 
         try {
             await login(username, password);
+            await refreshCart();
         } catch (error) {
             setError(
                 error instanceof Error
@@ -31,6 +34,7 @@ export default function LoginPage() {
     async function handleLogout() {
         try {
             await logout();
+            await refreshCart();
         } catch (error) {
             setError(
                 error instanceof Error
