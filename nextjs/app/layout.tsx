@@ -1,5 +1,5 @@
+import CartProvider from "@/app/context/CartContext";
 import AuthProvider from "./auth/AuthContext";
-import CartProvider from "./carrito/CartContext";
 import "./globals.css";
 import Header from "@/components/Header";
 

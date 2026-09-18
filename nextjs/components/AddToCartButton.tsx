@@ -1,7 +1,7 @@
 "use client";
 
 import { useContext } from "react";
-import { CartContext } from "@/app/carrito/CartContext";
+import { CartContext } from "@/app/context/CartContext";
 
 type AddToCartButtonProps = {
     productId: number;

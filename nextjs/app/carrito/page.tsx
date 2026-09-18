@@ -4,7 +4,7 @@ import styles from "./page.module.css";
 import { formatPrice } from "@/utils/formatPrice";
 
 import { useContext } from "react";
-import { CartContext } from "@/app/carrito/CartContext";
+import { CartContext } from "@/app/context/CartContext";
 import CheckoutButton from "@/components/CheckoutButton";
 
 export default function CartPage() {

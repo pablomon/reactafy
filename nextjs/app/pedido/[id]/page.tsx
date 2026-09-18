@@ -6,6 +6,7 @@ import { formatPrice } from "@/utils/formatPrice";
 import { formatOrderStatus } from "@/utils/formatOrderStatus";
 
 import styles from "./page.module.css";
+import CartRefresh from "./CaretRefresh";
 
 type OrderPageProps = {
     params: Promise<{
@@ -47,6 +48,7 @@ export default async function OrderPage(
     return (
         <main className={styles.container}>
 
+            <CartRefresh />
             <section className={styles.header}>
                 <h1 className={styles.title}>
                     Pedido completado

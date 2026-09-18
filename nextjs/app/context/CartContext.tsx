@@ -29,6 +29,7 @@ type CartContextType = {
     removeItem: (
         key: string
     ) => Promise<void>;
+    refreshCart: () => Promise<void>;
 };
 
 type CartProviderProps = {
@@ -38,9 +39,10 @@ type CartProviderProps = {
 export const CartContext =
     createContext<CartContextType>({
         cart: null,
-        addItem: async () => {},
-        updateItem: async () => {},
-        removeItem: async () => {},
+        addItem: async () => { },
+        updateItem: async () => { },
+        removeItem: async () => { },
+        refreshCart: async () => { },
     });
 
 export default function CartProvider(
@@ -50,22 +52,22 @@ export default function CartProvider(
         useState<Cart | null>(null);
 
     useEffect(() => {
-        async function loadCart() {
-            try {
-                const cart =
-                    await getCart();
-
-                setCart(cart);
-            } catch (error) {
-                console.error(
-                    "Failed to load cart:",
-                    error
-                );
-            }
-        }
-
-        loadCart();
+        refreshCart();
     }, []);
+
+    async function refreshCart() {
+        try {
+            const cart =
+                await getCart();
+
+            setCart(cart);
+        } catch (error) {
+            console.error(
+                "Failed to load cart:",
+                error
+            );
+        }
+    }
 
     async function addItem(
         id: number,
@@ -109,6 +111,7 @@ export default function CartProvider(
                 addItem,
                 updateItem,
                 removeItem,
+                refreshCart,
             }}
         >
             {props.children}
