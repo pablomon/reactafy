@@ -10,21 +10,12 @@ type OrderPageProps = {
     params: Promise<{
         id: string;
     }>;
-
-    searchParams: Promise<{
-        total?: string;
-        tax?: string;
-        items?: string;
-        currency?: string;
-    }>;
 };
 
 export default async function OrderPage(
     props: OrderPageProps
 ) {
     const params = await props.params;
-    const searchParams = await props.searchParams;
-
     const cookieStore = await cookies();
 
     const authToken =

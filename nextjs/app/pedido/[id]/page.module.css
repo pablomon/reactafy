@@ -1,0 +1,125 @@
+.container {
+    max-width: var(--container-main);
+    margin: 0 auto;
+    padding: var(--spacing-2xl);
+}
+
+.header {
+    margin-bottom: var(--spacing-3xl);
+}
+
+.title {
+    margin: 0;
+    font-size: var(--text-2xl);
+    line-height: var(--line-height-2xl);
+}
+
+.orderNumber {
+    margin: var(--spacing-sm) 0 0;
+}
+
+.content {
+    display: grid;
+    grid-template-columns: 1fr 360px;
+    gap: var(--spacing-3xl);
+    align-items: start;
+}
+
+.items h2,
+.summary h2 {
+    margin-top: 0;
+}
+
+.item {
+    display: grid;
+    grid-template-columns: 100px 1fr auto;
+    gap: var(--spacing-lg);
+    align-items: center;
+
+    padding: var(--spacing-lg) 0;
+
+    border-bottom: 1px solid #ddd;
+}
+
+.image {
+    display: block;
+    width: 100px;
+    height: 100px;
+    object-fit: contain;
+    background-color: var(--color-surface);
+    border-radius: var(--radius-lg);
+}
+
+.itemInfo h3 {
+    margin: 0;
+}
+
+.itemInfo p {
+    margin: var(--spacing-sm) 0 0;
+}
+
+.itemTotal {
+    margin: 0;
+    font-weight: 600;
+}
+
+.summary {
+    padding: var(--spacing-xl);
+    background-color: var(--color-surface);
+    border-radius: var(--radius-xl);
+}
+
+.summaryRow {
+    display: flex;
+    justify-content: space-between;
+    margin-top: var(--spacing-lg);
+}
+
+.total {
+    display: flex;
+    justify-content: space-between;
+
+    margin-top: var(--spacing-xl);
+    padding-top: var(--spacing-lg);
+
+    border-top: 1px solid #ccc;
+
+    font-size: var(--text-lg);
+}
+
+.actions {
+    margin-top: var(--spacing-3xl);
+}
+
+.button {
+    display: inline-block;
+    padding: 12px 24px;
+
+    border-radius: 4px;
+
+    background-color: var(--color-main);
+    color: var(--color-background);
+
+    text-decoration: none;
+}
+
+@media (max-width: 768px) {
+
+    .content {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-xl);
+    }
+
+    .item {
+        grid-template-columns: 80px 1fr;
+    }
+
+    .image {
+        width: 80px;
+        height: 80px;
+    }
+
+    .itemTotal {
+        grid-column: 2;
+    }
+}
