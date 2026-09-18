@@ -1,3 +1,5 @@
+import { Money } from "./money";
+
 export type ProductAttribute = {
     slug: string;
     name: string;
@@ -53,8 +55,8 @@ export type Product = {
     editorial: ProductEditorial;
     attributes: ProductAttribute[];
     stock: ProductStock;
-    price: number;
-    fromPrice: number | null;
+    price: Money;
+    fromPrice: Money | null;
 };
 
 export type ProductsPagination = {

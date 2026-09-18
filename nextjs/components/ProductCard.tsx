@@ -2,6 +2,7 @@ import type { Product } from "@/types/product";
 import styles from "./ProductCard.module.css";
 import Link from "next/link";
 import AddToCartButton from "@/components/AddToCartButton";
+import { formatPrice } from "@/utils/formatPrice";
 
 interface ProductCardProps {
     product: Product;
@@ -59,7 +60,7 @@ export default function ProductCard({ product }: ProductCardProps) {
 
             <p className={styles.price}>
                 {product.fromPrice !== null && "Desde "}
-                {price} €
+                {formatPrice(price)} €
             </p>
 
             <p className={styles.tax}>

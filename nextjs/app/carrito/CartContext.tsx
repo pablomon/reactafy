@@ -7,46 +7,7 @@ import {
     type ReactNode
 } from "react";
 
-type CartLine = {
-    key: string;
-    id: number;
-    quantity: number;
-    name: string;
-    images: {
-        id: number;
-        src: string;
-        thumbnail: string;
-        alt: string;
-    }[];
-    variation: {
-        raw_attribute: string;
-        attribute: string;
-        value: string;
-    }[];
-    prices: {
-        price: string;
-        currency_code: string;
-        currency_minor_unit: number;
-    };
-    totals: {
-        line_subtotal: string;
-        line_total: string;
-        currency_code: string;
-        currency_minor_unit: number;
-    };
-};
-
-type Cart = {
-    items: CartLine[];
-    items_count: number;
-    totals: {
-        total_items: string;
-        total_price: string;
-        total_tax: string;
-        currency_code: string;
-        currency_minor_unit: number;
-    };
-};
+import { Cart } from "@/types/cart";
 
 type CartContextType = {
     cart: Cart | null;

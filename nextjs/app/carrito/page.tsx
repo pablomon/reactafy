@@ -111,8 +111,6 @@ export default function CartPage() {
                                     <p className={styles.price}>
                                         {formatPrice(
                                             item.totals.line_total,
-                                            item.totals.currency_code,
-                                            item.totals.currency_minor_unit
                                         )}
                                     </p>
                                 </div>
@@ -129,8 +127,6 @@ export default function CartPage() {
                         <strong>
                             {formatPrice(
                                 cart.totals.total_price,
-                                cart.totals.currency_code,
-                                cart.totals.currency_minor_unit
                             )}
                         </strong>
                     </div>

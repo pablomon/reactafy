@@ -1,6 +1,7 @@
 import { getProduct } from "@/services/productService";
 import styles from "./page.module.css";
 import AddToCartButton from "@/components/AddToCartButton";
+import { formatPrice } from "@/utils/formatPrice";
 
 type ProductPageProps = {
     params: Promise<{ id: string }>;
@@ -46,7 +47,7 @@ export default async function ProductPage(
                     </div>
 
                     <p className={styles.price}>
-                        {product.price} €
+                        {formatPrice(product.price)} €
                     </p>
 
                     <p className={styles.sku}>

@@ -6,14 +6,6 @@ import AuthTest from "@/components/test/AuthTest";
 export default async function Tienda() {
     const data = await getProducts();
 
-        return (
-        <main>
-            <pre>
-                {JSON.stringify(data, null, 2)}
-            </pre>
-        </main>
-    );
-    
     return (
         <main>
             <h1>Tienda</h1>
