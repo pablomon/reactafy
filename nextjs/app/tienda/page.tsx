@@ -1,5 +1,5 @@
 import { getProducts } from "@/services/productService";
-import ProductCard from "@/components/productCard/ProductCard";
+import ProductCard from "@/components/ProductCard";
 import styles from "./page.module.css";
 import AuthTest from "@/components/test/AuthTest";
 

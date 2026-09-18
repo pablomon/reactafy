@@ -1,7 +1,7 @@
 import type { Product } from "@/types/product";
 import styles from "./ProductCard.module.css";
 import Link from "next/link";
-import AddToCartButton from "@/components/productCard/AddToCartButton";
+import AddToCartButton from "@/components/AddToCartButton";
 
 interface ProductCardProps {
     product: Product;

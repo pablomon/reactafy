@@ -1,6 +1,6 @@
 import { getProduct } from "@/services/productService";
 import styles from "./page.module.css";
-import AddToCartButton from "@/components/productCard/AddToCartButton";
+import AddToCartButton from "@/components/AddToCartButton";
 
 type ProductPageProps = {
     params: Promise<{ id: string }>;
@@ -53,7 +53,7 @@ export default async function ProductPage(
                         SKU: {product.sku}
                     </p>
 
-                    <AddToCartButton />
+                    <AddToCartButton productId={product.id}/>
                 </div>
             </div>
         </main>
