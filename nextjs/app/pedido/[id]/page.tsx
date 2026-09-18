@@ -3,6 +3,7 @@ import { cookies } from "next/headers";
 
 import { getOrder } from "@/services/orderService";
 import { formatPrice } from "@/utils/formatPrice";
+import { formatOrderStatus } from "@/utils/formatOrderStatus";
 
 import styles from "./page.module.css";
 
@@ -53,6 +54,10 @@ export default async function OrderPage(
 
                 <p>
                     Pedido #{order.id}
+                </p>
+
+                <p>
+                    Estado: {formatOrderStatus(order.status)}
                 </p>
 
                 <p>
