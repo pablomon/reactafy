@@ -1,16 +1,17 @@
+import type { Money } from "./money";
+
 export type OrderItem = {
     id: number;
     name: string;
     quantity: number;
-    total: string;
+    total: Money;
     image: string | null;
 };
 
 export type Order = {
     id: number;
     status: string;
-    total: string;
-    tax: string;
-    currency: string;
+    total: Money;
+    tax: Money;
     items: OrderItem[];
 };

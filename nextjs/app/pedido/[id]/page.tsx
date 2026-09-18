@@ -16,6 +16,7 @@ export default async function OrderPage(
     props: OrderPageProps
 ) {
     const params = await props.params;
+
     const cookieStore = await cookies();
 
     const authToken =
@@ -50,7 +51,7 @@ export default async function OrderPage(
                     Pedido completado
                 </h1>
 
-                <p className={styles.orderNumber}>
+                <p>
                     Pedido #{order.id}
                 </p>
 
@@ -58,7 +59,6 @@ export default async function OrderPage(
                     Gracias por tu compra.
                 </p>
             </section>
-
 
             <div className={styles.content}>
 
@@ -97,18 +97,13 @@ export default async function OrderPage(
                             </div>
 
                             <p className={styles.itemTotal}>
-                                {formatPrice(
-                                    item.total,
-                                    order.currency,
-                                    2
-                                )}
+                                {formatPrice(item.total)}
                             </p>
 
                         </article>
                     ))}
 
                 </section>
-
 
                 <aside className={styles.summary}>
 
@@ -136,11 +131,7 @@ export default async function OrderPage(
                         </span>
 
                         <span>
-                            {formatPrice(
-                                order.tax,
-                                order.currency,
-                                2
-                            )}
+                            {formatPrice(order.tax)}
                         </span>
                     </div>
 
@@ -150,18 +141,13 @@ export default async function OrderPage(
                         </span>
 
                         <strong>
-                            {formatPrice(
-                                order.total,
-                                order.currency,
-                                2
-                            )}
+                            {formatPrice(order.total)}
                         </strong>
                     </div>
 
                 </aside>
 
             </div>
-
 
             <div className={styles.actions}>
 

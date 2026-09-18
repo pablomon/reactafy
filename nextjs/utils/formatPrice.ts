@@ -1,15 +1,14 @@
+import type { Money } from "@/types/money";
+
 export function formatPrice(
-    price: string,
-    currencyCode: string,
-    currencyMinorUnit: number
+    money: Money
 ) {
     const value =
-        Number(price) / Math.pow(10, currencyMinorUnit);
+        Number(money.amount) /
+        Math.pow(10, money.minorUnit);
 
     return new Intl.NumberFormat("es-MX", {
         style: "currency",
-        currency: currencyCode,
-        minimumFractionDigits: currencyMinorUnit,
-        maximumFractionDigits: currencyMinorUnit,
+        currency: money.currency,
     }).format(value);
 }
