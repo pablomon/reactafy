@@ -2,8 +2,6 @@ import type { Money } from "@/types/money";
 
 export function formatPrice(money: Money) {
 
-    console.log("Money recibido:", money);
-
     const value =
         Number(money.amount) /
         Math.pow(10, money.minorUnit);

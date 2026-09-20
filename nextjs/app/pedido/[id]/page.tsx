@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { cookies } from "next/headers";
 
+import type { Order } from "@/types/order";
 import { getOrder } from "@/services/orderService";
 import { formatPrice } from "@/utils/formatPrice";
 import { formatOrderStatus } from "@/utils/formatOrderStatus";
@@ -14,10 +15,36 @@ type OrderPageProps = {
     }>;
 };
 
+// Se pinta cuando no se puede mostrar el pedido, sea cual sea el
+// motivo. Dice lo mismo en todos los casos a propósito: si el aviso
+// cambiara según el pedido exista o no, sería una forma de averiguar
+// qué pedidos hay en la tienda.
+function OrderUnavailable() {
+    return (
+        <main className={styles.container}>
+            <h1>Pedido no disponible</h1>
+
+            <p>
+                No se ha podido verificar tu pedido.
+            </p>
+
+            <Link href="/tienda">
+                Volver a la tienda
+            </Link>
+        </main>
+    );
+}
+
 export default async function OrderPage(
     props: OrderPageProps
 ) {
     const params = await props.params;
+
+    // El id llega de la URL y acaba en la ruta que se pide a
+    // WordPress.
+    if (!/^\d+$/.test(params.id)) {
+        return <OrderUnavailable />;
+    }
 
     const cookieStore = await cookies();
 
@@ -25,25 +52,28 @@ export default async function OrderPage(
         cookieStore.get("authToken")?.value;
 
     if (!authToken) {
-        return (
-            <main className={styles.container}>
-                <h1>Pedido no disponible</h1>
-
-                <p>
-                    No se ha podido verificar tu pedido.
-                </p>
-
-                <Link href="/tienda">
-                    Volver a la tienda
-                </Link>
-            </main>
-        );
+        return <OrderUnavailable />;
     }
 
-    const order = await getOrder(
-        params.id,
-        authToken
-    );
+    // getOrder lanza si WordPress responde con error: pedido
+    // inexistente, pedido de otro cliente o la tienda caída. Sin
+    // este try, el cliente vería la pantalla de error de Next justo
+    // después de pagar.
+    let order: Order;
+
+    try {
+        order = await getOrder(
+            params.id,
+            authToken
+        );
+    } catch (error) {
+        console.error(
+            `pedido ${params.id}: no se ha podido cargar`,
+            error
+        );
+
+        return <OrderUnavailable />;
+    }
 
     return (
         <main className={styles.container}>

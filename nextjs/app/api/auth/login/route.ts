@@ -1,5 +1,7 @@
 import { cookies } from "next/headers";
 
+import { setAuthCookie } from "@/services/authCookie";
+
 import { WORDPRESS_URL } from "@/services/wordpress";
 
 export async function POST(request: Request) {
@@ -29,18 +31,9 @@ export async function POST(request: Request) {
         );
     }
 
-    const cookieStore = await cookies();
+    await setAuthCookie(data.token);
 
-    cookieStore.set(
-        "authToken",
-        data.token,
-        {
-            httpOnly: true,
-            secure: true,
-            sameSite: "lax",
-            path: "/",
-        }
-    );
+    const cookieStore = await cookies();
 
     cookieStore.delete("cartToken");
 

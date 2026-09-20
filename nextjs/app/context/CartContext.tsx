@@ -59,15 +59,6 @@ async function refreshCart() {
     try {
         const cart = await getCart();
 
-        console.log(
-            "REFRESH CART:",
-            cart.items.map(item => ({
-                id: item.id,
-                name: item.name,
-                quantity: item.quantity,
-            }))
-        );
-
         setCart(cart);
     } catch (error) {
         console.error("Failed to load cart:", error);

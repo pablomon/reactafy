@@ -13,12 +13,6 @@ export async function POST() {
     const cartToken =
         cookieStore.get("cartToken")?.value;
 
-        console.log({
-    hasAuthToken: !!authToken,
-    authTokenLength: authToken?.length,
-    hasCartToken: !!cartToken,
-});
-
     // Usuario autenticado
     if (authToken) {
 
