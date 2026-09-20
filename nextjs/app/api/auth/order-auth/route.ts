@@ -48,6 +48,18 @@ export async function GET(request: Request) {
         );
     }
 
+    if (!data.token) {
+        return new Response(
+            "WordPress did not return a token",
+            {
+                status: 500,
+                headers: {
+                    "Cache-Control": "private, no-store",
+                },
+            }
+        );
+    }
+
     const cookieStore = await cookies();
 
     cookieStore.set("authToken", data.token, {
@@ -59,8 +71,11 @@ export async function GET(request: Request) {
 
     cookieStore.delete("cartToken");
 
-    return Response.redirect(
-        new URL(`/pedido/${orderId}`, request.url),
-        303
-    );
+    return new Response(null, {
+        status: 303,
+        headers: {
+            Location: `/pedido/${orderId}`,
+            "Cache-Control": "private, no-store",
+        },
+    });
 }
