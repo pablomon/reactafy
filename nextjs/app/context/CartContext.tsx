@@ -55,19 +55,24 @@ export default function CartProvider(
         refreshCart();
     }, []);
 
-    async function refreshCart() {
-        try {
-            const cart =
-                await getCart();
+async function refreshCart() {
+    try {
+        const cart = await getCart();
 
-            setCart(cart);
-        } catch (error) {
-            console.error(
-                "Failed to load cart:",
-                error
-            );
-        }
+        console.log(
+            "REFRESH CART:",
+            cart.items.map(item => ({
+                id: item.id,
+                name: item.name,
+                quantity: item.quantity,
+            }))
+        );
+
+        setCart(cart);
+    } catch (error) {
+        console.error("Failed to load cart:", error);
     }
+}
 
     async function addItem(
         id: number,

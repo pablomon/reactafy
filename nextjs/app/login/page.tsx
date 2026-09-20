@@ -18,7 +18,6 @@ export default function LoginPage() {
         event.preventDefault();
 
         setError("");
-
         try {
             await login(username, password);
             await refreshCart();
