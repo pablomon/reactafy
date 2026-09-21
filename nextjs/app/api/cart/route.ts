@@ -178,11 +178,16 @@ async function callWoo(
     path: string,
     body?: Record<string, unknown>
 ): Promise<Response> {
+
+    const totalStart = performance.now();
+
+    const identityStart = performance.now();
     const identity = await getIdentity();
+    const identityTime = performance.now() - identityStart;
 
     let response: Response;
 
-const start = performance.now();
+    const fetchStart = performance.now();
 
     try {
         response = await fetch(`${CART_API_URL}${path}`, {
@@ -191,25 +196,46 @@ const start = performance.now();
             body: body ? JSON.stringify(body) : undefined,
             cache: "no-store",
         });
-
     } catch {
         return errorResponse("WooCommerce no responde", 502);
     }
 
+    const fetchTime = performance.now() - fetchStart;
 
-    // Se guarda también si Woo responde con error: en la primera
-    // petición de un invitado la sesión se crea igualmente, y sin
-    // guardar el token la siguiente petición crearía otra.
+    const tokenStart = performance.now();
     await saveCartToken(identity, response);
+    const tokenTime = performance.now() - tokenStart;
 
-    // Un error del CDN o de PHP llega como HTML, no como JSON.
+    const jsonStart = performance.now();
     const data = await response.json().catch(() => null);
+    const jsonTime = performance.now() - jsonStart;
 
     if (data === null) {
-        console.error(`Woo ${path}: respuesta no JSON (${response.status})`);
+        console.error(
+            `Woo ${path}: respuesta no JSON (${response.status})`
+        );
 
-        return errorResponse("Respuesta inválida de WooCommerce", 502);
+        return errorResponse(
+            "Respuesta inválida de WooCommerce",
+            502
+        );
     }
+
+    const normalizeStart = performance.now();
+    const normalized = normalizeCart(data);
+    const normalizeTime = performance.now() - normalizeStart;
+
+    const totalTime = performance.now() - totalStart;
+
+    console.log("CART TIMING", {
+        path,
+        identity: Math.round(identityTime),
+        fetch: Math.round(fetchTime),
+        token: Math.round(tokenTime),
+        json: Math.round(jsonTime),
+        normalize: Math.round(normalizeTime),
+        total: Math.round(totalTime),
+    });
 
     if (!response.ok) {
         console.error(`Woo ${path}: ${response.status}`, data);
@@ -220,7 +246,7 @@ const start = performance.now();
         });
     }
 
-    return Response.json(normalizeCart(data), {
+    return Response.json(normalized, {
         headers: NO_STORE,
     });
 }
