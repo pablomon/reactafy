@@ -15,41 +15,54 @@ export async function GET() {
     };
 
     if (authToken) {
-        headers.Authorization = `Bearer ${authToken}`;
+        headers.Authorization =
+            `Bearer ${authToken}`;
     }
 
     if (cartToken) {
-        headers["Cart-Token"] = cartToken;
+        headers["Cart-Token"] =
+            cartToken;
     }
 
     const url =
         `${WORDPRESS_URL}/wp-json/wc/store/v1/cart/add-item`;
 
-    const results: number[] = [];
+    const results = [];
 
-    for (let i = 0; i < 3; i++) {
+    for (let i = 0; i < 6; i++) {
         const start = performance.now();
 
         const response = await fetch(url, {
             method: "POST",
             headers,
             body: JSON.stringify({
-                id: 686,       // pon aquí un ID real
+                id: 686,
                 quantity: 1,
             }),
             cache: "no-store",
         });
 
-        await response.arrayBuffer();
+        const data = await response.json();
 
-        results.push(
-            Math.round(performance.now() - start)
+        const elapsed = Math.round(
+            performance.now() - start
         );
 
-        console.log(
-            `add-item ${i + 1}: ${results[i]} ms`,
-            response.status
-        );
+        results.push({
+            request: i + 1,
+            elapsed,
+            status: response.status,
+            ok: response.ok,
+            itemsCount: data.items_count,
+        });
+
+        console.log({
+            request: i + 1,
+            elapsed,
+            status: response.status,
+            ok: response.ok,
+            itemsCount: data.items_count,
+        });
     }
 
     return Response.json({
