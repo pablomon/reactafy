@@ -1,18 +1,25 @@
-import dns from "node:dns/promises";
+import { WORDPRESS_URL } from "@/services/wordpress";
 
 export async function GET() {
     const start = performance.now();
 
-    const result = await dns.lookup("staging.aguafy.com");
+    const response = await fetch(
+        `${WORDPRESS_URL}/wp-json/wc/store/v1/cart`,
+        {
+            cache: "no-store",
+        }
+    );
 
-    const dnsTime = Math.round(
+    const elapsed = Math.round(
         performance.now() - start
     );
 
-    console.log("DNS:", result, dnsTime, "ms");
+    console.log(
+        `Woo desde Node: ${elapsed} ms`
+    );
 
     return Response.json({
-        result,
-        dnsTime,
+        status: response.status,
+        elapsed,
     });
 }
