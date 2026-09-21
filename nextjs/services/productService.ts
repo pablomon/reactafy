@@ -1,12 +1,13 @@
+import { siteConfig } from "@/config/site";
 import type {Product, ProductsResponse} from "@/types/product";
 
 import { WORDPRESS_URL } from "@/services/wordpress";
 
 const API_URL = `${WORDPRESS_URL}/wp-json/reactafy/v1`;
 
-export async function getProducts(): Promise<ProductsResponse> {
+export async function getProducts(page: number = 1): Promise<ProductsResponse> {
     const response = await fetch(
-        `${API_URL}/products?page=1&perPage=20`
+        `${API_URL}/products?page=${page}&perPage=${siteConfig.productsPerPage}`
     );
 
     if (!response.ok) {

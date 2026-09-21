@@ -178,12 +178,7 @@ async function callWoo(
     path: string,
     body?: Record<string, unknown>
 ): Promise<Response> {
-
-    const totalStart = performance.now();
-
-    const identityStart = performance.now();
     const identity = await getIdentity();
-    const identityTime = performance.now() - identityStart;
 
     let response: Response;
 
@@ -221,21 +216,7 @@ async function callWoo(
         );
     }
 
-    const normalizeStart = performance.now();
     const normalized = normalizeCart(data);
-    const normalizeTime = performance.now() - normalizeStart;
-
-    const totalTime = performance.now() - totalStart;
-
-    console.log("CART TIMING", {
-        path,
-        identity: Math.round(identityTime),
-        fetch: Math.round(fetchTime),
-        token: Math.round(tokenTime),
-        json: Math.round(jsonTime),
-        normalize: Math.round(normalizeTime),
-        total: Math.round(totalTime),
-    });
 
     if (!response.ok) {
         console.error(`Woo ${path}: ${response.status}`, data);
