@@ -182,6 +182,8 @@ async function callWoo(
 
     let response: Response;
 
+const start = performance.now();
+
     try {
         response = await fetch(`${CART_API_URL}${path}`, {
             method: body ? "POST" : "GET",
@@ -189,9 +191,11 @@ async function callWoo(
             body: body ? JSON.stringify(body) : undefined,
             cache: "no-store",
         });
+
     } catch {
         return errorResponse("WooCommerce no responde", 502);
     }
+
 
     // Se guarda también si Woo responde con error: en la primera
     // petición de un invitado la sesión se crea igualmente, y sin
