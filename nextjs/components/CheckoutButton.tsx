@@ -1,6 +1,7 @@
 "use client";
 
-import { WORDPRESS_URL } from "@/services/wordpress";
+import { siteConfig } from "@/config/site";
+const WORDPRESS_URL = siteConfig.WORDPRESS_URL;
 
 export default function CheckoutButton() {
 

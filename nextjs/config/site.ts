@@ -1,3 +1,4 @@
 export const siteConfig = {
-    productsPerPage: 20,
+    PRODUCTS_PER_PAGE: 20,
+    WORDPRESS_URL: process.env.NEXT_PUBLIC_WORDPRESS_URL
 };

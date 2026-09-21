@@ -1,5 +1,6 @@
 import { cookies } from "next/headers";
-import { WORDPRESS_URL } from "@/services/wordpress";
+import { siteConfig } from "@/config/site";
+const WORDPRESS_URL = siteConfig.WORDPRESS_URL;
 import { setAuthCookie } from "@/services/authCookie";
 
 // El canje es de un solo uso: ninguna capa debe guardar estas

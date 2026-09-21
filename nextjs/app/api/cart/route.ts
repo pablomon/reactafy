@@ -2,8 +2,9 @@ import { cookies } from "next/headers";
 
 import type { Cart } from "@/types/cart";
 import type { Money } from "@/types/money";
+import { siteConfig } from "@/config/site";
 
-import { WORDPRESS_URL } from "@/services/wordpress";
+const WORDPRESS_URL = siteConfig.WORDPRESS_URL;
 
 const CART_API_URL =
     `${WORDPRESS_URL}/wp-json/wc/store/v1/cart`;

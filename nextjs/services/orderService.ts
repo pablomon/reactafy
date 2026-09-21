@@ -1,6 +1,7 @@
 import type { Order } from "@/types/order";
 
-import { WORDPRESS_URL } from "@/services/wordpress";
+import { siteConfig } from "@/config/site";
+const WORDPRESS_URL = siteConfig.WORDPRESS_URL;
 
 const API_URL =
     `${WORDPRESS_URL}/wp-json/reactafy/v1`;

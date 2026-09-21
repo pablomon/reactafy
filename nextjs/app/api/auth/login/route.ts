@@ -2,7 +2,8 @@ import { cookies } from "next/headers";
 
 import { setAuthCookie } from "@/services/authCookie";
 
-import { WORDPRESS_URL } from "@/services/wordpress";
+import { siteConfig } from "@/config/site";
+const WORDPRESS_URL = siteConfig.WORDPRESS_URL;
 
 export async function POST(request: Request) {
 
