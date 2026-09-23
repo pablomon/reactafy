@@ -1,7 +1,9 @@
-import { getProduct } from "@/services/productService";
 import styles from "./page.module.css";
 import AddToCartButton from "@/components/AddToCartButton";
+import { getProduct } from "@/services/productService";
 import { formatPrice } from "@/utils/formatPrice";
+import {getProductPrices} from "@/services/pricingService";
+import Price from "@/components/Price";
 
 type ProductPageProps = {
     params: Promise<{ id: string }>;
@@ -14,6 +16,8 @@ export default async function ProductPage(
     const id = params.id;
 
     const product = await getProduct(id);
+    const pricesPromise = getProductPrices([product.id]);
+
     return (
         <main className={styles.container}>
             <div className={styles.product}>
@@ -46,9 +50,10 @@ export default async function ProductPage(
                         ))}
                     </div>
 
-                    <p className={styles.price}>
-                        {formatPrice(product.price)} €
-                    </p>
+                    <Price
+                        productId={product.id}
+                        pricesPromise={pricesPromise}
+                    />
 
                     <p className={styles.sku}>
                         SKU: {product.sku}

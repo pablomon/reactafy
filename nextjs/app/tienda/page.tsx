@@ -4,6 +4,7 @@ import ProductCard from "@/components/ProductCard";
 import styles from "./page.module.css";
 import AuthTest from "@/components/test/AuthTest";
 import Pagination from "@/components/Pagination";
+import ProductGrid from "@/components/ProductGrid";
 
 export default async function Tienda({
                                          searchParams,
@@ -29,18 +30,9 @@ export default async function Tienda({
                 Productos encontrados: {data.pagination.total}
             </p>
 
-            <div className={styles.grid}>
-                {data.products.map((product) => (
-                    <ProductCard
-                        key={product.id}
-                        product={product}
-                        pricesPromise={pricesPromise}
-                    />
-                ))}
-            </div>
-
-            <Pagination
-                currentPage={page}
+            <ProductGrid
+                initialProducts={data.products}
+                initialPage={page}
                 totalPages={data.pagination.totalPages}
             />
         </main>

@@ -2,8 +2,13 @@
 
 import { useMemo, useState } from "react";
 import type { Product } from "@/types/product";
-import type { ProductPrice } from "@/types/productPrice";
-import ProductCard from "@/components/ProductCard";
+import styles from "./ProductGrid.module.css";
+import ProductBatch from "@/components/ProductBatch";
+
+interface ProductBatchData {
+    page: number;
+    products: Product[];
+}
 
 interface ProductGridProps {
     initialProducts: Product[];
@@ -16,21 +21,19 @@ export default function ProductGrid({
                                         initialPage,
                                         totalPages,
                                     }: ProductGridProps) {
-    const [products, setProducts] = useState(initialProducts);
-    const [page, setPage] = useState(initialPage);
+    const [batches, setBatches] = useState<ProductBatchData[]>([
+        {
+            page: initialPage,
+            products: initialProducts,
+        },
+    ]);
+
     const [loading, setLoading] = useState(false);
 
-    const productIds = useMemo(
-        () => products.map((product) => product.id),
-        [products]
-    );
+    const currentPage =
+        batches[batches.length - 1].page;
 
-    const pricesPromise = useMemo(
-        () => getProductPrices(productIds),
-        [productIds]
-    );
-
-    const hasMore = page < totalPages;
+    const hasMore = currentPage < totalPages;
 
     async function loadMore() {
         if (loading || !hasMore) {
@@ -39,7 +42,7 @@ export default function ProductGrid({
 
         setLoading(true);
 
-        const nextPage = page + 1;
+        const nextPage = currentPage + 1;
 
         try {
             const response = await fetch(
@@ -47,17 +50,20 @@ export default function ProductGrid({
             );
 
             if (!response.ok) {
-                throw new Error("Failed to fetch products");
+                throw new Error(
+                    "Failed to fetch products"
+                );
             }
 
             const data = await response.json();
 
-            setProducts((current) => [
+            setBatches((current) => [
                 ...current,
-                ...data.products,
+                {
+                    page: nextPage,
+                    products: data.products,
+                },
             ]);
-
-            setPage(nextPage);
         } finally {
             setLoading(false);
         }
@@ -65,12 +71,11 @@ export default function ProductGrid({
 
     return (
         <>
-            <div>
-                {products.map((product) => (
-                    <ProductCard
-                        key={product.id}
-                        product={product}
-                        pricesPromise={pricesPromise}
+            <div className={styles.grid}>
+                {batches.map((batch) => (
+                    <ProductBatch
+                        key={batch.page}
+                        products={batch.products}
                     />
                 ))}
             </div>
@@ -80,29 +85,11 @@ export default function ProductGrid({
                     onClick={loadMore}
                     disabled={loading}
                 >
-                    {loading ? "Cargando..." : "Cargar más"}
+                    {loading
+                        ? "Cargando..."
+                        : "Cargar más"}
                 </button>
             )}
         </>
     );
-}
-
-async function getProductPrices(
-    productIds: number[]
-): Promise<Record<number, ProductPrice>> {
-    if (productIds.length === 0) {
-        return {};
-    }
-
-    const ids = productIds.join(",");
-
-    const response = await fetch(
-        `/api/products/pricing?ids=${ids}`
-    );
-
-    if (!response.ok) {
-        throw new Error("Failed to fetch product prices");
-    }
-
-    return response.json();
 }

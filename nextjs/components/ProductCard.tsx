@@ -6,10 +6,11 @@ import styles from "./ProductCard.module.css";
 import Link from "next/link";
 import AddToCartButton from "@/components/AddToCartButton";
 import Price from "@/components/Price";
+import Image from "next/image";
 
 interface ProductCardProps {
     product: Product;
-    pricesPromise: Promise<Record<number, ProductPrice>>;
+    pricesPromise?: Promise<Record<number, ProductPrice>>;
 }
 
 export default function ProductCard({
@@ -33,7 +34,7 @@ export default function ProductCard({
         <article className={styles.card}>
             <div className={styles.imageBox}>
                 {product.image ? (
-                    <img
+                    <Image
                         className={styles.image}
                         src={product.image}
                         alt={product.title}
@@ -63,10 +64,12 @@ export default function ProductCard({
                 </p>
             )}
 
-            <Price
-                productId={product.id}
-                pricesPromise={pricesPromise}
-            />
+            {pricesPromise && (
+                <Price
+                    productId={product.id}
+                    pricesPromise={pricesPromise}
+                />
+            )}
 
             {product.brand && (
                 <p className={styles.brand}>
