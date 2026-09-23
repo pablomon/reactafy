@@ -1,0 +1,10 @@
+.price {
+    margin: 0;
+    font-weight: 600;
+}
+
+.tax {
+    margin: 0;
+    font-size: var(--text-sm);
+    color: var(--color-muted);
+}

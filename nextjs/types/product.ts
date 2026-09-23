@@ -55,8 +55,6 @@ export type Product = {
     editorial: ProductEditorial;
     attributes: ProductAttribute[];
     stock: ProductStock;
-    price: Money;
-    fromPrice: Money | null;
 };
 
 export type ProductsPagination = {

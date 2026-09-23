@@ -1,14 +1,21 @@
+"use client";
+
 import type { Product } from "@/types/product";
+import type { ProductPrice } from "@/types/productPrice";
 import styles from "./ProductCard.module.css";
 import Link from "next/link";
 import AddToCartButton from "@/components/AddToCartButton";
-import { formatPrice } from "@/utils/formatPrice";
+import Price from "@/components/Price";
 
 interface ProductCardProps {
     product: Product;
+    pricesPromise: Promise<Record<number, ProductPrice>>;
 }
 
-export default function ProductCard({ product }: ProductCardProps) {
+export default function ProductCard({
+                                        product,
+                                        pricesPromise,
+                                    }: ProductCardProps) {
     const volume = product.attributes.find(
         (attribute) => attribute.slug === "volumen"
     );
@@ -21,8 +28,6 @@ export default function ProductCard({ product }: ProductCardProps) {
         product.categories.find(
             (category) => category.parentId !== 0
         ) ?? product.categories[0];
-
-    const price = product.fromPrice ?? product.price;
 
     return (
         <article className={styles.card}>
@@ -58,14 +63,10 @@ export default function ProductCard({ product }: ProductCardProps) {
                 </p>
             )}
 
-            <p className={styles.price}>
-                {product.fromPrice !== null && "Desde "}
-                {formatPrice(price)} €
-            </p>
-
-            <p className={styles.tax}>
-                (IVA inc.)
-            </p>
+            <Price
+                productId={product.id}
+                pricesPromise={pricesPromise}
+            />
 
             {product.brand && (
                 <p className={styles.brand}>
