@@ -1,48 +1,34 @@
 import { NextRequest, NextResponse } from "next/server";
-import { cookies } from "next/headers";
-import {siteConfig} from "@/config/site";
+import { getProductPrices } from "@/services/pricingService";
 
-const API_URL =
-    `${siteConfig.WORDPRESS_URL}/wp-json/reactafy/v1`;
-
+// "Cargar más" pide los precios por aquí. La URL de WordPress,
+// el token y el guest=1 los resuelve getProductPrices, igual
+// que en el primer render: un único sitio para esa lógica.
 export async function GET(request: NextRequest) {
-    const ids = request.nextUrl.searchParams.get("ids");
+    const ids = (request.nextUrl.searchParams.get("ids") ?? "")
+        .split(",")
+        .map(Number)
+        .filter((id) => Number.isInteger(id) && id > 0);
 
-    if (!ids) {
+    if (ids.length === 0) {
         return NextResponse.json(
             { error: "Missing ids" },
             { status: 400 }
         );
     }
 
-    const cookieStore = await cookies();
+    try {
+        const prices = await getProductPrices(ids);
 
-    const authToken = cookieStore.get("authToken")?.value;
-
-    const response = await fetch(
-        `${API_URL}/products/pricing?ids=${ids}`,
-        {
-            headers: authToken
-                ? {
-                    Authorization: `Bearer ${authToken}`,
-                }
-                : {},
-            cache: "no-store",
-        }
-    );
-
-    if (!response.ok) {
+        return NextResponse.json(prices, {
+            headers: {
+                "Cache-Control": "private, no-store",
+            },
+        });
+    } catch {
         return NextResponse.json(
             { error: "Failed to fetch prices" },
-            { status: response.status }
+            { status: 502 }
         );
     }
-
-    const data = await response.json();
-
-    return NextResponse.json(data, {
-        headers: {
-            "Cache-Control": "private, no-store",
-        },
-    });
 }
