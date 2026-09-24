@@ -1,53 +1,43 @@
 import { cookies } from "next/headers";
 
-import { setAuthCookie } from "@/services/authCookie";
-
-import { siteConfig } from "@/config/site";
-const WORDPRESS_URL = siteConfig.WORDPRESS_URL;
+import {
+    readJson,
+    startSession,
+    WordPressAuthError,
+} from "@/services/wordpressAuth";
 
 export async function POST(request: Request) {
+    const body = await readJson(request);
 
-    const body = await request.json();
+    const username =
+        typeof body.username === "string" ? body.username.trim() : "";
 
-    const response = await fetch(
-        `${WORDPRESS_URL}/wp-json/jwt-auth/v1/token`,
-        {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                username: body.username,
-                password: body.password,
-            }),
-        }
-    );
+    const password =
+        typeof body.password === "string" ? body.password : "";
 
-    const data = await response.json();
-
-    if (!response.ok) {
+    if (!username || !password) {
         return Response.json(
-            data,
-            { status: response.status }
+            { message: "Introduce usuario y contraseña." },
+            { status: 400 }
         );
     }
 
-    await setAuthCookie(data.token);
+    try {
+        const user = await startSession(username, password);
 
-    const cookieStore = await cookies();
+        const cookieStore = await cookies();
 
-    cookieStore.delete("cartToken");
+        cookieStore.delete("cartToken");
 
-    const payload = JSON.parse(
-        Buffer.from(
-            data.token.split(".")[1],
-            "base64url"
-        ).toString()
-    );
+        return Response.json(user);
+    } catch (error) {
+        if (error instanceof WordPressAuthError) {
+            return Response.json(
+                { code: error.code, message: error.message },
+                { status: error.status }
+            );
+        }
 
-    return Response.json({
-        id: Number(payload.data.user.id),
-        email: data.user_email,
-        name: data.user_display_name,
-    });
+        throw error;
+    }
 }
