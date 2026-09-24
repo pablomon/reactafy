@@ -1,30 +1,58 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import type { Product } from "@/types/product";
+import type { ProductPrice } from "@/types/productPrice";
 import styles from "./ProductGrid.module.css";
 import ProductBatch from "@/components/ProductBatch";
 
 interface ProductBatchData {
     page: number;
     products: Product[];
+    pricesPromise: Promise<Record<number, ProductPrice>>;
 }
 
 interface ProductGridProps {
     initialProducts: Product[];
     initialPage: number;
     totalPages: number;
+    initialPricesPromise: Promise<
+        Record<number, ProductPrice>
+    >;
+}
+
+async function getProductPricesClient(
+    productIds: number[]
+): Promise<Record<number, ProductPrice>> {
+    if (productIds.length === 0) {
+        return {};
+    }
+
+    const ids = productIds.join(",");
+
+    const response = await fetch(
+        `/api/products/pricing?ids=${ids}`
+    );
+
+    if (!response.ok) {
+        throw new Error("Failed to fetch prices");
+    }
+
+    return response.json();
 }
 
 export default function ProductGrid({
                                         initialProducts,
                                         initialPage,
                                         totalPages,
+                                        initialPricesPromise,
                                     }: ProductGridProps) {
+
     const [batches, setBatches] = useState<ProductBatchData[]>([
         {
             page: initialPage,
             products: initialProducts,
+            pricesPromise: initialPricesPromise,
         },
     ]);
 
@@ -57,11 +85,19 @@ export default function ProductGrid({
 
             const data = await response.json();
 
+            const productIds = data.products.map(
+                (product: Product) => product.id
+            );
+
+            const pricesPromise =
+                getProductPricesClient(productIds);
+
             setBatches((current) => [
                 ...current,
                 {
                     page: nextPage,
                     products: data.products,
+                    pricesPromise,
                 },
             ]);
         } finally {
@@ -76,6 +112,7 @@ export default function ProductGrid({
                     <ProductBatch
                         key={batch.page}
                         products={batch.products}
+                        pricesPromise={batch.pricesPromise}
                     />
                 ))}
             </div>

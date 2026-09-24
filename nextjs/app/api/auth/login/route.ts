@@ -45,8 +45,6 @@ export async function POST(request: Request) {
         ).toString()
     );
 
-    console.log("JWT PAYLOAD:", payload);
-
     return Response.json({
         id: Number(payload.data.user.id),
         email: data.user_email,

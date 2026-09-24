@@ -1,9 +1,5 @@
 import { getProducts } from "@/services/productService";
 import { getProductPrices } from "@/services/pricingService";
-import ProductCard from "@/components/ProductCard";
-import styles from "./page.module.css";
-import AuthTest from "@/components/test/AuthTest";
-import Pagination from "@/components/Pagination";
 import ProductGrid from "@/components/ProductGrid";
 
 export default async function Tienda({
@@ -34,6 +30,7 @@ export default async function Tienda({
                 initialProducts={data.products}
                 initialPage={page}
                 totalPages={data.pagination.totalPages}
+                initialPricesPromise={pricesPromise}
             />
         </main>
     );
