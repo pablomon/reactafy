@@ -1,9 +1,13 @@
+import { cookies } from "next/headers";
 import {ProductPrice} from "@/types/productPrice";
 import {siteConfig} from "@/config/site";
 
 const API_URL =
     `${siteConfig.WORDPRESS_URL}/wp-json/reactafy/v1`;
 
+// Solo para el servidor. Lee la sesión de la cookie para que un
+// usuario logueado reciba sus precios también en el primer render,
+// igual que en "Cargar más" (que pasa por /api/products/pricing).
 export async function getProductPrices(
     productIds: number[]
 ): Promise<Record<number, ProductPrice>> {
@@ -13,10 +17,20 @@ export async function getProductPrices(
 
     const ids = productIds.join(",");
 
+    const authToken =
+        (await cookies()).get("authToken")?.value;
+
     const start = performance.now();
 
     const response = await fetch(
-        `${API_URL}/products/pricing?ids=${ids}`
+        `${API_URL}/products/pricing?ids=${ids}`,
+        {
+            headers: authToken
+                ? { Authorization: `Bearer ${authToken}` }
+                : {},
+            // Precios por usuario: nunca se cachean.
+            cache: "no-store",
+        }
     );
 
     const fetchTime = performance.now() - start;
