@@ -1,5 +1,23 @@
-.grid {
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: var(--spacing-3xl) var(--spacing-lg);
+.main {
+    max-width: var(--container-main);
+    margin: 0 auto;
+    padding: var(--spacing-xl) var(--spacing-md) 60px;
+}
+
+@media (min-width: 992px) {
+    .main {
+        padding: var(--spacing-2xl) var(--spacing-2xl) 76px;
+    }
+}
+
+.visuallyHidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
 }

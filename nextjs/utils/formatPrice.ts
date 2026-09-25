@@ -9,5 +9,8 @@ export function formatPrice(money: Money) {
     return new Intl.NumberFormat("es-MX", {
         style: "currency",
         currency: money.currency,
+        // "MXN 49.25" y "MXN 85", como en aguafy.com
+        currencyDisplay: "code",
+        trailingZeroDisplay: "stripIfInteger",
     }).format(value);
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 export default function RegisterForm() {
@@ -10,6 +11,7 @@ export default function RegisterForm() {
 
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
+    const router = useRouter();
 
     // La cuenta se creó pero no se pudo abrir sesión (respuesta 202).
     const [createdMessage, setCreatedMessage] =
@@ -64,7 +66,7 @@ export default function RegisterForm() {
 
             // Temporalmente.
             // Después decidiremos dónde redirigir.
-            window.location.href = "/";
+            router.push("/");
 
         } catch {
             setError(

@@ -2,79 +2,120 @@
     display: flex;
     flex-direction: column;
     min-width: 0;
+    color: var(--color-main);
 }
 
 .imageBox {
     position: relative;
-    aspect-ratio: 1 / 1;
+    aspect-ratio: 5 / 7;
     background-color: var(--color-surface);
     border-radius: var(--radius-2xl);
     overflow: hidden;
 }
 
+.imageLink {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+}
+
 .image {
     display: block;
     width: 100%;
-    height: 100%;
+    height: auto;
+    aspect-ratio: 1 / 1;
     object-fit: contain;
 }
 
+.addButton {
+    position: absolute;
+    right: 13px;
+    bottom: 18px;
+    width: 29px;
+    height: 29px;
+    padding: 0;
+    border: 0;
+    border-radius: 9990px;
+    background: #fff;
+    color: var(--color-accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.15s, color 0.15s, transform 0.15s;
+}
+
+.addButton:hover {
+    background: var(--color-accent);
+    color: #fff;
+}
+
+.addButton:active {
+    transform: scale(0.92);
+}
+
+.addButton[data-state="adding"] {
+    opacity: 0.6;
+    cursor: default;
+}
+
+.addButton[data-state="added"] {
+    background: var(--color-accent);
+    color: #fff;
+}
+
+.addButton[data-state="error"] {
+    background: #d63638;
+    color: #fff;
+}
+
+.info {
+    margin-top: 15px;
+}
+
 .category {
-    align-self: flex-start;
-    margin-top: var(--spacing-md);
-    padding: 4px 12px;
-    border-radius: 999px;
+    display: inline-block;
+    padding: 4px 22px;
+    border-radius: 9990px;
     background-color: var(--color-main);
-    color: var(--color-background);
-    font-size: var(--text-xs);
-    line-height: var(--line-height-xs);
+    color: #fff;
+    font-size: 12.6px;
+    line-height: 1.7;
 }
 
 .name {
-    margin: var(--spacing-sm) 0 0;
-    color: var(--color-accent);
-    font-size: var(--text-base);
-    line-height: var(--line-height-base);
-    font-weight: 600;
+    margin: 20px 0 0;
+    font-size: 18px;
+    line-height: 1.4;
+    font-weight: 700;
+}
+
+.name a {
+    color: inherit;
+    text-decoration: none;
 }
 
 .meta {
-    margin: var(--spacing-xs) 0 0;
-    color: var(--color-text);
-    font-size: var(--text-sm);
-    line-height: var(--line-height-sm);
-}
-
-.price {
-    margin: var(--spacing-xs) 0 0;
-    color: var(--color-accent);
-    font-size: var(--text-base);
-    line-height: var(--line-height-base);
-    font-weight: 300;
-}
-
-.tax {
     margin: 0;
-    color: var(--color-text);
-    font-size: var(--text-xs);
-    line-height: var(--line-height-xs);
+    font-size: var(--text-sm);
+    line-height: 1.7;
 }
 
 .brand {
-    margin: var(--spacing-xs) 0 0;
-    color: var(--color-text);
     font-size: var(--text-sm);
-    line-height: var(--line-height-sm);
+    line-height: 1.7;
+    color: inherit;
+    text-decoration: underline;
 }
 
-.card button {
-    margin-top: var(--spacing-sm);
-    width: 100%;
-    padding: 8px 12px;
-    border: 1px solid var(--color-main);
-    border-radius: 4px;
-    background: var(--color-background);
-    color: var(--color-main);
-    font: inherit;
-    cursor: pointer;
+@media (max-width: 480px) {
+    .category {
+        padding: 2px 12px;
+        font-size: var(--text-xs);
+    }
+
+    .name {
+        font-size: 16px;
+    }
 }

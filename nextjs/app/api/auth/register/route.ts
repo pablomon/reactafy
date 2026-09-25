@@ -1,11 +1,11 @@
-import { siteConfig } from "@/config/site";
 import {
     cleanMessage,
     readJson,
+    serverSecretMissingResponse,
+    ServerSecretMissingError,
     startSession,
+    wordpressServerFetch,
 } from "@/services/wordpressAuth";
-
-const WORDPRESS_URL = siteConfig.WORDPRESS_URL;
 
 export async function POST(request: Request) {
     const body = await readJson(request);
@@ -23,50 +23,36 @@ export async function POST(request: Request) {
         );
     }
 
-    // Secreto compartido con WordPress (REACTAFY_SERVER_SECRET en
-    // wp-config.php). Solo existe en el servidor: sin el prefijo
-    // NEXT_PUBLIC_ nunca llega al navegador.
-    const secret = process.env.REACTAFY_SERVER_SECRET;
+    let result;
 
-    if (!secret) {
-        console.error(
-            "Falta REACTAFY_SERVER_SECRET (ver .env.example)"
-        );
+    try {
+        result = await wordpressServerFetch("register", {
+            email,
+            password,
+        });
+    } catch (error) {
+        if (error instanceof ServerSecretMissingError) {
+            return serverSecretMissingResponse(
+                error,
+                "El registro no está disponible."
+            );
+        }
 
-        return Response.json(
-            { message: "El registro no está disponible." },
-            { status: 500 }
-        );
+        throw error;
     }
 
-    const registerResponse = await fetch(
-        `${WORDPRESS_URL}/wp-json/reactafy/v1/register`,
-        {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "X-Reactafy-Secret": secret,
-            },
-            body: JSON.stringify({
-                email,
-                password,
-            }),
-            cache: "no-store",
-        }
-    );
+    const { response, data } = result;
 
-    const registerData = await readJson(registerResponse);
-
-    if (!registerResponse.ok) {
+    if (!response.ok) {
         return Response.json(
             {
-                code: registerData.code,
+                code: data.code,
                 message: cleanMessage(
-                    registerData.message,
+                    data.message,
                     "No se pudo crear la cuenta."
                 ),
             },
-            { status: registerResponse.status }
+            { status: response.status }
         );
     }
 

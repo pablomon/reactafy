@@ -104,6 +104,27 @@ async function saveCartToken(
     });
 }
 
+// La Store API exige Cart-Token (o Nonce) para escribir en el carrito.
+// Si aún no lo tenemos (invitado nuevo o recién logueado), se lo pedimos
+// a Woo con un GET, que siempre lo devuelve.
+async function ensureCartToken(identity: Identity): Promise<Identity> {
+    if (identity.cartToken) {
+        return identity;
+    }
+
+    const response = await fetch(CART_API_URL, {
+        headers: getWooHeaders(identity, false),
+        cache: "no-store",
+    });
+
+    await saveCartToken(identity, response);
+
+    const cartToken =
+        response.headers.get("Cart-Token") ?? undefined;
+
+    return { ...identity, cartToken };
+}
+
 type WooMoneyFields = {
     currency_code: string;
     currency_minor_unit: number;
@@ -179,11 +200,17 @@ async function callWoo(
     path: string,
     body?: Record<string, unknown>
 ): Promise<Response> {
-    const identity = await getIdentity();
+    let identity = await getIdentity();
+
+    if (body) {
+        try {
+            identity = await ensureCartToken(identity);
+        } catch {
+            return errorResponse("WooCommerce no responde", 502);
+        }
+    }
 
     let response: Response;
-
-    const fetchStart = performance.now();
 
     try {
         response = await fetch(`${CART_API_URL}${path}`, {
@@ -196,15 +223,9 @@ async function callWoo(
         return errorResponse("WooCommerce no responde", 502);
     }
 
-    const fetchTime = performance.now() - fetchStart;
-
-    const tokenStart = performance.now();
     await saveCartToken(identity, response);
-    const tokenTime = performance.now() - tokenStart;
 
-    const jsonStart = performance.now();
     const data = await response.json().catch(() => null);
-    const jsonTime = performance.now() - jsonStart;
 
     if (data === null) {
         console.error(
@@ -217,18 +238,17 @@ async function callWoo(
         );
     }
 
-    const normalized = normalizeCart(data);
-
+    // Woo responde { code, message } si falla: no tiene forma de carrito.
     if (!response.ok) {
         console.error(`Woo ${path}: ${response.status}`, data);
 
-        return Response.json(data, {
-            status: response.status,
-            headers: NO_STORE,
-        });
+        return Response.json(
+            { code: data.code, message: data.message },
+            { status: response.status, headers: NO_STORE }
+        );
     }
 
-    return Response.json(normalized, {
+    return Response.json(normalizeCart(data), {
         headers: NO_STORE,
     });
 }
@@ -248,6 +268,21 @@ async function readBody(
 }
 
 export async function GET() {
+    const identity = await getIdentity();
+
+    // Un invitado sin cartToken no tiene carrito en WooCommerce: se
+    // responde vacío sin llamar a Woo (ahorra ~700 ms por visita).
+    // El carrito se crea en Woo al añadir el primer producto (POST).
+    if (identity.kind === "guest" && !identity.cartToken) {
+        const emptyCart: Cart = {
+            items: [],
+            items_count: 0,
+            totals: null,
+        };
+
+        return Response.json(emptyCart, { headers: NO_STORE });
+    }
+
     return callWoo("");
 }
 

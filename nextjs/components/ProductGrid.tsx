@@ -119,6 +119,8 @@ export default function ProductGrid({
 
             {hasMore && (
                 <button
+                    type="button"
+                    className={styles.loadMore}
                     onClick={loadMore}
                     disabled={loading}
                 >

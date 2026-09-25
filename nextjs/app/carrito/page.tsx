@@ -11,14 +11,13 @@ export default function CartPage() {
     const context = useContext(CartContext);
 
     const cart = context.cart;
-    const updateItem = context.updateItem;
-    const removeItem = context.removeItem;
+    const changeQuantity = context.changeQuantity;
 
     if (!cart) {
         return <p>Cargando carrito...</p>;
     }
 
-    if (cart.items.length === 0) {
+    if (cart.items.length === 0 || !cart.totals) {
         return <p>El carrito está vacío.</p>;
     }
 
@@ -72,21 +71,12 @@ export default function CartPage() {
                                     >
                                         <button
                                             type="button"
-                                            onClick={() => {
-                                                if (
-                                                    item.quantity > 1
-                                                ) {
-                                                    updateItem(
-                                                        item.key,
-                                                        item.quantity - 1
-                                                    );
-                                                    return;
-                                                }
-
-                                                removeItem(
-                                                    item.key
-                                                );
-                                            }}
+                                            onClick={() =>
+                                                changeQuantity(
+                                                    item.key,
+                                                    -1
+                                                )
+                                            }
                                         >
                                             −
                                         </button>
@@ -98,9 +88,9 @@ export default function CartPage() {
                                         <button
                                             type="button"
                                             onClick={() =>
-                                                updateItem(
+                                                changeQuantity(
                                                     item.key,
-                                                    item.quantity + 1
+                                                    1
                                                 )
                                             }
                                         >

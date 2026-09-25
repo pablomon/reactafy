@@ -1,6 +1,7 @@
 import { getProducts } from "@/services/productService";
 import { getProductPrices } from "@/services/pricingService";
 import ProductGrid from "@/components/ProductGrid";
+import styles from "./page.module.css";
 
 export default async function Tienda({
                                          searchParams,
@@ -19,12 +20,9 @@ export default async function Tienda({
     const pricesPromise = getProductPrices(productIds);
 
     return (
-        <main>
-            <h1>Tienda</h1>
-
-            <p>
-                Productos encontrados: {data.pagination.total}
-            </p>
+        <main className={styles.main}>
+            {/* Oculto a la vista, pero sigue siendo el título para SEO y lectores de pantalla */}
+            <h1 className={styles.visuallyHidden}>Tienda</h1>
 
             <ProductGrid
                 initialProducts={data.products}

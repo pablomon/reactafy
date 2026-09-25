@@ -1,10 +1,20 @@
 .price {
-    margin: 0;
-    font-weight: 600;
+    margin: 3px 0 0;
+    font-size: 18px;
+    line-height: 1.7;
+    font-weight: 400;
+    color: var(--color-main);
 }
 
 .tax {
     margin: 0;
-    font-size: var(--text-sm);
-    color: var(--color-muted);
+    font-size: 12.6px;
+    line-height: 1.7;
+    color: var(--color-main);
+}
+
+@media (max-width: 480px) {
+    .price {
+        font-size: 16px;
+    }
 }

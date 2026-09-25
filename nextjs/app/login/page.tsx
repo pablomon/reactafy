@@ -1,6 +1,7 @@
 "use client";
 
 import { useContext, useState } from "react";
+import Link from "next/link";
 import { AuthContext } from "@/app/context/AuthContext";
 import { CartContext } from "../context/CartContext";
 
@@ -111,6 +112,12 @@ export default function LoginPage() {
                     Iniciar sesión
                 </button>
             </form>
+
+            <p>
+                <Link href="/recuperar-contrasena">
+                    ¿Has olvidado tu contraseña?
+                </Link>
+            </p>
 
             {error && (
                 <p>
