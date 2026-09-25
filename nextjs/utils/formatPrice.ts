@@ -1,10 +1,9 @@
 import type { Money } from "@/types/money";
+import { moneyToNumber } from "@/utils/money";
 
 export function formatPrice(money: Money) {
 
-    const value =
-        Number(money.amount) /
-        Math.pow(10, money.minorUnit);
+    const value = moneyToNumber(money);
 
     return new Intl.NumberFormat("es-MX", {
         style: "currency",

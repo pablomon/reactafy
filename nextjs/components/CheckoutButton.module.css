@@ -1,0 +1,18 @@
+.button {
+    display: block;
+    width: 86%;
+    margin: var(--spacing-lg) auto 0;
+    padding: 8px var(--spacing-lg);
+    border: 0;
+    border-radius: 9990px;
+    background: var(--color-main);
+    color: #fff;
+    font: inherit;
+    font-size: var(--text-lg);
+    cursor: pointer;
+}
+
+.button:disabled {
+    background: #9ea3b0;
+    cursor: not-allowed;
+}

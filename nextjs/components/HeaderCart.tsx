@@ -1,13 +1,12 @@
 "use client";
 
-import Link from "next/link";
 import { useContext } from "react";
 
 import styles from "./Header.module.css";
 import { CartContext } from "@/app/context/CartContext";
 
 export default function HeaderCart() {
-    const { cart } = useContext(CartContext);
+    const { cart, openCart } = useContext(CartContext);
 
     // Se suma a partir de las líneas (y no de items_count) para que
     // el contador siga los cambios optimistas del carrito al momento.
@@ -15,10 +14,12 @@ export default function HeaderCart() {
         cart?.items.reduce((sum, item) => sum + item.quantity, 0) ?? 0;
 
     return (
-        <Link
-            href="/carrito"
-            className={styles.iconLink}
-            aria-label={`Carrito (${count} productos)`}
+        <button
+            type="button"
+            className={`${styles.iconLink} ${styles.iconButtonReset}`}
+            aria-label={`Abrir la cesta (${count} productos)`}
+            aria-haspopup="dialog"
+            onClick={openCart}
         >
             <svg width="19" height="19" viewBox="0 0 19 19" fill="none" aria-hidden="true">
                 <path
@@ -35,6 +36,6 @@ export default function HeaderCart() {
             </svg>
 
             <span className={styles.badge}>{count}</span>
-        </Link>
+        </button>
     );
 }

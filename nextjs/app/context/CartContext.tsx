@@ -2,6 +2,7 @@
 
 import {
     createContext,
+    useCallback,
     useEffect,
     useRef,
     useState,
@@ -22,8 +23,16 @@ type CartContextType = {
     addItem: (id: number, quantity: number) => Promise<void>;
     updateItem: (key: string, quantity: number) => Promise<void>;
     changeQuantity: (key: string, delta: number) => void;
+    setQuantity: (key: string, quantity: number) => void;
     removeItem: (key: string) => Promise<void>;
     refreshCart: () => Promise<void>;
+    // true mientras haya cambios sin confirmar por Woo (clics en
+    // debounce o peticiones en la cola).
+    isSyncing: boolean;
+    // Panel "Cesta"
+    isOpen: boolean;
+    openCart: () => void;
+    closeCart: () => void;
 };
 
 type CartProviderProps = {
@@ -37,12 +46,26 @@ export const CartContext = createContext<CartContextType>({
     addItem: async () => { },
     updateItem: async () => { },
     changeQuantity: () => { },
+    setQuantity: () => { },
     removeItem: async () => { },
     refreshCart: async () => { },
+    isSyncing: false,
+    isOpen: false,
+    openCart: () => { },
+    closeCart: () => { },
 });
 
 export default function CartProvider(props: CartProviderProps) {
     const [cart, setCart] = useState<Cart | null>(null);
+    const [isOpen, setIsOpen] = useState(false);
+
+    // useCallback: la misma función en cada render. CartDrawer las usa
+    // en las dependencias de sus efectos; si cambiaran en cada render,
+    // esos efectos se repetirían sin parar.
+    const openCart = useCallback(() => setIsOpen(true), []);
+    const closeCart = useCallback(() => setIsOpen(false), []);
+    // Cambios pendientes: peticiones en la cola + clics en debounce.
+    const [pending, setPending] = useState(0);
 
     // Último carrito conocido (incluye los cambios optimistas), sin esperar al render.
     const cartRef = useRef<Cart | null>(null);
@@ -63,6 +86,7 @@ export default function CartProvider(props: CartProviderProps) {
     // y no hay clics pendientes (si no, borraría el cambio optimista).
     function enqueue(request: () => Promise<Cart>): Promise<void> {
         const requestId = ++lastRequestRef.current;
+        setPending((n) => n + 1);
 
         const run = async () => {
             try {
@@ -82,6 +106,8 @@ export default function CartProvider(props: CartProviderProps) {
                 if (fresh) applyCart(fresh);
 
                 throw error;
+            } finally {
+                setPending((n) => n - 1);
             }
         };
 
@@ -96,6 +122,7 @@ export default function CartProvider(props: CartProviderProps) {
         if (timer) {
             clearTimeout(timer);
             timersRef.current.delete(key);
+            setPending((n) => n - 1);
         }
     }
 
@@ -137,13 +164,20 @@ export default function CartProvider(props: CartProviderProps) {
         return enqueue(() => removeCartItem(key));
     }
 
-    // +1 / −1 sobre la cantidad más reciente, con debounce por línea.
+    // +1 / −1 sobre la cantidad más reciente.
     function changeQuantity(key: string, delta: number) {
+        const item = cartRef.current?.items.find((i) => i.key === key);
+        if (!item) return;
+
+        setQuantity(key, item.quantity + delta);
+    }
+
+    // Cantidad exacta (campo numérico o botones), optimista y con
+    // debounce por línea: solo se envía a Woo el último valor.
+    function setQuantity(key: string, quantity: number) {
         const current = cartRef.current;
         const item = current?.items.find((i) => i.key === key);
         if (!current || !item) return;
-
-        const quantity = item.quantity + delta;
 
         if (quantity < 1) {
             removeItem(key).catch(() => { });
@@ -158,10 +192,12 @@ export default function CartProvider(props: CartProviderProps) {
         });
 
         cancelPending(key);
+        setPending((n) => n + 1);
         timersRef.current.set(
             key,
             setTimeout(() => {
                 timersRef.current.delete(key);
+                setPending((n) => n - 1);
                 enqueue(() => updateCartItem(key, quantity)).catch(() => { });
             }, QUANTITY_DEBOUNCE_MS)
         );
@@ -174,8 +210,13 @@ export default function CartProvider(props: CartProviderProps) {
                 addItem,
                 updateItem,
                 changeQuantity,
+                setQuantity,
                 removeItem,
                 refreshCart,
+                isSyncing: pending > 0,
+                isOpen,
+                openCart,
+                closeCart,
             }}
         >
             {props.children}
