@@ -6,9 +6,14 @@ import styles from "./page.module.css";
 import AddToCartButton from "@/components/AddToCartButton";
 import Price from "@/components/Price";
 import type { Product } from "@/types/product";
+import type { ProductPrice } from "@/types/productPrice";
 import { resolveProduct } from "@/services/productService";
-import { getProductPrices } from "@/services/pricingService";
+import {
+    getGuestProductPrices,
+    getProductPrices,
+} from "@/services/pricingService";
 import { productFormat } from "@/utils/productFormat";
+import { productJsonLd, serializeJsonLd } from "@/utils/productJsonLd";
 import { productPath } from "@/utils/productPath";
 
 // /producto/{group}                   → product = undefined
@@ -123,11 +128,27 @@ export default async function ProductPage(props: ProductPageProps) {
         permanentRedirect(productPath(product) + (query ? `?${query}` : ""));
     }
 
+    // Precio visible: el del usuario (con sesión) o el de invitado.
+    // Se pinta en streaming con <Price>, no se espera aquí.
     const pricesPromise = getProductPrices([product.id]);
+
+    // Precio para el JSON-LD: siempre el de invitado. Si falla, la
+    // página se pinta igual, solo que sin oferta en los datos estructurados.
+    const guestPrices: Record<number, ProductPrice | undefined> =
+        await getGuestProductPrices([product.id]).catch(() => ({}));
+
+    const jsonLd = productJsonLd(product, guestPrices[product.id]);
     const format = productFormat(product);
 
     return (
         <main className={styles.container}>
+            {/* Datos estructurados para Google. Un <script> normal (no
+                next/script): son datos, no código que ejecutar. */}
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: serializeJsonLd(jsonLd) }}
+            />
+
             <div className={styles.product}>
                 <div className={styles.imageBox}>
                     {product.image && (

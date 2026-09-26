@@ -58,3 +58,28 @@ export async function getProductPrices(
 
     return data;
 }
+
+// Precio de INVITADO siempre, haya sesión o no. Para datos públicos,
+// como el JSON-LD de la ficha: Google rastrea sin sesión y no deben
+// salir en el código fuente los precios de un usuario concreto.
+// Misma URL que getProductPrices sin sesión: LiteSpeed la cachea y, si
+// ambas se piden en el mismo render, Next hace una sola petición.
+export async function getGuestProductPrices(
+    productIds: number[]
+): Promise<Record<number, ProductPrice>> {
+    if (productIds.length === 0) {
+        return {};
+    }
+
+    const response = await fetch(
+        `${API_URL}/products/pricing?guest=1&ids=${productIds.join(",")}`,
+        { cache: "no-store" }
+    );
+
+    if (!response.ok) {
+        throw new Error("Failed to fetch guest product prices");
+    }
+
+    return response.json();
+}
+
