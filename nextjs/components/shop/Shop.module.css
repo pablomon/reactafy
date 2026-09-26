@@ -1,0 +1,284 @@
+/* ---------- Barra: botón Filtros + orden ---------- */
+.toolbar {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    margin: 0 0 var(--spacing-lg);
+}
+
+.filterButton {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: 6px 18px;
+    border: 1px solid var(--color-main);
+    border-radius: 9990px;
+    background: none;
+    color: var(--color-main);
+    font: inherit;
+    font-size: var(--text-sm);
+    cursor: pointer;
+}
+
+.filterButton:hover {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+}
+
+.filterBadge {
+    min-width: 20px;
+    height: 20px;
+    padding: 0 5px;
+    border-radius: 9990px;
+    background: var(--color-main);
+    color: #fff;
+    font-size: 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.pending {
+    color: var(--color-muted);
+    font-size: var(--text-sm);
+}
+
+/* El orden, a la derecha */
+.sort {
+    margin-left: auto;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    font-size: var(--text-sm);
+    color: var(--color-main);
+}
+
+.sortLabel {
+    color: var(--color-muted);
+}
+
+.sortSelect {
+    padding: 6px 12px;
+    border: 1px solid var(--color-main);
+    border-radius: 9990px;
+    background: var(--color-background);
+    color: var(--color-main);
+    font: inherit;
+    cursor: pointer;
+}
+
+@media (max-width: 575px) {
+    .sortLabel {
+        display: none;
+    }
+}
+
+/* ---------- Filtros activos ---------- */
+.activeList {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--spacing-sm);
+    margin: 0 0 var(--spacing-xl);
+    padding: 0;
+    list-style: none;
+}
+
+.activeChip {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: 4px 12px;
+    border-radius: 9990px;
+    background: var(--color-surface);
+    color: var(--color-main);
+    font-size: var(--text-sm);
+    text-decoration: none;
+}
+
+.activeChip:hover {
+    color: var(--color-accent);
+}
+
+.clearLink {
+    color: var(--color-main);
+    font-size: var(--text-sm);
+}
+
+/* ---------- Panel (mismo patrón que la cesta, pero por la izquierda) ---------- */
+.overlay {
+    position: fixed;
+    inset: 0;
+    background: rgb(0 13 57 / 0.45);
+    z-index: 60;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0s linear 0.3s;
+}
+
+.overlay[data-open="true"] {
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 0.3s ease;
+}
+
+.drawer {
+    position: fixed;
+    top: 12px;
+    left: 12px;
+    bottom: 12px;
+    width: min(380px, calc(100vw - 24px));
+    background: var(--color-background);
+    border-radius: 32px;
+    z-index: 61;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 0 32px rgb(0 0 0 / 0.15);
+
+    /* Cerrado: fuera de la pantalla por la izquierda. */
+    transform: translateX(calc(-100% - 24px));
+    visibility: hidden;
+    transition:
+        transform 0.35s cubic-bezier(0.32, 0.72, 0, 1),
+        visibility 0s linear 0.35s;
+}
+
+.drawer[data-open="true"] {
+    transform: translateX(0);
+    visibility: visible;
+    transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .overlay,
+    .drawer,
+    .overlay[data-open="true"],
+    .drawer[data-open="true"] {
+        transition: none;
+    }
+}
+
+.drawerHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 0 var(--spacing-md);
+    padding: var(--spacing-xl) var(--spacing-sm) var(--spacing-md);
+    border-bottom: 1px solid #c9ccd4;
+}
+
+.drawerTitle {
+    margin: 0;
+    font-size: var(--text-lg);
+    font-weight: 400;
+}
+
+.drawerClose {
+    display: inline-flex;
+    padding: var(--spacing-xs);
+    border: 0;
+    background: none;
+    color: var(--color-main);
+    cursor: pointer;
+}
+
+.drawerBody {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0 var(--spacing-xl) var(--spacing-xl);
+}
+
+/* ---------- Una faceta ---------- */
+.facet {
+    margin: 0;
+    padding: var(--spacing-lg) 0;
+    border: 0;
+    border-bottom: 1px solid #c9ccd4;
+}
+
+.facetTitle {
+    padding: 0;
+    margin-bottom: var(--spacing-sm);
+    font-weight: 500;
+    color: var(--color-main);
+}
+
+.options {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.option {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: 6px 0;
+    color: var(--color-main);
+    font-size: var(--text-sm);
+    cursor: pointer;
+}
+
+.option input {
+    width: 18px;
+    height: 18px;
+    margin: 0;
+    accent-color: var(--color-main);
+    cursor: inherit;
+}
+
+.option[data-disabled="true"] {
+    opacity: 0.4;
+    cursor: default;
+}
+
+.optionName {
+    flex: 1;
+}
+
+.optionCount {
+    color: var(--color-muted);
+}
+
+.moreButton {
+    margin-top: var(--spacing-xs);
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--color-main);
+    font: inherit;
+    font-size: var(--text-sm);
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+/* ---------- Pie: Limpiar + Ver N productos ---------- */
+.drawerFooter {
+    display: flex;
+    gap: var(--spacing-md);
+    padding: var(--spacing-lg) var(--spacing-xl) var(--spacing-xl);
+    border-top: 1px solid #c9ccd4;
+}
+
+.clearButton {
+    padding: 10px 20px;
+    border: 1px solid var(--color-main);
+    border-radius: 9990px;
+    background: none;
+    color: var(--color-main);
+    font: inherit;
+    cursor: pointer;
+}
+
+.applyButton {
+    flex: 1;
+    padding: 10px 20px;
+    border: 0;
+    border-radius: 9990px;
+    background: var(--color-accent);
+    color: #fff;
+    font: inherit;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+}

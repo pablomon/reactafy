@@ -1,0 +1,284 @@
+"use client";
+
+import {
+    useEffect,
+    useOptimistic,
+    useRef,
+    useState,
+    useTransition,
+} from "react";
+import { useRouter } from "next/navigation";
+
+import type { Facet } from "@/types/product";
+import {
+    clearFilters,
+    selectedValues,
+    setParam,
+    toggleFilter,
+    withQuery,
+} from "@/utils/filterUrl";
+import styles from "./Shop.module.css";
+
+// Opciones visibles por faceta antes de "Ver más" (Sabor tiene ~30)
+const VISIBLE_OPTIONS = 6;
+
+// Los valores son los que acepta el endpoint /products (orderby)
+const SORT_OPTIONS = [
+    { value: "", label: "Destacados" },
+    { value: "price", label: "Precio: menor a mayor" },
+    { value: "price-desc", label: "Precio: mayor a menor" },
+];
+
+type ShopFiltersProps = {
+    facets: Facet[];
+    // Ruta de la categoría sin filtros: "/tienda/bebidas/"
+    basePath: string;
+    // Query actual sin page: "brand=perrier&envase=vidrio"
+    queryString: string;
+    // Productos que cumplen los filtros actuales
+    total: number;
+};
+
+// Barra de la tienda (botón Filtros + orden) y panel de filtros.
+//
+// El estado de los filtros vive en la URL, no en useState: marcar una
+// casilla cambia la URL con router.replace, Next vuelve a pintar la
+// página en el servidor y llegan productos, facetas y conteos nuevos.
+export default function ShopFilters({
+    facets,
+    basePath,
+    queryString,
+    total,
+}: ShopFiltersProps) {
+    const router = useRouter();
+
+    // isPending: true mientras Next trae la página filtrada del servidor
+    const [isPending, startTransition] = useTransition();
+
+    // La casilla se marca AL INSTANTE, sin esperar al servidor. Cuando
+    // llega la respuesta, queryString (la de verdad) sustituye a esta.
+    const [optimisticQuery, setOptimisticQuery] = useOptimistic(queryString);
+
+    const [isOpen, setIsOpen] = useState(false);
+    // Facetas desplegadas con "Ver más": { sabor: true }
+    const [expanded, setExpanded] = useState<Record<string, boolean>>({});
+    const closeRef = useRef<HTMLButtonElement>(null);
+
+    const query = new URLSearchParams(optimisticQuery);
+    const facetSlugs = facets.map((facet) => facet.slug);
+
+    const activeCount = facets.reduce(
+        (sum, facet) => sum + selectedValues(query, facet.slug).length,
+        0
+    );
+
+    function navigate(next: URLSearchParams) {
+        startTransition(() => {
+            setOptimisticQuery(next.toString());
+            // replace: filtrar no llena el historial ("atrás" sale de la tienda)
+            // scroll: false: la página no salta arriba al filtrar
+            router.replace(withQuery(basePath, next), { scroll: false });
+        });
+    }
+
+    // Abierto: foco en la X, Escape cierra y la página no hace scroll.
+    // Al cerrar, el foco vuelve al botón "Filtros".
+    useEffect(() => {
+        if (!isOpen) return;
+
+        const previousFocus = document.activeElement as HTMLElement | null;
+        closeRef.current?.focus();
+
+        function onKeyDown(event: KeyboardEvent) {
+            if (event.key === "Escape") setIsOpen(false);
+        }
+
+        document.addEventListener("keydown", onKeyDown);
+        document.body.style.overflow = "hidden";
+
+        return () => {
+            document.removeEventListener("keydown", onKeyDown);
+            document.body.style.overflow = "";
+            previousFocus?.focus();
+        };
+    }, [isOpen]);
+
+    return (
+        <>
+            <div className={styles.toolbar}>
+                {facets.length > 0 && (
+                    <button
+                        type="button"
+                        className={styles.filterButton}
+                        aria-haspopup="dialog"
+                        onClick={() => setIsOpen(true)}
+                    >
+                        Filtros
+                        {activeCount > 0 && (
+                            <span className={styles.filterBadge}>
+                                {activeCount}
+                            </span>
+                        )}
+                    </button>
+                )}
+
+                {isPending && (
+                    <span className={styles.pending} role="status">
+                        Actualizando…
+                    </span>
+                )}
+
+                <label className={styles.sort}>
+                    <span className={styles.sortLabel}>Ordenar</span>
+                    <select
+                        className={styles.sortSelect}
+                        value={query.get("orderby") ?? ""}
+                        onChange={(event) =>
+                            navigate(setParam(query, "orderby", event.target.value))
+                        }
+                    >
+                        {SORT_OPTIONS.map((option) => (
+                            <option key={option.value} value={option.value}>
+                                {option.label}
+                            </option>
+                        ))}
+                    </select>
+                </label>
+            </div>
+
+            {/* Siempre montado, como la cesta: así el CSS anima entrada y salida */}
+            <div
+                className={styles.overlay}
+                data-open={isOpen}
+                onClick={() => setIsOpen(false)}
+            />
+
+            <aside
+                className={styles.drawer}
+                data-open={isOpen}
+                aria-hidden={!isOpen}
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="filters-drawer-title"
+            >
+                <header className={styles.drawerHeader}>
+                    <h2 id="filters-drawer-title" className={styles.drawerTitle}>
+                        Filtros
+                    </h2>
+
+                    <button
+                        ref={closeRef}
+                        type="button"
+                        className={styles.drawerClose}
+                        aria-label="Cerrar los filtros"
+                        onClick={() => setIsOpen(false)}
+                    >
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                            <path d="M1 1l14 14M15 1 1 15" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                        </svg>
+                    </button>
+                </header>
+
+                <div className={styles.drawerBody}>
+                    {facets.map((facet) => {
+                        const selected = selectedValues(query, facet.slug);
+                        const isExpanded = expanded[facet.slug] ?? false;
+
+                        // Plegada: las primeras + las marcadas (nunca se esconde una marcada)
+                        const visible = facet.options.filter(
+                            (option, index) =>
+                                isExpanded ||
+                                index < VISIBLE_OPTIONS ||
+                                selected.includes(option.slug)
+                        );
+
+                        const hiddenCount = facet.options.length - visible.length;
+
+                        return (
+                            <fieldset key={facet.slug} className={styles.facet}>
+                                <legend className={styles.facetTitle}>
+                                    {facet.name}
+                                </legend>
+
+                                <ul className={styles.options}>
+                                    {visible.map((option) => {
+                                        const checked = selected.includes(option.slug);
+                                        // 0 productos: no se puede marcar (sí desmarcar)
+                                        const disabled = !checked && option.count === 0;
+
+                                        return (
+                                            <li key={option.slug}>
+                                                <label
+                                                    className={styles.option}
+                                                    data-disabled={disabled}
+                                                >
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={checked}
+                                                        disabled={disabled}
+                                                        onChange={() =>
+                                                            navigate(
+                                                                toggleFilter(
+                                                                    query,
+                                                                    facet.slug,
+                                                                    option.slug
+                                                                )
+                                                            )
+                                                        }
+                                                    />
+                                                    <span className={styles.optionName}>
+                                                        {option.name}
+                                                    </span>
+                                                    <span className={styles.optionCount}>
+                                                        {option.count}
+                                                    </span>
+                                                </label>
+                                            </li>
+                                        );
+                                    })}
+                                </ul>
+
+                                {(hiddenCount > 0 || isExpanded) && (
+                                    <button
+                                        type="button"
+                                        className={styles.moreButton}
+                                        onClick={() =>
+                                            setExpanded((current) => ({
+                                                ...current,
+                                                [facet.slug]: !isExpanded,
+                                            }))
+                                        }
+                                    >
+                                        {isExpanded ? "Ver menos" : `Ver ${hiddenCount} más`}
+                                    </button>
+                                )}
+                            </fieldset>
+                        );
+                    })}
+                </div>
+
+                <footer className={styles.drawerFooter}>
+                    {activeCount > 0 && (
+                        <button
+                            type="button"
+                            className={styles.clearButton}
+                            onClick={() => navigate(clearFilters(query, facetSlugs))}
+                        >
+                            Limpiar
+                        </button>
+                    )}
+
+                    <button
+                        type="button"
+                        className={styles.applyButton}
+                        onClick={() => setIsOpen(false)}
+                    >
+                        {isPending
+                            ? "Actualizando…"
+                            : `Ver ${total} ${total === 1 ? "producto" : "productos"}`}
+                    </button>
+                </footer>
+            </aside>
+        </>
+    );
+}

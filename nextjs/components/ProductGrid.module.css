@@ -37,7 +37,13 @@
     cursor: pointer;
 }
 
-.loadMore:disabled {
+.loadMore {
+    width: fit-content;
+    text-align: center;
+    text-decoration: none;
+}
+
+.loadMore[aria-disabled="true"] {
     opacity: 0.6;
     cursor: default;
 }
