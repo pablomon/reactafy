@@ -1,6 +1,7 @@
 import type { Cart } from "@/types/cart";
 
-const CART_API_URL = "/api/cart";
+// Con barra final: trailingSlash (next.config) redirigiría "/api/cart".
+const CART_API_URL = "/api/cart/";
 
 export async function getCart(): Promise<Cart> {
     const response = await fetch(

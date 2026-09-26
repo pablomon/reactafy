@@ -6,20 +6,20 @@ import type { ProductPrice } from "@/types/productPrice";
 import styles from "./ProductGrid.module.css";
 import ProductBatch from "@/components/ProductBatch";
 
-interface ProductBatchData {
+type ProductBatchData = {
     page: number;
     products: Product[];
     pricesPromise: Promise<Record<number, ProductPrice>>;
-}
+};
 
-interface ProductGridProps {
+type ProductGridProps = {
     initialProducts: Product[];
     initialPage: number;
     totalPages: number;
     initialPricesPromise: Promise<
         Record<number, ProductPrice>
     >;
-}
+};
 
 async function getProductPricesClient(
     productIds: number[]
@@ -31,7 +31,7 @@ async function getProductPricesClient(
     const ids = productIds.join(",");
 
     const response = await fetch(
-        `/api/products/pricing?ids=${ids}`
+        `/api/products/pricing/?ids=${ids}`
     );
 
     if (!response.ok) {
@@ -74,7 +74,7 @@ export default function ProductGrid({
 
         try {
             const response = await fetch(
-                `/api/products?page=${nextPage}`
+                `/api/products/?page=${nextPage}`
             );
 
             if (!response.ok) {

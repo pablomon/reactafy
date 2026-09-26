@@ -3,11 +3,11 @@
 import { FormEvent, useState } from "react";
 import Link from "next/link";
 
-interface ResetPasswordFormProps {
+type ResetPasswordFormProps = {
     // "key" es un nombre reservado en React, por eso resetKey.
     resetKey: string;
     login: string;
-}
+};
 
 export default function ResetPasswordForm({
     resetKey,
@@ -39,7 +39,7 @@ export default function ResetPasswordForm({
 
         try {
             const response = await fetch(
-                "/api/auth/password/reset",
+                "/api/auth/password/reset/",
                 {
                     method: "POST",
                     headers: {

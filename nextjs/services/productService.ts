@@ -46,3 +46,31 @@ export async function getProduct(
 
     return response.json();
 }
+
+// Traduce una URL de la tienda al producto que le corresponde.
+// Devuelve null si el grupo no existe (404 de WordPress).
+export async function resolveProduct(
+    group: string,
+    product: string | null,
+    legacyParams: Record<string, string>
+): Promise<Product | null> {
+    const query = new URLSearchParams({ group, ...legacyParams });
+
+    if (product) {
+        query.set("product", product);
+    }
+
+    const response = await fetch(
+        `${API_URL}/products/resolve?${query}`
+    );
+
+    if (response.status === 404) {
+        return null;
+    }
+
+    if (!response.ok) {
+        throw new Error("Failed to resolve product");
+    }
+
+    return response.json();
+}

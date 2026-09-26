@@ -8,12 +8,14 @@ import type { Product } from "@/types/product";
 import type { ProductPrice } from "@/types/productPrice";
 import { CartContext } from "@/app/context/CartContext";
 import Price from "@/components/Price";
+import { productFormat } from "@/utils/productFormat";
+import { productPath } from "@/utils/productPath";
 import styles from "./ProductCard.module.css";
 
-interface ProductCardProps {
+type ProductCardProps = {
     product: Product;
     pricesPromise?: Promise<Record<number, ProductPrice>>;
-}
+};
 
 type AddState = "idle" | "adding" | "added" | "error";
 
@@ -28,20 +30,14 @@ export default function ProductCard({
     const { addItem } = useContext(CartContext);
     const [addState, setAddState] = useState<AddState>("idle");
 
-    const volume = product.attributes.find(
-        (attribute) => attribute.slug === "volumen"
-    );
-
-    const quantity = product.attributes.find(
-        (attribute) => attribute.slug === "cantidad"
-    );
+    const format = productFormat(product);
 
     const category =
         product.categories.find(
             (category) => category.parentId !== 0
         ) ?? product.categories[0];
 
-    const href = `/producto/${product.id}`;
+    const href = productPath(product);
 
     async function handleAdd() {
         if (addState === "adding") return;
@@ -115,10 +111,8 @@ export default function ProductCard({
                     <Link href={href}>{product.title}</Link>
                 </h2>
 
-                {quantity && volume && (
-                    <p className={styles.meta}>
-                        {quantity.value} botellas de {volume.value}
-                    </p>
+                {format && (
+                    <p className={styles.meta}>{format}</p>
                 )}
 
                 {pricesPromise && (

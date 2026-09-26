@@ -1,5 +1,3 @@
-import { Money } from "./money";
-
 export type ProductAttribute = {
     slug: string;
     name: string;
@@ -28,6 +26,8 @@ export type ProductBrand = {
 
 export type ProductGroup = {
     id: number;
+    // Slug del grupo en la URL: /producto/{slug}/…
+    slug: string;
     name: string;
     products: number[];
 };
@@ -42,8 +42,19 @@ export type ProductStock = {
     status: string;
 };
 
+// Metadatos SEO de Yoast (del grupo). Solo llegan en /products/resolve.
+export type ProductSeo = {
+    title: string;
+    description: string;
+    ogImage: string | null;
+    noindex: boolean;
+};
+
 export type Product = {
     id: number;
+    // Identifica al producto dentro de su grupo: "24-lata-500-ml".
+    // null si en Woo le falta algún atributo (no tiene URL propia).
+    slug: string | null;
     sku: string;
     title: string;
     image: string;
@@ -55,6 +66,7 @@ export type Product = {
     editorial: ProductEditorial;
     attributes: ProductAttribute[];
     stock: ProductStock;
+    seo?: ProductSeo;
 };
 
 export type ProductsPagination = {

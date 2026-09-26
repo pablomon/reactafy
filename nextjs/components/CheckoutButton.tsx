@@ -21,7 +21,7 @@ export default function CheckoutButton(props: CheckoutButtonProps) {
     async function handleCheckout() {
         setRedirecting(true);
 
-        const response = await fetch("/api/checkout", { method: "POST" });
+        const response = await fetch("/api/checkout/", { method: "POST" });
 
         if (!response.ok) {
             console.error("Checkout failed");

@@ -3,6 +3,9 @@ export const siteConfig = {
     WORDPRESS_URL: process.env.NEXT_PUBLIC_WORDPRESS_URL,
     WORDPRESS_SECRET: process.env.WORDPRESS_SECRET,
 
+    // Dominio público de la tienda (canonical, enlaces absolutos…).
+    SITE_URL: process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
+
     // Mismos valores que la página de ajustes de WordPress (snippet 40:
     // tienda_telefono, tienda_whatsapp, tienda_minimo_mxn). Si cambian allí,
     // hay que cambiarlos aquí. Pendiente: leerlos de un endpoint.

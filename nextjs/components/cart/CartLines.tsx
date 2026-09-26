@@ -6,22 +6,16 @@ import { useContext, useState } from "react";
 import type { CartLine } from "@/types/cart";
 import { CartContext } from "@/app/context/CartContext";
 import { formatPrice } from "@/utils/formatPrice";
+import { cartLineFormat } from "@/utils/productFormat";
 import styles from "./Cart.module.css";
 
-// "24 botellas de 330 ml" a partir de los atributos de la variación.
-// Si el producto no tiene cantidad y volumen, se muestran sus valores tal cual.
+// "24 latas de 500 ml"; si el producto no tiene esos atributos, sus
+// valores tal cual.
 function describe(line: CartLine) {
-    const find = (slug: string) =>
-        line.variation.find((v) => v.raw_attribute.endsWith(slug))?.value;
-
-    const quantity = find("cantidad");
-    const volume = find("volumen");
-
-    if (quantity && volume) {
-        return `${quantity} botellas de ${volume}`;
-    }
-
-    return line.variation.map((v) => v.value).join(" · ");
+    return (
+        cartLineFormat(line) ||
+        line.variation.map((v) => v.value).join(" · ")
+    );
 }
 
 function QuantityInput(props: { line: CartLine }) {

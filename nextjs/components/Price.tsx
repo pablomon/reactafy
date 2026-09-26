@@ -5,10 +5,10 @@ import type { ProductPrice } from "@/types/productPrice";
 import { formatPrice } from "@/utils/formatPrice";
 import styles from "./Price.module.css";
 
-interface PriceProps {
+type PriceProps = {
     productId: number;
     pricesPromise: Promise<Record<number, ProductPrice>>;
-}
+};
 
 export default function Price({
                                   productId,

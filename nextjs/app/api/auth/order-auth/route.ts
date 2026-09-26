@@ -50,7 +50,7 @@ function errorPage(
   <p><strong>Tu compra está registrada.</strong> Recibirás la confirmación por correo.</p>
   <p>Si necesitas ayuda, indícanos este código:</p>
   <p><code>${errorCode}</code>${reference}</p>
-  <p><a href="/tienda">Volver a la tienda</a></p>
+  <p><a href="/tienda/">Volver a la tienda</a></p>
 </main>`;
 
     return new Response(html, {
@@ -67,7 +67,7 @@ function redirectToOrder(orderId: string) {
         status: 303,
         headers: {
             ...NO_STORE,
-            Location: `/pedido/${orderId}`,
+            Location: `/pedido/${orderId}/`,
         },
     });
 }

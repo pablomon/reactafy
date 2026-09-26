@@ -15,6 +15,9 @@ type User = {
 
 type AuthContextType = {
     user: User | null;
+    // true mientras se pregunta a /api/auth/me/ al cargar la app:
+    // user = null todavía no significa "sin sesión".
+    isLoading: boolean;
     login: (
         username: string,
         password: string
@@ -28,6 +31,7 @@ type AuthProviderProps = {
 
 export const AuthContext = createContext<AuthContextType>({
     user: null,
+    isLoading: true,
     login: async () => {},
     logout: async () => {},
 });
@@ -36,22 +40,29 @@ export default function AuthProvider(
     props: AuthProviderProps
 ) {
     const [user, setUser] = useState<User | null>(null);
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
 
         async function getUser() {
+            try {
+                const response = await fetch(
+                    "/api/auth/me/"
+                );
 
-            const response = await fetch(
-                "/api/auth/me"
-            );
+                if (!response.ok) {
+                    return;
+                }
 
-            if (!response.ok) {
-                return;
+                const data = await response.json();
+
+                setUser(data);
+            } catch (error) {
+                console.error("Failed to load user:", error);
+            } finally {
+                // Con sesión, sin sesión o con error de red: ya sabemos.
+                setIsLoading(false);
             }
-
-            const data = await response.json();
-
-            setUser(data);
         }
 
         getUser();
@@ -62,7 +73,7 @@ export default function AuthProvider(
         username: string,
         password: string
     ) {
-        const response = await fetch("/api/auth/login", {
+        const response = await fetch("/api/auth/login/", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -86,7 +97,7 @@ export default function AuthProvider(
 
     async function logout() {
         const response = await fetch(
-            "/api/auth/logout",
+            "/api/auth/logout/",
             {
                 method: "POST",
             }
@@ -105,6 +116,7 @@ export default function AuthProvider(
         <AuthContext.Provider
             value={{
                 user,
+                isLoading,
                 login,
                 logout,
             }}

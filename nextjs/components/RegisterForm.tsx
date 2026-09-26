@@ -33,7 +33,7 @@ export default function RegisterForm() {
 
         try {
             const response = await fetch(
-                "/api/auth/register",
+                "/api/auth/register/",
                 {
                     method: "POST",
                     headers: {

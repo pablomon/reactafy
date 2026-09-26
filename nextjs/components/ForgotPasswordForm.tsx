@@ -23,7 +23,7 @@ export default function ForgotPasswordForm() {
 
         try {
             const response = await fetch(
-                "/api/auth/password/forgot",
+                "/api/auth/password/forgot/",
                 {
                     method: "POST",
                     headers: {
