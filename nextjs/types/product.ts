@@ -1,3 +1,5 @@
+import type { Seo } from "./seo";
+
 export type ProductAttribute = {
     slug: string;
     name: string;
@@ -42,14 +44,6 @@ export type ProductStock = {
     status: string;
 };
 
-// Metadatos SEO de Yoast (del grupo). Solo llegan en /products/resolve.
-export type ProductSeo = {
-    title: string;
-    description: string;
-    ogImage: string | null;
-    noindex: boolean;
-};
-
 export type Product = {
     id: number;
     // Identifica al producto dentro de su grupo: "24-lata-500-ml".
@@ -66,7 +60,8 @@ export type Product = {
     editorial: ProductEditorial;
     attributes: ProductAttribute[];
     stock: ProductStock;
-    seo?: ProductSeo;
+    // SEO de Yoast (del grupo). Solo llega en /products/resolve.
+    seo?: Seo;
 };
 
 export type ProductsPagination = {

@@ -10,6 +10,7 @@ import { CartContext } from "@/app/context/CartContext";
 import Price from "@/components/Price";
 import { productFormat } from "@/utils/productFormat";
 import { productPath } from "@/utils/productPath";
+import { brandPath } from "@/utils/brandPath";
 import styles from "./ProductCard.module.css";
 
 type ProductCardProps = {
@@ -124,7 +125,7 @@ export default function ProductCard({
 
                 {product.brand && (
                     <Link
-                        href={`/brand/${product.brand.slug}`}
+                        href={brandPath(product.brand.slug)}
                         className={styles.brand}
                     >
                         {product.brand.name}

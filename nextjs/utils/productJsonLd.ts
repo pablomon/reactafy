@@ -59,10 +59,3 @@ export function productJsonLd(
             : {}),
     };
 }
-
-// El JSON va dentro de <script>: si algún texto contuviera "</script>",
-// cerraría la etiqueta. Se escapa "<" (recomendación de la guía JSON-LD
-// de Next).
-export function serializeJsonLd(data: object): string {
-    return JSON.stringify(data).replace(/</g, "\\u003c");
-}

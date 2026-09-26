@@ -6,6 +6,17 @@ export const siteConfig = {
     // Dominio público de la tienda (canonical, enlaces absolutos…).
     SITE_URL: process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
 
+    SITE_NAME: "Aguafy",
+
+    // Logo de la tienda (header, datos estructurados…).
+    LOGO_URL: `${process.env.NEXT_PUBLIC_WORDPRESS_URL}/wp-content/uploads/2025/03/logo_aguafy_h.webp`,
+
+    // Perfiles en redes sociales (datos estructurados y, más adelante, footer).
+    SOCIAL: {
+        FACEBOOK: "https://www.facebook.com/aguafy/",
+        INSTAGRAM: "https://www.instagram.com/aguafy_/",
+    },
+
     // Mismos valores que la página de ajustes de WordPress (snippet 40:
     // tienda_telefono, tienda_whatsapp, tienda_minimo_mxn). Si cambian allí,
     // hay que cambiarlos aquí. Pendiente: leerlos de un endpoint.

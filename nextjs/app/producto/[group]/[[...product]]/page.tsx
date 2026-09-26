@@ -4,6 +4,7 @@ import { notFound, permanentRedirect } from "next/navigation";
 
 import styles from "./page.module.css";
 import AddToCartButton from "@/components/AddToCartButton";
+import Breadcrumbs, { type BreadcrumbItem } from "@/components/Breadcrumbs";
 import Price from "@/components/Price";
 import type { Product } from "@/types/product";
 import type { ProductPrice } from "@/types/productPrice";
@@ -13,8 +14,10 @@ import {
     getProductPrices,
 } from "@/services/pricingService";
 import { productFormat } from "@/utils/productFormat";
-import { productJsonLd, serializeJsonLd } from "@/utils/productJsonLd";
+import { serializeJsonLd } from "@/utils/jsonLd";
+import { productJsonLd } from "@/utils/productJsonLd";
 import { productPath } from "@/utils/productPath";
+import { brandPath } from "@/utils/brandPath";
 
 // /producto/{group}                   → product = undefined
 // /producto/{group}/{product}         → product = ["24-lata-500-ml"]
@@ -140,6 +143,18 @@ export default async function ProductPage(props: ProductPageProps) {
     const jsonLd = productJsonLd(product, guestPrices[product.id]);
     const format = productFormat(product);
 
+    // Tienda › Marca › Producto (la marca solo si el producto la tiene).
+    const breadcrumbs: BreadcrumbItem[] = [
+        { name: "Tienda", href: "/tienda/" },
+        ...(product.brand
+            ? [{ name: product.brand.name, href: brandPath(product.brand.slug) }]
+            : []),
+        {
+            name: format ? `${product.title} ${format}` : product.title,
+            href: productPath(product),
+        },
+    ];
+
     return (
         <main className={styles.container}>
             {/* Datos estructurados para Google. Un <script> normal (no
@@ -148,6 +163,8 @@ export default async function ProductPage(props: ProductPageProps) {
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{ __html: serializeJsonLd(jsonLd) }}
             />
+
+            <Breadcrumbs items={breadcrumbs} />
 
             <div className={styles.product}>
                 <div className={styles.imageBox}>

@@ -19,6 +19,8 @@ type ProductGridProps = {
     initialPricesPromise: Promise<
         Record<number, ProductPrice>
     >;
+    // Slug de marca: "Cargar más" pide solo productos de esa marca.
+    brand?: string;
 };
 
 async function getProductPricesClient(
@@ -46,6 +48,7 @@ export default function ProductGrid({
                                         initialPage,
                                         totalPages,
                                         initialPricesPromise,
+                                        brand,
                                     }: ProductGridProps) {
 
     const [batches, setBatches] = useState<ProductBatchData[]>([
@@ -73,9 +76,13 @@ export default function ProductGrid({
         const nextPage = currentPage + 1;
 
         try {
-            const response = await fetch(
-                `/api/products/?page=${nextPage}`
-            );
+            const query = new URLSearchParams({ page: String(nextPage) });
+
+            if (brand) {
+                query.set("brand", brand);
+            }
+
+            const response = await fetch(`/api/products/?${query}`);
 
             if (!response.ok) {
                 throw new Error(

@@ -15,8 +15,6 @@ const MENU: HeaderMenuItem[] = [
     { label: "Blog", href: "/blog" },
 ];
 
-const LOGO_URL = `${siteConfig.WORDPRESS_URL}/wp-content/uploads/2025/03/logo_aguafy_h.webp`;
-
 const { PHONE, WHATSAPP, MIN_ORDER_MXN } = siteConfig.STORE;
 
 const minOrder = new Intl.NumberFormat("es-MX", {
@@ -72,7 +70,7 @@ export default function Header() {
 
                 <Link href="/" className={styles.logo}>
                     <Image
-                        src={LOGO_URL}
+                        src={siteConfig.LOGO_URL}
                         alt="Aguafy - Tu distribuidor de bebidas"
                         width={170}
                         height={45}
