@@ -57,7 +57,7 @@ export default async function BrandPage(props: BrandPageProps) {
     const { page: pageParam } = await props.searchParams;
     const page = Number(pageParam) || 1;
 
-    const data = await getProducts(page, brand.slug);
+    const data = await getProducts({ page, filters: { brand: brand.slug } });
     const pricesPromise = getProductPrices(
         data.products.map((product) => product.id)
     );
@@ -81,7 +81,7 @@ export default async function BrandPage(props: BrandPageProps) {
                     initialPage={page}
                     totalPages={data.pagination.totalPages}
                     initialPricesPromise={pricesPromise}
-                    brand={brand.slug}
+                    filters={{ brand: brand.slug }}
                 />
             )}
         </main>

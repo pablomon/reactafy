@@ -19,8 +19,10 @@ type ProductGridProps = {
     initialPricesPromise: Promise<
         Record<number, ProductPrice>
     >;
-    // Slug de marca: "Cargar más" pide solo productos de esa marca.
-    brand?: string;
+    // Lo mismo que se pidió en el servidor, para que "Cargar más" siga igual:
+    // categoría (con sus subcategorías) y facetas ({ brand: "perrier" }).
+    category?: string;
+    filters?: Record<string, string>;
 };
 
 async function getProductPricesClient(
@@ -48,7 +50,8 @@ export default function ProductGrid({
                                         initialPage,
                                         totalPages,
                                         initialPricesPromise,
-                                        brand,
+                                        category,
+                                        filters,
                                     }: ProductGridProps) {
 
     const [batches, setBatches] = useState<ProductBatchData[]>([
@@ -66,6 +69,12 @@ export default function ProductGrid({
 
     const hasMore = currentPage < totalPages;
 
+    // Lo mismo que se pidió, con la página siguiente: brand=perrier&page=3
+    const nextPageQuery = new URLSearchParams({
+        ...filters,
+        page: String(currentPage + 1),
+    }).toString();
+
     async function loadMore() {
         if (loading || !hasMore) {
             return;
@@ -76,10 +85,10 @@ export default function ProductGrid({
         const nextPage = currentPage + 1;
 
         try {
-            const query = new URLSearchParams({ page: String(nextPage) });
+            const query = new URLSearchParams({ ...filters, page: String(nextPage) });
 
-            if (brand) {
-                query.set("brand", brand);
+            if (category) {
+                query.set("category", category);
             }
 
             const response = await fetch(`/api/products/?${query}`);
@@ -125,16 +134,22 @@ export default function ProductGrid({
             </div>
 
             {hasMore && (
-                <button
-                    type="button"
+                // Enlace real a la página siguiente: Google (y quien no tenga
+                // JavaScript) llega a todos los productos. Con JavaScript se
+                // intercepta el clic y se añaden los productos sin recargar.
+                <a
+                    href={`?${nextPageQuery}`}
                     className={styles.loadMore}
-                    onClick={loadMore}
-                    disabled={loading}
+                    aria-disabled={loading}
+                    onClick={(event) => {
+                        event.preventDefault();
+                        loadMore();
+                    }}
                 >
                     {loading
                         ? "Cargando..."
                         : "Cargar más"}
-                </button>
+                </a>
             )}
         </>
     );

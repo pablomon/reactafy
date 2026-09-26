@@ -71,7 +71,31 @@ export type ProductsPagination = {
     totalPages: number;
 };
 
+// Una opción de una faceta: { slug: "lata", name: "Lata", count: 38 }
+// count 0 = no hay productos con esa opción y los filtros actuales.
+export type FacetOption = {
+    slug: string;
+    name: string;
+    count: number;
+};
+
+// Una faceta: Marca, Envase, Volumen… (salen de Woo, no hay lista fija)
+export type Facet = {
+    slug: string;
+    name: string;
+    options: FacetOption[];
+};
+
+// Subcategoría para los chips de navegación, con su número de productos.
+export type Subcategory = {
+    slug: string;
+    name: string;
+    count: number;
+};
+
 export type ProductsResponse = {
     products: Product[];
     pagination: ProductsPagination;
+    facets: Facet[];
+    subcategories: Subcategory[];
 };
