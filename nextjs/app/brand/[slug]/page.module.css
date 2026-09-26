@@ -1,0 +1,18 @@
+.main {
+    max-width: var(--container-main);
+    margin: 0 auto;
+    padding: var(--spacing-xl) var(--spacing-md) 60px;
+}
+
+.title {
+    margin: 0 0 var(--spacing-2xl);
+    font-size: var(--text-2xl);
+    line-height: var(--line-height-2xl);
+    color: var(--color-main);
+}
+
+@media (min-width: 992px) {
+    .main {
+        padding: var(--spacing-2xl) var(--spacing-2xl) 76px;
+    }
+}
