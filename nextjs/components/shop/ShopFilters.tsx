@@ -200,7 +200,10 @@ export default function ShopFilters({
                                     {facet.name}
                                 </legend>
 
-                                <ul className={styles.options}>
+                                {/* Chips: cada uno es un <label> con su casilla dentro.
+                                    La casilla es invisible, pero sigue funcionando con
+                                    clic, teclado y lectores de pantalla. */}
+                                <ul className={styles.chipList}>
                                     {visible.map((option) => {
                                         const checked = selected.includes(option.slug);
                                         // 0 productos: no se puede marcar (sí desmarcar)
@@ -209,11 +212,13 @@ export default function ShopFilters({
                                         return (
                                             <li key={option.slug}>
                                                 <label
-                                                    className={styles.option}
+                                                    className={styles.chip}
+                                                    data-checked={checked}
                                                     data-disabled={disabled}
                                                 >
                                                     <input
                                                         type="checkbox"
+                                                        className={styles.chipInput}
                                                         checked={checked}
                                                         disabled={disabled}
                                                         onChange={() =>
@@ -226,12 +231,7 @@ export default function ShopFilters({
                                                             )
                                                         }
                                                     />
-                                                    <span className={styles.optionName}>
-                                                        {option.name}
-                                                    </span>
-                                                    <span className={styles.optionCount}>
-                                                        {option.count}
-                                                    </span>
+                                                    {option.name}
                                                 </label>
                                             </li>
                                         );

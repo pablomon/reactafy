@@ -43,6 +43,16 @@
     text-decoration: none;
 }
 
+/* Carga automática: invisible, pero en el flujo de la página (el observer lo
+   detecta al final del grid y Google lo sigue). Con el teclado (Tab), aparece. */
+.loadMore[data-auto="true"]:not(:focus-visible) {
+    height: 1px;
+    margin-top: 0;
+    padding: 0;
+    overflow: hidden;
+    opacity: 0;
+}
+
 .loadMore[aria-disabled="true"] {
     opacity: 0.6;
     cursor: default;

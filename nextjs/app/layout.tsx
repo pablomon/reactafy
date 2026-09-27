@@ -4,6 +4,7 @@ import CartProvider from "@/app/context/CartContext";
 import AuthProvider from "./context/AuthContext";
 import "./globals.css";
 import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 import CartDrawer from "@/components/cart/CartDrawer";
 import { siteConfig } from "@/config/site";
 
@@ -25,6 +26,7 @@ export default function RootLayout({
             <CartProvider>
                 <Header />
                 {children}
+                <Footer />
                 <CartDrawer />
             </CartProvider>
         </AuthProvider>

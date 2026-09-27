@@ -1,5 +1,5 @@
 export const siteConfig = {
-    PRODUCTS_PER_PAGE: 20,
+    PRODUCTS_PER_PAGE: 15,
     WORDPRESS_URL: process.env.NEXT_PUBLIC_WORDPRESS_URL,
     WORDPRESS_SECRET: process.env.WORDPRESS_SECRET,
 

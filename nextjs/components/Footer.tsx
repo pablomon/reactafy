@@ -1,96 +1,103 @@
-import styles from './SiteFooter.module.css'
+import Link from "next/link";
 
-const AYUDA = [
-  'Contacto',
-  'Preguntas frecuentes',
-  'Nuestras Rutas',
-]
+import { siteConfig } from "@/config/site";
+import styles from "./Footer.module.css";
 
-const LEGAL = [
-  'Política de privacidad',
-  'Política de devolución',
-]
+const { FACEBOOK, INSTAGRAM } = siteConfig.SOCIAL;
+const { PHONE, WHATSAPP } = siteConfig.STORE;
 
-export function SiteFooter() {
-  return (
-    <footer className={styles.footer}>
-      <div className={styles.inner}>
+// Bloques de valor (copiados del pie de aguafy.com).
+// Provisional: más adelante, del mismo menú de WordPress que el header.
+const VALUE_BLOCKS = [
+    { title: "Reparto especializado", cta: "Contacta con nosotros", href: "/contacto/" },
+    { title: "Rutas semanales por todo CDMX", cta: "Contacta a nuestro equipo", href: "/contacto/" },
+    { title: "Trato directo y personalizado", cta: "Pregúntanos", href: "/contacto/" },
+    { title: "Los mejores proveedores", cta: "Ver todo el producto", href: "/tienda/" },
+];
 
-        <div className={styles.features}>
-          <div>
-            <h2 className={styles.featureTitle}>Reparto especializado</h2>
-            <p className={styles.featureText}>
-              Rutas semanales por todo CDMX y alrededores.
-            </p>
-          </div>
+// Páginas de WordPress: <a> normales (no <Link>). Cuando Reactafy esté en
+// aguafy.com, WordPress las servirá en estas mismas rutas.
+const HELP_LINKS = [
+    { label: "Contacto", href: "/contacto/" },
+    { label: "Preguntas frecuentes", href: "/faq/" },
+    { label: "Política de privacidad", href: "/faq/" },
+    { label: "Política de devolución", href: "/faq/" },
+];
 
-          <div>
-            <h2 className={styles.featureTitle}>Trato directo y personalizado</h2>
-            <p className={styles.featureText}>
-              Contacta con nuestro equipo y pregúntanos lo que necesites.
-            </p>
-          </div>
+// Pie provisional. Server Component: sin estado ni JavaScript.
+export default function Footer() {
+    return (
+        <footer className={styles.footer}>
+            <div className={styles.container}>
+                <ul className={styles.values}>
+                    {VALUE_BLOCKS.map((block) => (
+                        <li key={block.title} className={styles.value}>
+                            <p className={styles.valueTitle}>{block.title}</p>
+                            {block.href === "/tienda/" ? (
+                                <Link href={block.href} className={styles.valueLink}>
+                                    {block.cta}
+                                </Link>
+                            ) : (
+                                <a href={block.href} className={styles.valueLink}>
+                                    {block.cta}
+                                </a>
+                            )}
+                        </li>
+                    ))}
+                </ul>
 
-          <div>
-            <h2 className={styles.featureTitle}>Los mejores proveedores</h2>
-            <p className={styles.featureText}>
-              Distintivo platino y círculo de proveedores.
-            </p>
-          </div>
-        </div>
+                <nav className={styles.help} aria-label="Ayuda">
+                    <p className={styles.helpTitle}>¿Necesitas ayuda?</p>
+                    <ul className={styles.helpLinks}>
+                        {HELP_LINKS.map((link) => (
+                            <li key={link.label}>
+                                <a href={link.href} className={styles.helpLink}>
+                                    {link.label}
+                                </a>
+                            </li>
+                        ))}
+                    </ul>
+                </nav>
 
-        <div className={styles.columns}>
-          <p className={styles.columnTitle}>¿Necesitas ayuda?</p>
+                <div className={styles.bottom}>
+                    <p className={styles.copy}>
+                        {new Date().getFullYear()} © Aguafy. Todos los derechos reservados
+                    </p>
 
-          <div>
-            <h3 className={styles.columnHeading}>Atención</h3>
-            <div className={styles.list}>
-              {AYUDA.map((item) => (
-                <a key={item} href="#ayuda" className={styles.link}>
-                  {item}
-                </a>
-              ))}
+                    <ul className={styles.social} aria-label="Redes sociales y contacto">
+                        <li>
+                            <a href={FACEBOOK} aria-label="Facebook" className={styles.icon}>
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                    <path d="M14 8h3V4h-3c-2.8 0-4.5 1.8-4.5 4.6V11H7v4h2.5v9h4v-9H17l.5-4h-4V8.8c0-.5.2-.8.5-.8Z" />
+                                </svg>
+                            </a>
+                        </li>
+                        <li>
+                            <a href={INSTAGRAM} aria-label="Instagram" className={styles.icon}>
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                                    <rect x="3" y="3" width="18" height="18" rx="5" />
+                                    <circle cx="12" cy="12" r="4" />
+                                    <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none" />
+                                </svg>
+                            </a>
+                        </li>
+                        <li>
+                            <a href={`https://wa.me/521${WHATSAPP}`} aria-label="WhatsApp" className={styles.icon}>
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                    <path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.2.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.2-1.2-.1-.1-.2-.2-.5-.3Z" />
+                                </svg>
+                            </a>
+                        </li>
+                        <li>
+                            <a href={`tel:${PHONE}`} aria-label={`Llamar al ${PHONE}`} className={styles.icon}>
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                    <path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1A17 17 0 0 1 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1l-2.3 2.2Z" />
+                                </svg>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
             </div>
-          </div>
-
-          <div>
-            <h3 className={styles.columnHeading}>Legal</h3>
-            <div className={styles.list}>
-              {LEGAL.map((item) => (
-                <a key={item} href="#legal" className={styles.link}>
-                  {item}
-                </a>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        <div className={styles.legal}>
-          <span>2025 © AGUAFY. TODOS LOS DERECHOS RESERVADOS</span>
-
-          <div className={styles.social}>
-            <a href="#facebook" className={styles.socialLink} aria-label="Facebook">
-              <svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor">
-                <path d="M13 22v-9h3l.5-3.5H13V7.3c0-1 .3-1.7 1.7-1.7H17V2.4A24 24 0 0 0 14.6 2C12 2 10 3.6 10 6.9v2.6H7V13h3v9h3Z" />
-              </svg>
-            </a>
-
-            <a href="#instagram" className={styles.socialLink} aria-label="Instagram">
-              <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="2">
-                <rect x="3" y="3" width="18" height="18" rx="5" />
-                <circle cx="12" cy="12" r="4" />
-                <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none" />
-              </svg>
-            </a>
-
-            <a href="#whatsapp" className={styles.socialLink} aria-label="WhatsApp">
-              <svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor">
-                <path d="M12 2a10 10 0 0 0-8.7 15L2 22l5.2-1.3A10 10 0 1 0 12 2Zm5.5 14.1c-.2.6-1.3 1.2-1.8 1.3-.5 0-1 .2-3.3-.7-2.8-1.1-4.5-3.9-4.7-4.1-.1-.2-1.1-1.4-1.1-2.7s.7-1.9 1-2.2c.2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 2c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.6 1.1 1.4 1.8 1 .9 1.8 1.1 2 1.3.3.1.4 0 .6-.1l.8-.9c.2-.2.4-.2.6-.1l2 1c.2.1.4.2.4.3v1.3Z" />
-              </svg>
-            </a>
-          </div>
-        </div>
-      </div>
-    </footer>
-  )
+        </footer>
+    );
 }

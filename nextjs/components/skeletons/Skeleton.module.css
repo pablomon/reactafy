@@ -1,0 +1,99 @@
+/* Bloque gris con un brillo que lo recorre ("shimmer") */
+.block {
+    border-radius: var(--radius-lg);
+    background: linear-gradient(
+        90deg,
+        var(--color-surface) 25%,
+        #ffffff 50%,
+        var(--color-surface) 75%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.4s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+    from {
+        background-position: 200% 0;
+    }
+    to {
+        background-position: -200% 0;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .block {
+        animation: none;
+    }
+}
+
+/* Solo para lectores de pantalla */
+.srOnly {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* ---------- Tarjeta del grid ---------- */
+.title {
+    width: min(280px, 60%);
+    height: 32px;
+    margin-bottom: var(--spacing-2xl);
+}
+
+.cardImage {
+    aspect-ratio: 1 / 1;
+}
+
+.cardLine {
+    height: 14px;
+    margin-top: var(--spacing-sm);
+}
+
+.cardLineShort {
+    width: 55%;
+}
+
+/* ---------- Ficha de producto ---------- */
+.product {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-2xl);
+}
+
+@media (max-width: 767px) {
+    .product {
+        grid-template-columns: 1fr;
+    }
+}
+
+.productImage {
+    aspect-ratio: 1 / 1;
+}
+
+.productInfo {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+.productTitle {
+    height: 36px;
+    width: 80%;
+}
+
+.productLine {
+    height: 16px;
+}
+
+.productButton {
+    height: 44px;
+    width: 200px;
+    margin-top: var(--spacing-lg);
+    border-radius: 9990px;
+}

@@ -199,50 +199,75 @@
 
 .facetTitle {
     padding: 0;
-    margin-bottom: var(--spacing-sm);
-    font-weight: 500;
+    margin-bottom: var(--spacing-md);
+    font-size: var(--text-lg);
+    font-weight: 400;
     color: var(--color-main);
 }
 
-.options {
+/* ---------- Opciones como chips ---------- */
+.chipList {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
     margin: 0;
     padding: 0;
     list-style: none;
 }
 
-.option {
-    display: flex;
+.chip {
+    position: relative;
+    display: inline-flex;
     align-items: center;
-    gap: var(--spacing-sm);
-    padding: 6px 0;
+    padding: 6px 16px;
+    border-radius: 9990px;
+    background: #efefef;
     color: var(--color-main);
     font-size: var(--text-sm);
+    letter-spacing: 0.5px;
     cursor: pointer;
+    user-select: none;
+    transition: background 0.15s ease, color 0.15s ease;
 }
 
-.option input {
-    width: 18px;
-    height: 18px;
-    margin: 0;
-    accent-color: var(--color-main);
-    cursor: inherit;
+.chip:hover {
+    background: #e3e3e3;
 }
 
-.option[data-disabled="true"] {
-    opacity: 0.4;
+/* Marcado */
+.chip[data-checked="true"] {
+    background: var(--color-main);
+    color: #fff;
+}
+
+/* 0 productos con los filtros actuales */
+.chip[data-disabled="true"] {
+    opacity: 0.45;
     cursor: default;
 }
 
-.optionName {
-    flex: 1;
+.chip[data-disabled="true"]:hover {
+    background: #efefef;
 }
 
-.optionCount {
-    color: var(--color-muted);
+/* La casilla real: invisible pero accesible (clic, teclado, lector) */
+.chipInput {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: 0;
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* Foco con teclado visible en la píldora */
+.chip:has(.chipInput:focus-visible) {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
 }
 
 .moreButton {
-    margin-top: var(--spacing-xs);
+    margin-top: var(--spacing-md);
     padding: 0;
     border: 0;
     background: none;

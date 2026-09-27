@@ -57,4 +57,14 @@ body {
   line-height: var(--line-height-base);
   color: var(--color-text);
   background-color: var(--color-background);
+
+  /* Pie siempre abajo: en páginas cortas, <main> se estira y empuja el pie */
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+body > main {
+  flex: 1 0 auto;
+  width: 100%;
 }
