@@ -139,6 +139,10 @@
     font-size: 12.6px;
     letter-spacing: 0.5px;
     text-decoration: none;
+    /* Es un <button>: sin fondo ni fuente del navegador */
+    background: none;
+    font-family: inherit;
+    cursor: pointer;
 }
 
 /* Iconos de cuenta y carrito */
@@ -163,6 +167,32 @@
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+/* Zoom del globo al añadir al carrito (ver HeaderCart.tsx) */
+.badgeBump {
+    animation: badgeBump 0.45s ease;
+}
+
+@keyframes badgeBump {
+    0% {
+        transform: scale(1);
+    }
+    35% {
+        transform: scale(1.45);
+    }
+    65% {
+        transform: scale(0.9);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .badgeBump {
+        animation: none;
+    }
 }
 
 /* Menú móvil (panel lateral) */

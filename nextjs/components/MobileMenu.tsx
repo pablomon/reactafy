@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
+import CloseButton from "./CloseButton";
+
 import styles from "./Header.module.css";
 
 export type HeaderMenuItem = {
@@ -61,16 +63,11 @@ export default function MobileMenu(props: MobileMenuProps) {
                         aria-modal="true"
                         aria-label="Menú"
                     >
-                        <button
-                            type="button"
-                            className={`${styles.iconButtonReset} ${styles.drawerClose}`}
+                        <CloseButton
+                            className={styles.drawerClose}
                             aria-label="Cerrar menú"
                             onClick={() => setOpen(false)}
-                        >
-                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-                                <path d="M1 1l14 14M15 1 1 15" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-                            </svg>
-                        </button>
+                        />
 
                         <nav aria-label="Principal (móvil)">
                             <ul className={styles.drawerList}>

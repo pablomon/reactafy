@@ -3,6 +3,7 @@ import Image from "next/image";
 
 import styles from "./Header.module.css";
 import { siteConfig } from "@/config/site";
+import { getBrands } from "@/services/productService";
 import { getStore } from "@/services/storeService";
 import type { Store } from "@/types/store";
 import { moneyToNumber } from "@/utils/money";
@@ -10,6 +11,7 @@ import HeaderAccount from "./HeaderAccount";
 import HeaderCart from "./HeaderCart";
 import HeaderNav from "./HeaderNav";
 import MobileMenu, { type HeaderMenuItem } from "./MobileMenu";
+import SearchPanel from "./SearchPanel";
 
 const MENU: HeaderMenuItem[] = [
     { label: "Tienda", href: "/tienda", highlight: true },
@@ -54,7 +56,12 @@ function SearchIcon() {
 }
 
 export default async function Header() {
-    const store = await getStore();
+    // En paralelo: el header no tarda más por pedir también las marcas.
+    // Si fallan las marcas, la web sigue funcionando (panel vacío).
+    const [store, brands] = await Promise.all([
+        getStore(),
+        getBrands().catch(() => []),
+    ]);
 
     return (
         <header className={styles.header}>
@@ -68,9 +75,13 @@ export default async function Header() {
             <div className={styles.bar}>
                 <div className={styles.mobileLeft}>
                     <MobileMenu items={MENU} />
-                    <Link href="/tienda" className={styles.iconButton} aria-label="Buscar">
+                    <SearchPanel
+                        brands={brands}
+                        triggerClassName={styles.iconButtonReset}
+                        triggerLabel="Buscar"
+                    >
                         <SearchIcon />
-                    </Link>
+                    </SearchPanel>
                 </div>
 
                 <Link href="/" className={styles.logo}>
@@ -86,10 +97,10 @@ export default async function Header() {
                 <nav className={styles.nav} aria-label="Principal">
                     <HeaderNav items={MENU} />
 
-                    <Link href="/tienda" className={styles.searchButton}>
+                    <SearchPanel brands={brands} triggerClassName={styles.searchButton}>
                         <SearchIcon />
                         Buscar
-                    </Link>
+                    </SearchPanel>
                 </nav>
 
                 <div className={styles.actions}>

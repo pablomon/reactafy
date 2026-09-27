@@ -106,7 +106,7 @@ export async function startSession(
 // Error cuando falta el secreto compartido en el entorno de Next.
 export class ServerSecretMissingError extends Error {
     constructor() {
-        super("Falta WORDPRESS_SECRET (ver .env.example)");
+        super("Falta WP_SECRET (ver .env.example)");
     }
 }
 

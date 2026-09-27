@@ -1,6 +1,6 @@
 "use client";
 
-import { useContext } from "react";
+import { useContext, useState } from "react";
 
 import styles from "./Header.module.css";
 import { CartContext } from "@/app/context/CartContext";
@@ -12,6 +12,21 @@ export default function HeaderCart() {
     // el contador siga los cambios optimistas del carrito al momento.
     const count =
         cart?.items.reduce((sum, item) => sum + item.quantity, 0) ?? 0;
+
+    // Zoom del globo cuando SUBE el número (se añade algo). Patrón
+    // "estado derivado": comparamos con el valor anterior durante el
+    // render, sin useEffect. null = el carrito aún no había cargado: la
+    // primera carga (0 → 3) no es "añadir", así que no anima.
+    const current = cart ? count : null;
+    const [previous, setPrevious] = useState(current);
+    const [bumps, setBumps] = useState(0);
+
+    if (current !== previous) {
+        if (previous !== null && current !== null && current > previous) {
+            setBumps(bumps + 1);
+        }
+        setPrevious(current);
+    }
 
     return (
         <button
@@ -35,7 +50,14 @@ export default function HeaderCart() {
                 />
             </svg>
 
-            <span className={styles.badge}>{count}</span>
+            {/* key={bumps}: cada "añadir" crea un <span> nuevo, y un
+                elemento nuevo vuelve a reproducir su animación CSS */}
+            <span
+                key={bumps}
+                className={bumps > 0 ? `${styles.badge} ${styles.badgeBump}` : styles.badge}
+            >
+                {count}
+            </span>
         </button>
     );
 }

@@ -1,6 +1,6 @@
 import { siteConfig } from "@/config/site";
 import type { ProductDetail, ProductsResponse } from "@/types/product";
-import type { Brand } from "@/types/brand";
+import type { Brand, BrandSummary } from "@/types/brand";
 import type { Category } from "@/types/category";
 
 const API_URL =
@@ -77,6 +77,17 @@ export async function getBrand(slug: string): Promise<Brand | null> {
 
     if (!response.ok) {
         throw new Error("Failed to fetch brand");
+    }
+
+    return response.json();
+}
+
+// Todas las marcas con productos, por nombre (panel "Buscar").
+export async function getBrands(): Promise<BrandSummary[]> {
+    const response = await fetch(`${API_URL}/brands`);
+
+    if (!response.ok) {
+        throw new Error("Failed to fetch brands");
     }
 
     return response.json();

@@ -59,41 +59,26 @@
     width: 55%;
 }
 
-/* ---------- Ficha de producto ---------- */
-.product {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: var(--spacing-2xl);
+/* ---------- Piezas genéricas ---------- */
+
+/* Línea de texto. Va DENTRO de un elemento con la tipografía real
+   (<p className={page.title}>…): es inline-block y más baja que la
+   línea, así la altura la marca el line-height del texto de verdad y
+   el esqueleto ocupa exactamente lo mismo. El ancho, en em, escala con
+   la fuente. */
+.text {
+    display: inline-block;
+    height: 0.8em;
+    vertical-align: middle;
+    border-radius: 4px;
 }
 
-@media (max-width: 767px) {
-    .product {
-        grid-template-columns: 1fr;
-    }
-}
-
-.productImage {
-    aspect-ratio: 1 / 1;
-}
-
-.productInfo {
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing-md);
-}
-
-.productTitle {
-    height: 36px;
-    width: 80%;
-}
-
-.productLine {
-    height: 16px;
-}
-
-.productButton {
-    height: 44px;
-    width: 200px;
-    margin-top: var(--spacing-lg);
+/* Botones y chips redondeados */
+.pill {
+    display: inline-block;
     border-radius: 9990px;
+}
+
+.image {
+    aspect-ratio: 1 / 1;
 }

@@ -8,6 +8,6 @@ const url = siteConfig.WORDPRESS_URL;
 // staging sin que nadie se entere.
 if (!url) {
     throw new Error(
-        "Falta NEXT_PUBLIC_WORDPRESS_URL (ver .env.example)"
+        "Falta NEXT_PUBLIC_WP_URL (ver .env.example)"
     );
 }

@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
 import { notFound, permanentRedirect } from "next/navigation";
 
-import styles from "./page.module.css";
+import styles from "@/components/product/ProductPage.module.css";
 import Breadcrumbs, { type BreadcrumbItem } from "@/components/Breadcrumbs";
 import Price from "@/components/Price";
 import AddToCartForm from "@/components/product/AddToCartForm";
+import BulkPrices from "@/components/product/BulkPrices";
+import ProductImage from "@/components/product/ProductImage";
 import ProductCarousel from "@/components/product/ProductCarousel";
 import ProductNotes from "@/components/product/ProductNotes";
 import ProductSelectors from "@/components/product/ProductSelectors";
@@ -208,14 +209,10 @@ export default async function ProductPage(props: ProductPageProps) {
                         )}
 
                         {product.image && (
-                            <Image
+                            <ProductImage
                                 className={styles.image}
                                 src={product.image}
                                 alt={format ? `${product.title} ${format}` : product.title}
-                                width={600}
-                                height={600}
-                                sizes="(min-width: 992px) 40vw, 100vw"
-                                priority
                             />
                         )}
 
@@ -234,7 +231,13 @@ export default async function ProductPage(props: ProductPageProps) {
 
                             {format && <p className={styles.format}>{format}</p>}
 
-                            <Price productId={product.id} pricesPromise={pricesPromise} />
+                            <Price
+                                productId={product.id}
+                                pricesPromise={pricesPromise}
+                                // Precio de 1 caja: los tramos van en la tabla
+                                showFrom={false}
+                                showSaving
+                            />
 
                             {product.brand && (
                                 <Link href={brandPath(product.brand.slug)} className={styles.brand}>
@@ -244,6 +247,8 @@ export default async function ProductPage(props: ProductPageProps) {
                         </div>
 
                         <ProductSelectors selectors={selectors} group={product.group} />
+
+                        <BulkPrices productId={product.id} pricesPromise={pricesPromise} />
 
                         <div className={styles.buy}>
                             <AddToCartForm

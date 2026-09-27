@@ -1,0 +1,211 @@
+/* Misma distancia al header que la tienda y las marcas
+   (app/tienda/[[...categoria]]/page.module.css → .main) */
+.page {
+    padding: var(--spacing-xl) 0 60px;
+}
+
+@media (min-width: 992px) {
+    .page {
+        padding-top: var(--spacing-2xl);
+    }
+}
+
+.container {
+    max-width: var(--container-main);
+    margin: 0 auto;
+    padding: 0 var(--spacing-md);
+}
+
+@media (min-width: 992px) {
+    .container {
+        padding: 0 var(--spacing-2xl);
+    }
+}
+
+/* ============ Franja azul claro ============ */
+.hero {
+    margin-top: var(--spacing-lg);
+    padding: var(--spacing-2xl) 0;
+    background: var(--color-surface);
+}
+
+.heroInner {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--spacing-xl);
+}
+
+@media (min-width: 992px) {
+    .heroInner {
+        grid-template-columns: 2fr 3fr;
+        gap: var(--spacing-3xl);
+        align-items: start;
+    }
+}
+
+/* ---------- Imagen ---------- */
+.media {
+    position: relative;
+}
+
+.unitsPill {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    z-index: 1;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    padding: 3px 10px;
+    border-radius: 9990px;
+    background: var(--color-background);
+    color: var(--color-main);
+    font-size: var(--text-xs);
+}
+
+.image {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1 / 1;
+    object-fit: contain;
+}
+
+.sku {
+    margin: var(--spacing-sm) 0 0;
+    font-size: var(--text-xs);
+    color: var(--color-main);
+}
+
+/* ---------- Datos + selectores ---------- */
+/* min-height: el alto que tiene esta columna CON tabla de precios por
+   volumen de 3 tramos (medido: 678 px en móvil, 559 px desde 768 px).
+   Así, al cambiar entre un volumen con tabla y otro sin ella, la franja
+   azul no cambia de alto y lo de debajo no salta. Si un día cambia el
+   diseño de la ficha, hay que volver a medirlo. */
+.content {
+    display: grid;
+    grid-template-columns: 1fr;
+    align-content: start;
+    gap: var(--spacing-xl);
+    min-height: 680px;
+}
+
+@media (min-width: 768px) {
+    .content {
+        grid-template-columns: 3fr 2fr;
+        column-gap: var(--spacing-2xl);
+        min-height: 560px;
+    }
+
+    /* Compra y avisos ocupan las dos columnas */
+    .buy,
+    .notesRow {
+        grid-column: 1 / -1;
+    }
+}
+
+.info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-xs);
+    color: var(--color-main);
+}
+
+.category {
+    margin: 0;
+    font-size: var(--text-xs);
+    color: var(--color-accent);
+}
+
+.title {
+    margin: 0;
+    font-size: 40px;
+    line-height: 1.05;
+    text-wrap: balance;
+}
+
+@media (max-width: 575px) {
+    .title {
+        font-size: var(--text-2xl);
+    }
+}
+
+.format {
+    margin: 0;
+    font-size: var(--text-xs);
+}
+
+.brand {
+    margin-top: var(--spacing-sm);
+    color: var(--color-main);
+    font-size: var(--text-sm);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+.buy {
+    padding-bottom: var(--spacing-2xl);
+    border-bottom: 1px solid #b5b5b5;
+}
+
+/* ============ Cambiando de producto dentro del grupo ============
+   Al pulsar un chip del selector, OptionPending marca data-pending="true"
+   mientras llega el producto nuevo (useLinkStatus). Con :has() la franja
+   entera "se entera". Cuando llega la página nueva el atributo desaparece
+   y todo vuelve solo. */
+
+/* Imagen: se atenúa, sin esqueleto, mientras llega el producto nuevo.
+   El retraso de 0,15 s evita el parpadeo cuando todo es casi
+   instantáneo: si llega antes, no se llega a ver nada. El relevo a la
+   foto nueva (misma opacidad de partida, la vieja de fondo mientras baja
+   la nueva y fundido a 1) lo hace ProductImage.tsx; aquí solo está la
+   transición y cómo se pinta ese fondo. */
+.image {
+    transition: opacity 0.3s ease;
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.heroInner:has([data-pending="true"]) .image {
+    opacity: 0.4;
+    transition-delay: 0.15s;
+}
+
+/* Precios y formato (lo que cambia de verdad entre volúmenes): esqueleto.
+   .info > p:not(.category) = formato, precio e "IVA inc."; más el título
+   y la tabla de precios por volumen. El texto se vuelve transparente y el
+   bloque toma el brillo, así ocupa exactamente lo mismo. */
+.heroInner:has([data-pending="true"]) :is(.info > p:not(.category), p:has(+ table)),
+.heroInner:has([data-pending="true"]) table {
+    color: transparent;
+    border-radius: 4px;
+    /* Un tono más oscuro que la franja (--color-surface), o no se vería */
+    background: linear-gradient(90deg, #dce8fb 25%, #ffffff 50%, #dce8fb 75%);
+    background-size: 200% 100%;
+    animation: pendingShimmer 1.4s ease-in-out infinite;
+}
+
+/* Lo que va dentro (badge "Hasta -20%", celdas, bordes): oculto, pero
+   sigue ocupando su sitio */
+.heroInner:has([data-pending="true"]) :is(.info > p:not(.category), table) * {
+    visibility: hidden;
+}
+
+@keyframes pendingShimmer {
+    from {
+        background-position: 200% 0;
+    }
+    to {
+        background-position: -200% 0;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .heroInner:has([data-pending="true"]) :is(.info > p:not(.category), p:has(+ table)),
+    .heroInner:has([data-pending="true"]) table {
+        animation: none;
+    }
+}

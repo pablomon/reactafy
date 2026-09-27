@@ -1,0 +1,137 @@
+/* Fondo oscuro detrás del panel */
+.backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    background: rgb(0 13 57 / 0.4);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.25s ease, visibility 0.25s;
+}
+
+.backdrop[data-open="true"] {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Panel: fuera de pantalla por arriba; abierto, baja a su sitio.
+   visibility también se "anima": al cerrar cambia al FINAL de la
+   transición, así el panel se ve subir antes de ocultarse. */
+.panel {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 61;
+    /* Móvil: puede ocupar toda la pantalla, como en aguafy.com */
+    max-height: 100dvh;
+    overflow-y: auto;
+    background: var(--color-background);
+    box-shadow: 0 8px 24px rgb(0 13 57 / 0.12);
+    transform: translateY(-100%);
+    visibility: hidden;
+    transition: transform 0.3s ease, visibility 0.3s;
+}
+
+@media (min-width: 992px) {
+    .panel {
+        max-height: 85dvh;
+    }
+}
+
+.panel[data-open="true"] {
+    transform: none;
+    visibility: visible;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .backdrop,
+    .panel {
+        transition: none;
+    }
+}
+
+/* Medidas copiadas del panel de aguafy.com (móvil y escritorio a 1280 px).
+   Ancho completo: sin el max-width del contenedor de la web. */
+.inner {
+    position: relative;
+    padding: 40px 0 var(--spacing-lg);
+}
+
+@media (min-width: 992px) {
+    .inner {
+        padding: 33px 50px;
+    }
+}
+
+/* La X, arriba a la derecha y fuera del flujo */
+.close {
+    position: absolute;
+    top: var(--spacing-sm);
+    right: var(--spacing-md);
+}
+
+@media (min-width: 992px) {
+    .close {
+        top: var(--spacing-md);
+        right: 25px;
+    }
+}
+
+/* Columnas de ANCHO FIJO, tantas como quepan y centradas: la
+   separación entre marcas es siempre la misma y, si no caben, pasan a
+   la fila siguiente y el panel crece hacia abajo. Sin gap: la separación
+   la da el padding de cada marca, como en aguafy.com.
+   Móvil: 92 px (4 por fila). Desde tablet: 114 px (10 a 1280 px). */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, 92px);
+    justify-content: center;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+@media (min-width: 576px) {
+    .grid {
+        grid-template-columns: repeat(auto-fill, 114px);
+    }
+}
+
+@media (min-width: 992px) {
+    .grid {
+        padding: 22px 0;
+    }
+}
+
+.brand {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 4px 18px;
+    color: var(--color-main);
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 17px;
+    text-align: center;
+    text-decoration: none;
+}
+
+@media (min-width: 576px) {
+    .brand {
+        gap: 10px;
+        padding: 22px 15px;
+    }
+}
+
+/* Un 20 % más grandes que en aguafy.com (70 px → 84 px, texto 10 → 12 px) */
+.logo {
+    width: 84px;
+    height: 84px;
+    object-fit: contain;
+}
+
+.brand:hover .name {
+    text-decoration: underline;
+}

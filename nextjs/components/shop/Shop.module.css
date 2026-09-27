@@ -174,15 +174,6 @@
     font-weight: 400;
 }
 
-.drawerClose {
-    display: inline-flex;
-    padding: var(--spacing-xs);
-    border: 0;
-    background: none;
-    color: var(--color-main);
-    cursor: pointer;
-}
-
 .drawerBody {
     flex: 1;
     overflow-y: auto;

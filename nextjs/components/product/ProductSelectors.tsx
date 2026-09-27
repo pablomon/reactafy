@@ -3,6 +3,7 @@ import Link from "next/link";
 import type { ProductGroup } from "@/types/product";
 import type { Selector } from "@/utils/productSelectors";
 import { productPath } from "@/utils/productPath";
+import OptionPending from "./OptionPending";
 import styles from "./Product.module.css";
 
 type ProductSelectorsProps = {
@@ -44,6 +45,7 @@ export default function ProductSelectors({ selectors, group }: ProductSelectorsP
                                     }
                                 >
                                     {option.value}
+                                    <OptionPending />
                                 </Link>
                             </li>
                         ))}

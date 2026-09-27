@@ -1,5 +1,7 @@
 "use client";
 
+import CloseButton from "@/components/CloseButton";
+
 import { useContext, useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 
@@ -64,17 +66,11 @@ export default function CartDrawer() {
                         Cesta
                     </h2>
 
-                    <button
+                    <CloseButton
                         ref={closeRef}
-                        type="button"
-                        className={styles.drawerClose}
                         aria-label="Cerrar la cesta"
                         onClick={closeCart}
-                    >
-                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-                            <path d="M1 1l14 14M15 1 1 15" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-                        </svg>
-                    </button>
+                    />
                 </header>
 
                 <div className={styles.drawerBody}>

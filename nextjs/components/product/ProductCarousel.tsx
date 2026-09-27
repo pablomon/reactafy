@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 import type { Product } from "@/types/product";
@@ -49,6 +50,46 @@ export default function ProductCarousel({ title, products, pricesPromise }: Prod
         track.scrollBy({ left: direction * track.clientWidth * 0.9, behavior: "smooth" });
     }
 
+    const router = useRouter();
+
+    // Al pulsar una tarjeta queremos subir arriba con scroll SUAVE.
+    // Si lo dejamos al <Link>, Next hace su propio scroll (instantáneo) al
+    // montar la página nueva y corta la animación. Así que aquí:
+    //  1. preventDefault(): el <Link> ve que el clic ya está "atendido" y
+    //     no navega (lo comprueba con e.defaultPrevented).
+    //  2. Navegamos nosotros con router.push(…, { scroll: false }): Next no
+    //     toca el scroll.
+    //  3. Subimos con scrollTo smooth mientras llega la página.
+    //     Problema: el esqueleto es más bajo que la página; al montarse, el
+    //     navegador recorta el scroll al nuevo máximo y CANCELA la animación.
+    //     Por eso fijamos la altura mínima del documento mientras sube y la
+    //     soltamos al acabar (evento scrollend, con un plan B por tiempo).
+    // onClickCapture: un solo manejador en la lista (delegación de eventos)
+    // que se ejecuta ANTES que el onClick del <Link>.
+    function handleClickCapture(event: React.MouseEvent) {
+        const link = (event.target as HTMLElement).closest("a");
+
+        // Ctrl/Cmd/Shift o botón central → nueva pestaña: comportamiento normal
+        if (!link || event.metaKey || event.ctrlKey || event.shiftKey || event.button !== 0) return;
+
+        const href = link.getAttribute("href");
+        if (!href?.startsWith("/producto/")) return;
+
+        event.preventDefault();
+
+        const root = document.documentElement;
+        root.style.minHeight = `${root.scrollHeight}px`;
+
+        const release = () => {
+            root.style.minHeight = "";
+        };
+        window.addEventListener("scrollend", release, { once: true });
+        setTimeout(release, 1500);
+
+        router.push(href, { scroll: false });
+        window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
     if (products.length === 0) {
         return null;
     }
@@ -68,7 +109,7 @@ export default function ProductCarousel({ title, products, pricesPromise }: Prod
                     ‹
                 </button>
 
-                <ul ref={trackRef} className={styles.carouselTrack}>
+                <ul ref={trackRef} className={styles.carouselTrack} onClickCapture={handleClickCapture}>
                     {products.map((product) => (
                         <li key={product.id} className={styles.carouselItem}>
                             <ProductCard product={product} pricesPromise={pricesPromise} />

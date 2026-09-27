@@ -53,6 +53,67 @@
     opacity: 0.4;
 }
 
+/* Navegación en curso hacia esta opción (ver OptionPending.tsx) */
+.optionPending {
+    display: none;
+}
+
+.selectorOption:has(.optionPending[data-pending="true"]) {
+    background: var(--color-main);
+    color: #fff;
+    animation: optionPulse 0.9s ease-in-out infinite;
+}
+
+@keyframes optionPulse {
+    50% {
+        opacity: 0.55;
+    }
+}
+
+/* ============ Precio por volumen ============ */
+/* Hijo directo de .content (grid): ocupa todo el ancho */
+.bulk {
+    grid-column: 1 / -1;
+    max-width: 420px;
+    color: var(--color-main);
+}
+
+.bulkTitle {
+    margin: 0 0 var(--spacing-sm);
+    font-size: var(--text-xs);
+    font-weight: 700;
+    color: var(--color-accent);
+}
+
+.bulkTable {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--text-sm);
+}
+
+.bulkTable th {
+    padding: 0 0 var(--spacing-xs);
+    font-size: var(--text-xs);
+    font-weight: 400;
+    text-align: left;
+    color: var(--color-muted);
+}
+
+.bulkTable td {
+    padding: var(--spacing-sm) 0;
+    border-top: 1px solid #b5b5b5;
+}
+
+.bulkTable th:last-child,
+.bulkTable td:last-child {
+    text-align: right;
+}
+
+.bulkSaving {
+    color: var(--color-accent);
+    font-weight: 700;
+}
+
 /* ============ Cantidad + añadir ============ */
 .addForm {
     display: flex;

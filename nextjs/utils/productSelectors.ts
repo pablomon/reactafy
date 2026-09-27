@@ -24,6 +24,11 @@ export type Selector = {
     options: SelectorOption[];
 };
 
+// Atributos que NO se muestran como selector en la ficha, aunque cambien
+// dentro del grupo. "cantidad" va siempre ligada al volumen (12 × 1 L,
+// 24 × 600 ml…), así que elegir el volumen ya lleva al producto correcto.
+const HIDDEN_SELECTORS = new Set(["cantidad"]);
+
 function valueOf(attributes: ProductAttribute[], slug: string) {
     const value = attributes.find((attribute) => attribute.slug === slug)?.value;
     return value === undefined ? undefined : String(value);
@@ -36,6 +41,8 @@ export function productSelectors(
     const selectors: Selector[] = [];
 
     for (const attribute of current.attributes) {
+        if (HIDDEN_SELECTORS.has(attribute.slug)) continue;
+
         const currentValue = String(attribute.value);
 
         // Valores distintos de este atributo en el grupo, en orden de aparición
@@ -56,10 +63,12 @@ export function productSelectors(
             );
 
             // Mismo valor en todos los demás atributos que el producto actual
+            // (los ocultos no cuentan: no se eligen, se derivan)
             const exact = withValue.find((item) =>
                 current.attributes.every(
                     (other) =>
                         other.slug === attribute.slug ||
+                        HIDDEN_SELECTORS.has(other.slug) ||
                         valueOf(item.attributes, other.slug) === String(other.value)
                 )
             );

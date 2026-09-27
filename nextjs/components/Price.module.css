@@ -18,3 +18,16 @@
         font-size: 16px;
     }
 }
+
+/* "Hasta -20%": descuento máximo por volumen (ficha) */
+.badge {
+    display: inline-block;
+    margin-left: var(--spacing-sm);
+    padding: 1px 10px;
+    border-radius: 9990px;
+    background: var(--color-accent);
+    color: #fff;
+    font-size: var(--text-xs);
+    line-height: 1.6;
+    vertical-align: middle;
+}

@@ -1,5 +1,7 @@
 "use client";
 
+import CloseButton from "@/components/CloseButton";
+
 import {
     useEffect,
     useOptimistic,
@@ -161,17 +163,11 @@ export default function ShopFilters({
                         Filtros
                     </h2>
 
-                    <button
+                    <CloseButton
                         ref={closeRef}
-                        type="button"
-                        className={styles.drawerClose}
                         aria-label="Cerrar los filtros"
                         onClick={() => setIsOpen(false)}
-                    >
-                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-                            <path d="M1 1l14 14M15 1 1 15" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-                        </svg>
-                    </button>
+                    />
                 </header>
 
                 <div className={styles.drawerBody}>
