@@ -19,9 +19,6 @@ import {
 } from "@/utils/filterUrl";
 import styles from "./Shop.module.css";
 
-// Opciones visibles por faceta antes de "Ver más" (Sabor tiene ~30)
-const VISIBLE_OPTIONS = 6;
-
 // Los valores son los que acepta el endpoint /products (orderby)
 const SORT_OPTIONS = [
     { value: "", label: "Destacados" },
@@ -60,8 +57,6 @@ export default function ShopFilters({
     const [optimisticQuery, setOptimisticQuery] = useOptimistic(queryString);
 
     const [isOpen, setIsOpen] = useState(false);
-    // Facetas desplegadas con "Ver más": { sabor: true }
-    const [expanded, setExpanded] = useState<Record<string, boolean>>({});
     const closeRef = useRef<HTMLButtonElement>(null);
 
     const query = new URLSearchParams(optimisticQuery);
@@ -182,17 +177,6 @@ export default function ShopFilters({
                 <div className={styles.drawerBody}>
                     {facets.map((facet) => {
                         const selected = selectedValues(query, facet.slug);
-                        const isExpanded = expanded[facet.slug] ?? false;
-
-                        // Plegada: las primeras + las marcadas (nunca se esconde una marcada)
-                        const visible = facet.options.filter(
-                            (option, index) =>
-                                isExpanded ||
-                                index < VISIBLE_OPTIONS ||
-                                selected.includes(option.slug)
-                        );
-
-                        const hiddenCount = facet.options.length - visible.length;
 
                         return (
                             <fieldset key={facet.slug} className={styles.facet}>
@@ -204,7 +188,7 @@ export default function ShopFilters({
                                     La casilla es invisible, pero sigue funcionando con
                                     clic, teclado y lectores de pantalla. */}
                                 <ul className={styles.chipList}>
-                                    {visible.map((option) => {
+                                    {facet.options.map((option) => {
                                         const checked = selected.includes(option.slug);
                                         // 0 productos: no se puede marcar (sí desmarcar)
                                         const disabled = !checked && option.count === 0;
@@ -238,20 +222,6 @@ export default function ShopFilters({
                                     })}
                                 </ul>
 
-                                {(hiddenCount > 0 || isExpanded) && (
-                                    <button
-                                        type="button"
-                                        className={styles.moreButton}
-                                        onClick={() =>
-                                            setExpanded((current) => ({
-                                                ...current,
-                                                [facet.slug]: !isExpanded,
-                                            }))
-                                        }
-                                    >
-                                        {isExpanded ? "Ver menos" : `Ver ${hiddenCount} más`}
-                                    </button>
-                                )}
                             </fieldset>
                         );
                     })}

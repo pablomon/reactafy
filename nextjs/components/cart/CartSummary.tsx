@@ -4,15 +4,18 @@ import { useContext } from "react";
 
 import { CartContext } from "@/app/context/CartContext";
 import CheckoutButton from "@/components/CheckoutButton";
-import { siteConfig } from "@/config/site";
+import { useStore } from "@/app/context/StoreContext";
 import { formatPrice } from "@/utils/formatPrice";
 import { moneyToNumber, numberToMoney } from "@/utils/money";
 import styles from "./Cart.module.css";
 
-const MIN_ORDER = siteConfig.STORE.MIN_ORDER_MXN;
-
 export default function CartSummary() {
     const { cart, isSyncing } = useContext(CartContext);
+    const store = useStore();
+
+    // Ajustes de la tienda en Woo (Ajustes → Tienda)
+    const MIN_ORDER = moneyToNumber(store.minOrder);
+    const MAX_ORDER = store.maxOrder ? moneyToNumber(store.maxOrder) : null;
 
     const totals = cart?.totals ?? null;
     const isEmpty = !cart || cart.items.length === 0 || !totals;
@@ -22,11 +25,12 @@ export default function CartSummary() {
     const estimated = isEmpty ? 0 : moneyToNumber(totals.total_price);
     const remaining = Math.max(0, MIN_ORDER - estimated);
     const reachesMinimum = remaining === 0;
+    const exceedsMaximum = MAX_ORDER !== null && estimated > MAX_ORDER;
     const progress = Math.min(1, estimated / MIN_ORDER);
 
     const remainingText = totals
         ? formatPrice(numberToMoney(remaining, totals.total_price))
-        : `MXN ${MIN_ORDER}`;
+        : formatPrice(store.minOrder);
 
     return (
         <div className={styles.summary}>
@@ -76,11 +80,18 @@ export default function CartSummary() {
                         <span>Precio estimado</span>
                         <span>{formatPrice(totals.total_price)}</span>
                     </div>
+
+                    {exceedsMaximum && store.maxOrder && (
+                        <p className={styles.progressText} role="alert">
+                            El pedido máximo es de {formatPrice(store.maxOrder)}.
+                            Quita algún producto para poder continuar.
+                        </p>
+                    )}
                 </>
             )}
 
             <CheckoutButton
-                disabled={isEmpty || !reachesMinimum || isSyncing}
+                disabled={isEmpty || !reachesMinimum || exceedsMaximum || isSyncing}
                 syncing={isSyncing}
             />
         </div>

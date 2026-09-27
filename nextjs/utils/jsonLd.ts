@@ -1,4 +1,5 @@
 import { siteConfig } from "@/config/site";
+import type { Store } from "@/types/store";
 
 // Datos estructurados (schema.org, formato JSON-LD) comunes a la tienda.
 
@@ -10,7 +11,7 @@ const ORGANIZATION_ID = `${SITE_URL}#organization`;
 const WEBSITE_ID = `${SITE_URL}#website`;
 
 // La empresa y el sitio web. Va en la home.
-export function siteJsonLd() {
+export function siteJsonLd(store: Store) {
     return {
         "@context": "https://schema.org",
         "@graph": [
@@ -23,8 +24,8 @@ export function siteJsonLd() {
                 sameAs: Object.values(siteConfig.SOCIAL),
                 contactPoint: {
                     "@type": "ContactPoint",
-                    // Formato internacional: +52 y los 10 dígitos.
-                    telephone: `+52${siteConfig.STORE.PHONE}`,
+                    // Formato internacional: prefijo del país de la tienda + número
+                    telephone: `${store.callingCode}${store.phone}`,
                     contactType: "customer service",
                     areaServed: "MX",
                     availableLanguage: "es",

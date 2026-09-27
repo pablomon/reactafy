@@ -1,82 +1,135 @@
+.page {
+    padding-bottom: 60px;
+}
+
 .container {
     max-width: var(--container-main);
     margin: 0 auto;
-    padding: var(--spacing-2xl);
+    padding: 0 var(--spacing-md);
 }
 
-.product {
+@media (min-width: 992px) {
+    .container {
+        padding: 0 var(--spacing-2xl);
+    }
+}
+
+/* ============ Franja azul claro ============ */
+.hero {
+    margin-top: var(--spacing-lg);
+    padding: var(--spacing-2xl) 0;
+    background: var(--color-surface);
+}
+
+.heroInner {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: var(--spacing-3xl);
-    align-items: start;
+    grid-template-columns: 1fr;
+    gap: var(--spacing-xl);
 }
 
-.imageBox {
-    aspect-ratio: 1 / 1;
-    background-color: var(--color-surface);
-    border-radius: var(--radius-2xl);
-    overflow: hidden;
+@media (min-width: 992px) {
+    .heroInner {
+        grid-template-columns: 2fr 3fr;
+        gap: var(--spacing-3xl);
+        align-items: start;
+    }
+}
+
+/* ---------- Imagen ---------- */
+.media {
+    position: relative;
+}
+
+.unitsPill {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    z-index: 1;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    padding: 3px 10px;
+    border-radius: 9990px;
+    background: var(--color-background);
+    color: var(--color-main);
+    font-size: var(--text-xs);
 }
 
 .image {
     display: block;
     width: 100%;
-    height: 100%;
+    height: auto;
+    aspect-ratio: 1 / 1;
     object-fit: contain;
-}
-
-.info {
-    padding-top: var(--spacing-lg);
-}
-
-.title {
-    margin: 0;
-    font-size: var(--text-2xl);
-    line-height: var(--line-height-2xl);
-}
-
-.brand {
-    margin: var(--spacing-sm) 0 0;
-    font-size: var(--text-sm);
-}
-
-.attributes {
-    margin-top: var(--spacing-xl);
-}
-
-.attributes p {
-    margin: var(--spacing-xs) 0;
-}
-
-.price {
-    margin: var(--spacing-xl) 0 0;
-    font-size: var(--text-xl);
-    font-weight: 700;
 }
 
 .sku {
     margin: var(--spacing-sm) 0 0;
     font-size: var(--text-xs);
+    color: var(--color-main);
 }
 
-.button {
-    margin-top: var(--spacing-xl);
-    padding: 12px 24px;
-    border: 0;
-    border-radius: 4px;
-    background-color: var(--color-main);
-    color: var(--color-background);
-    font: inherit;
-    cursor: pointer;
+/* ---------- Datos + selectores ---------- */
+.content {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--spacing-xl);
 }
 
-@media (max-width: 768px) {
-    .product {
-        grid-template-columns: 1fr;
-        gap: var(--spacing-xl);
+@media (min-width: 768px) {
+    .content {
+        grid-template-columns: 3fr 2fr;
+        column-gap: var(--spacing-2xl);
     }
 
-    .info {
-        padding-top: 0;
+    /* Compra y avisos ocupan las dos columnas */
+    .buy,
+    .notesRow {
+        grid-column: 1 / -1;
     }
+}
+
+.info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-xs);
+    color: var(--color-main);
+}
+
+.category {
+    margin: 0;
+    font-size: var(--text-xs);
+    color: var(--color-accent);
+}
+
+.title {
+    margin: 0;
+    font-size: 40px;
+    line-height: 1.05;
+    text-wrap: balance;
+}
+
+@media (max-width: 575px) {
+    .title {
+        font-size: var(--text-2xl);
+    }
+}
+
+.format {
+    margin: 0;
+    font-size: var(--text-xs);
+}
+
+.brand {
+    margin-top: var(--spacing-sm);
+    color: var(--color-main);
+    font-size: var(--text-sm);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+.buy {
+    padding-bottom: var(--spacing-2xl);
+    border-bottom: 1px solid #b5b5b5;
 }

@@ -72,6 +72,22 @@ export function productFormat(product: Product): string {
     });
 }
 
+// Solo las unidades, sin volumen: "24 latas". Para la píldora de la
+// ficha "La caja contiene 24 latas". "" si no hay cantidad.
+export function productUnits(product: Product): string {
+    const get = (slug: string) =>
+        product.attributes.find((attribute) => attribute.slug === slug)?.value;
+
+    const quantity = get("cantidad");
+
+    if (!quantity) return "";
+
+    return formatParts({
+        quantity,
+        container: get("envase") as string | undefined,
+    });
+}
+
 // Líneas del carrito (Store API de Woo: los atributos llegan como
 // "attribute_pa_cantidad" / "pa_cantidad").
 export function cartLineFormat(line: CartLine): string {

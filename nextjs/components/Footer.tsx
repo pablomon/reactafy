@@ -1,10 +1,10 @@
 import Link from "next/link";
 
 import { siteConfig } from "@/config/site";
+import { getStore } from "@/services/storeService";
 import styles from "./Footer.module.css";
 
 const { FACEBOOK, INSTAGRAM } = siteConfig.SOCIAL;
-const { PHONE, WHATSAPP } = siteConfig.STORE;
 
 // Bloques de valor (copiados del pie de aguafy.com).
 // Provisional: más adelante, del mismo menú de WordPress que el header.
@@ -25,7 +25,10 @@ const HELP_LINKS = [
 ];
 
 // Pie provisional. Server Component: sin estado ni JavaScript.
-export default function Footer() {
+export default async function Footer() {
+    // Misma petición que el layout y el header: Next la memoiza
+    const { phone, whatsappUrl, callingCode } = await getStore();
+
     return (
         <footer className={styles.footer}>
             <div className={styles.container}>
@@ -82,14 +85,14 @@ export default function Footer() {
                             </a>
                         </li>
                         <li>
-                            <a href={`https://wa.me/521${WHATSAPP}`} aria-label="WhatsApp" className={styles.icon}>
+                            <a href={whatsappUrl} aria-label="WhatsApp" className={styles.icon}>
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                                     <path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.2.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.2-1.2-.1-.1-.2-.2-.5-.3Z" />
                                 </svg>
                             </a>
                         </li>
                         <li>
-                            <a href={`tel:${PHONE}`} aria-label={`Llamar al ${PHONE}`} className={styles.icon}>
+                            <a href={`tel:${callingCode}${phone}`} aria-label={`Llamar al ${phone}`} className={styles.icon}>
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                                     <path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1A17 17 0 0 1 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1l-2.3 2.2Z" />
                                 </svg>

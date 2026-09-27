@@ -1,5 +1,5 @@
 import { siteConfig } from "@/config/site";
-import type { Product, ProductsResponse } from "@/types/product";
+import type { ProductDetail, ProductsResponse } from "@/types/product";
 import type { Brand } from "@/types/brand";
 import type { Category } from "@/types/category";
 
@@ -43,7 +43,7 @@ export async function resolveProduct(
     group: string,
     product: string | null,
     legacyParams: Record<string, string>
-): Promise<Product | null> {
+): Promise<ProductDetail | null> {
     const query = new URLSearchParams({ group, ...legacyParams });
 
     if (product) {

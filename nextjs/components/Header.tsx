@@ -3,6 +3,9 @@ import Image from "next/image";
 
 import styles from "./Header.module.css";
 import { siteConfig } from "@/config/site";
+import { getStore } from "@/services/storeService";
+import type { Store } from "@/types/store";
+import { moneyToNumber } from "@/utils/money";
 import HeaderAccount from "./HeaderAccount";
 import HeaderCart from "./HeaderCart";
 import HeaderNav from "./HeaderNav";
@@ -15,21 +18,21 @@ const MENU: HeaderMenuItem[] = [
     { label: "Blog", href: "/blog" },
 ];
 
-const { PHONE, WHATSAPP, MIN_ORDER_MXN } = siteConfig.STORE;
-
-const minOrder = new Intl.NumberFormat("es-MX", {
-    maximumFractionDigits: 0,
-    useGrouping: false, // "$1200", como en aguafy.com
-}).format(MIN_ORDER_MXN);
-
 // Un bloque de mensajes. Se pinta dos veces seguidas y se desplaza
 // un 50 %: cuando el primero sale, el segundo ocupa su sitio y el
 // bucle no tiene salto.
-function MarqueeBlock(props: { hidden?: boolean }) {
+function MarqueeBlock(props: { store: Store; hidden?: boolean }) {
+    const { phone, whatsapp, whatsappUrl, callingCode } = props.store;
+
+    const minOrder = new Intl.NumberFormat("es-MX", {
+        maximumFractionDigits: 0,
+        useGrouping: false, // "$1200", como en aguafy.com
+    }).format(moneyToNumber(props.store.minOrder));
+
     const messages = [0, 1, 2].map((i) => (
         <span key={i}>
-            · LLÁMANOS: <a href={`tel:${PHONE}`}>{PHONE}</a>
-            {" "}· WHATSAPP: <a href={`https://wa.me/521${WHATSAPP}`}>{WHATSAPP}</a>
+            · LLÁMANOS: <a href={`tel:${callingCode}${phone}`}>{phone}</a>
+            {" "}· WHATSAPP: <a href={whatsappUrl}>{whatsapp}</a>
             {" "}· ENTREGA GRATIS CON PEDIDO MÍNIMO ${minOrder} EN CDMX Y ALREDEDORES{" "}
         </span>
     ));
@@ -50,13 +53,15 @@ function SearchIcon() {
     );
 }
 
-export default function Header() {
+export default async function Header() {
+    const store = await getStore();
+
     return (
         <header className={styles.header}>
             <div className={styles.marquee}>
                 <div className={styles.marqueeTrack}>
-                    <MarqueeBlock />
-                    <MarqueeBlock hidden />
+                    <MarqueeBlock store={store} />
+                    <MarqueeBlock store={store} hidden />
                 </div>
             </div>
 

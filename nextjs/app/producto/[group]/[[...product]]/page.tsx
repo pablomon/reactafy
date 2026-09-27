@@ -1,11 +1,17 @@
 import type { Metadata } from "next";
 import Image from "next/image";
+import Link from "next/link";
 import { notFound, permanentRedirect } from "next/navigation";
 
 import styles from "./page.module.css";
-import AddToCartButton from "@/components/AddToCartButton";
 import Breadcrumbs, { type BreadcrumbItem } from "@/components/Breadcrumbs";
 import Price from "@/components/Price";
+import AddToCartForm from "@/components/product/AddToCartForm";
+import ProductCarousel from "@/components/product/ProductCarousel";
+import ProductNotes from "@/components/product/ProductNotes";
+import ProductSelectors from "@/components/product/ProductSelectors";
+import ProductTabs from "@/components/product/ProductTabs";
+import { getStore } from "@/services/storeService";
 import type { Product } from "@/types/product";
 import type { ProductPrice } from "@/types/productPrice";
 import { resolveProduct } from "@/services/productService";
@@ -13,7 +19,8 @@ import {
     getGuestProductPrices,
     getProductPrices,
 } from "@/services/pricingService";
-import { productFormat } from "@/utils/productFormat";
+import { productFormat, productUnits } from "@/utils/productFormat";
+import { productSelectors } from "@/utils/productSelectors";
 import { serializeJsonLd } from "@/utils/jsonLd";
 import { productJsonLd } from "@/utils/productJsonLd";
 import { productPath } from "@/utils/productPath";
@@ -133,7 +140,11 @@ export default async function ProductPage(props: ProductPageProps) {
 
     // Precio visible: el del usuario (con sesión) o el de invitado.
     // Se pinta en streaming con <Price>, no se espera aquí.
-    const pricesPromise = getProductPrices([product.id]);
+    // Una sola petición para el producto y sus upsells ("Te puede interesar").
+    const pricesPromise = getProductPrices([
+        product.id,
+        ...product.upsells.map((upsell) => upsell.id),
+    ]);
 
     // Precio para el JSON-LD: siempre el de invitado. Si falla, la
     // página se pinta igual, solo que sin oferta en los datos estructurados.
@@ -155,8 +166,22 @@ export default async function ProductPage(props: ProductPageProps) {
         },
     ];
 
+    // Misma petición que el layout: Next la memoiza
+    const store = await getStore();
+
+    const units = productUnits(product);
+    const selectors = productSelectors(product, product.groupProducts);
+
+    // Como en las tarjetas: la subcategoría ("Cerveza") antes que la de primer nivel
+    const category =
+        product.categories.find((item) => item.parentId !== 0) ??
+        product.categories[0];
+
+    const isAlcohol = product.tags.some((tag) => tag.slug === "alcohol");
+    const outOfStock = product.stock.status === "out_of_stock";
+
     return (
-        <main className={styles.container}>
+        <main className={styles.page}>
             {/* Datos estructurados para Google. Un <script> normal (no
                 next/script): son datos, no código que ejecutar. */}
             <script
@@ -164,54 +189,102 @@ export default async function ProductPage(props: ProductPageProps) {
                 dangerouslySetInnerHTML={{ __html: serializeJsonLd(jsonLd) }}
             />
 
-            <Breadcrumbs items={breadcrumbs} />
+            <div className={styles.container}>
+                <Breadcrumbs items={breadcrumbs} />
+            </div>
 
-            <div className={styles.product}>
-                <div className={styles.imageBox}>
-                    {product.image && (
-                        <Image
-                            className={styles.image}
-                            src={product.image}
-                            alt={product.title}
-                            width={500}
-                            height={500}
-                            priority
-                        />
-                    )}
-                </div>
+            {/* Franja azul claro: imagen, datos, selectores y compra */}
+            <section className={styles.hero}>
+                <div className={`${styles.container} ${styles.heroInner}`}>
+                    <div className={styles.media}>
+                        {units && (
+                            <span className={styles.unitsPill}>
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                                    <path d="M3 7.5 12 3l9 4.5v9L12 21l-9-4.5v-9Z" strokeLinejoin="round" />
+                                    <path d="m3 7.5 9 4.5 9-4.5M12 12v9" strokeLinejoin="round" />
+                                </svg>
+                                La caja contiene {units}
+                            </span>
+                        )}
 
-                <div className={styles.info}>
-                    <h1 className={styles.title}>
-                        {product.title}
-                    </h1>
+                        {product.image && (
+                            <Image
+                                className={styles.image}
+                                src={product.image}
+                                alt={format ? `${product.title} ${format}` : product.title}
+                                width={600}
+                                height={600}
+                                sizes="(min-width: 992px) 40vw, 100vw"
+                                priority
+                            />
+                        )}
 
-                    {format && <p>{format}</p>}
-
-                    {product.brand && (
-                        <p className={styles.brand}>
-                            {product.brand.name}
-                        </p>
-                    )}
-
-                    <div className={styles.attributes}>
-                        {product.attributes.map((attribute) => (
-                            <p key={attribute.slug}>
-                                {attribute.name}: {attribute.value}
-                            </p>
-                        ))}
+                        {product.sku && (
+                            <p className={styles.sku}>sku {product.sku}</p>
+                        )}
                     </div>
 
-                    <Price
-                        productId={product.id}
-                        pricesPromise={pricesPromise}
-                    />
+                    <div className={styles.content}>
+                        <div className={styles.info}>
+                            {category && (
+                                <p className={styles.category}>{category.name}</p>
+                            )}
 
-                    <p className={styles.sku}>
-                        SKU: {product.sku}
-                    </p>
+                            <h1 className={styles.title}>{product.title}</h1>
 
-                    <AddToCartButton productId={product.id} />
+                            {format && <p className={styles.format}>{format}</p>}
+
+                            <Price productId={product.id} pricesPromise={pricesPromise} />
+
+                            {product.brand && (
+                                <Link href={brandPath(product.brand.slug)} className={styles.brand}>
+                                    {product.brand.name}
+                                </Link>
+                            )}
+                        </div>
+
+                        <ProductSelectors selectors={selectors} group={product.group} />
+
+                        <div className={styles.buy}>
+                            <AddToCartForm
+                                // Otro producto = formulario nuevo (cantidad a 1)
+                                key={product.id}
+                                productId={product.id}
+                                title={product.title}
+                                outOfStock={outOfStock}
+                            />
+                        </div>
+
+                        <div className={styles.notesRow}>
+                            <ProductNotes
+                                isAlcohol={isAlcohol}
+                                minOrder={store.minOrder}
+                            />
+                        </div>
+                    </div>
                 </div>
+            </section>
+
+            <div className={styles.container}>
+                <ProductTabs
+                    key={product.id}
+                    attributes={product.attributes}
+                    descriptionHtml={product.description}
+                    brand={
+                        product.brand
+                            ? {
+                                name: product.brand.name,
+                                descriptionHtml: product.brand.description,
+                            }
+                            : null
+                    }
+                />
+
+                <ProductCarousel
+                    title="Te puede interesar"
+                    products={product.upsells}
+                    pricesPromise={pricesPromise}
+                />
             </div>
         </main>
     );

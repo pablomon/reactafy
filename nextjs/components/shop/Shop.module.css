@@ -197,6 +197,11 @@
     border-bottom: 1px solid #c9ccd4;
 }
 
+/* Sin línea bajo la última faceta (el pie del panel ya tiene la suya) */
+.facet:last-child {
+    border-bottom: 0;
+}
+
 .facetTitle {
     padding: 0;
     margin-bottom: var(--spacing-md);
@@ -264,18 +269,6 @@
 .chip:has(.chipInput:focus-visible) {
     outline: 2px solid var(--color-accent);
     outline-offset: 2px;
-}
-
-.moreButton {
-    margin-top: var(--spacing-md);
-    padding: 0;
-    border: 0;
-    background: none;
-    color: var(--color-main);
-    font: inherit;
-    font-size: var(--text-sm);
-    text-decoration: underline;
-    cursor: pointer;
 }
 
 /* ---------- Pie: Limpiar + Ver N productos ---------- */

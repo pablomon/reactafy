@@ -7,6 +7,8 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import CartDrawer from "@/components/cart/CartDrawer";
 import { siteConfig } from "@/config/site";
+import { StoreProvider } from "@/app/context/StoreContext";
+import { getStore } from "@/services/storeService";
 
 // Base para las URLs relativas de los metadatos (canonical, imágenes OG):
 // "/producto/x/y" → "https://aguafy.com/producto/x/y".
@@ -14,14 +16,19 @@ export const metadata: Metadata = {
     metadataBase: new URL(siteConfig.SITE_URL),
 };
 
-export default function RootLayout({
+export default async function RootLayout({
                                        children,
                                    }: Readonly<{
     children: React.ReactNode;
 }>) {
+    // Ajustes de la tienda (Woo). El header y el pie hacen la misma
+    // petición: Next la memoiza y solo sale una.
+    const store = await getStore();
+
     return (
         <html lang="es">
         <body>
+        <StoreProvider value={store}>
         <AuthProvider>
             <CartProvider>
                 <Header />
@@ -30,6 +37,7 @@ export default function RootLayout({
                 <CartDrawer />
             </CartProvider>
         </AuthProvider>
+        </StoreProvider>
         </body>
         </html>
     );
