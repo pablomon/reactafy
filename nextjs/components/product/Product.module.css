@@ -1,0 +1,324 @@
+/* ============ Selectores ("Elige tu volumen") ============ */
+.selectors {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+}
+
+.selectorLabel {
+    margin: 0 0 var(--spacing-sm);
+    font-size: var(--text-xs);
+    font-weight: 700;
+    color: var(--color-accent);
+}
+
+.selectorOptions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-xs);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.selectorOption {
+    display: inline-block;
+    padding: 3px 14px;
+    border: 1px solid transparent;
+    border-radius: 9990px;
+    background: var(--color-background);
+    color: var(--color-main);
+    font-size: var(--text-xs);
+    line-height: 1.4;
+    text-decoration: none;
+}
+
+.selectorOption:hover {
+    background: var(--color-main);
+    color: #fff;
+}
+
+.selectorOption[data-state="active"] {
+    background: var(--color-main);
+    color: #fff;
+}
+
+/* Lleva a otra combinación (cambia también otro atributo) */
+.selectorOption[data-state="other"] {
+    border-color: var(--color-main);
+    background: transparent;
+}
+
+.selectorOption[data-state="out"] {
+    opacity: 0.4;
+}
+
+/* ============ Cantidad + añadir ============ */
+.addForm {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--spacing-lg);
+}
+
+.quantity {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 18px;
+    border-radius: 9990px;
+    background: var(--color-background);
+}
+
+.quantityButton {
+    padding: 0 4px;
+    border: 0;
+    background: none;
+    color: var(--color-main);
+    font: inherit;
+    font-size: var(--text-lg);
+    cursor: pointer;
+}
+
+.quantityButton:disabled {
+    opacity: 0.3;
+    cursor: default;
+}
+
+.quantityInput {
+    width: 40px;
+    margin: 0 var(--spacing-xs);
+    border: 0;
+    background: none;
+    color: var(--color-main);
+    font: inherit;
+    text-align: center;
+    -moz-appearance: textfield;
+}
+
+.quantityInput::-webkit-outer-spin-button,
+.quantityInput::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.addButton {
+    min-width: 220px;
+    padding: 8px 40px;
+    border: 0;
+    border-radius: 9990px;
+    background: var(--color-accent);
+    color: #fff;
+    font: inherit;
+    cursor: pointer;
+    transition: opacity 0.15s ease;
+}
+
+.addButton:disabled {
+    opacity: 0.5;
+    cursor: default;
+}
+
+.addButton[data-state="error"] {
+    background: #d63638;
+}
+
+.srOnly {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+}
+
+/* ============ Avisos ============ */
+.notes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-lg) var(--spacing-3xl);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.note {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--spacing-md);
+    max-width: 320px;
+    font-size: var(--text-xs);
+    line-height: 1.3;
+    color: var(--color-main);
+}
+
+.note svg {
+    flex-shrink: 0;
+}
+
+/* ============ Pestañas ============ */
+.tabs {
+    margin-top: var(--spacing-3xl);
+}
+
+.tabList {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-xl);
+}
+
+.tab {
+    padding: 8px 24px;
+    border: 0;
+    border-radius: 9990px;
+    background: #f2f2f2;
+    color: var(--color-main);
+    font: inherit;
+    font-size: var(--text-sm);
+    cursor: pointer;
+}
+
+.tab[aria-selected="true"] {
+    background: var(--color-main);
+    color: #fff;
+}
+
+.tabPanel {
+    max-width: 780px;
+}
+
+.features {
+    display: flex;
+    gap: var(--spacing-xl);
+    align-items: flex-start;
+}
+
+@media (max-width: 575px) {
+    .features {
+        flex-direction: column;
+    }
+}
+
+.featureList {
+    flex: 0 0 200px;
+    margin: 0;
+    padding: var(--spacing-md);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface);
+    font-size: var(--text-xs);
+}
+
+.featureRow {
+    display: flex;
+    gap: var(--spacing-xs);
+    padding: var(--spacing-md) 0;
+}
+
+.featureRow:not(:last-child) {
+    border-bottom: 1px solid #b5b5b5;
+}
+
+.featureRow dt,
+.featureRow dd {
+    margin: 0;
+}
+
+.richText {
+    flex: 1;
+    font-size: var(--text-sm);
+    line-height: 1.7;
+    color: var(--color-main);
+}
+
+.richText p {
+    margin: 0 0 var(--spacing-md);
+}
+
+/* ============ Carrusel "Te puede interesar" ============ */
+.carousel {
+    margin-top: var(--spacing-3xl);
+}
+
+.carouselTitle {
+    margin: 0 0 var(--spacing-xl);
+    font-size: var(--text-xl);
+    line-height: var(--line-height-xl);
+    color: var(--color-main);
+}
+
+.carouselBody {
+    position: relative;
+}
+
+.carouselTrack {
+    display: grid;
+    grid-auto-flow: column;
+    /* 2 tarjetas en móvil, 3 en tablet, 4 en escritorio */
+    grid-auto-columns: calc((100% - 12px) / 2);
+    gap: 12px;
+    margin: 0;
+    padding: 0 0 var(--spacing-sm);
+    list-style: none;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+}
+
+.carouselTrack::-webkit-scrollbar {
+    display: none;
+}
+
+@media (min-width: 768px) {
+    .carouselTrack {
+        grid-auto-columns: calc((100% - 2 * 15px) / 3);
+        gap: 15px;
+    }
+}
+
+@media (min-width: 992px) {
+    .carouselTrack {
+        grid-auto-columns: calc((100% - 3 * 15px) / 4);
+    }
+}
+
+.carouselItem {
+    scroll-snap-align: start;
+    min-width: 0;
+}
+
+.carouselArrow {
+    position: absolute;
+    top: 35%;
+    z-index: 1;
+    width: 32px;
+    height: 44px;
+    border: 0;
+    background: var(--color-background);
+    color: var(--color-muted);
+    font-size: 22px;
+    cursor: pointer;
+    box-shadow: 0 1px 4px rgb(0 0 0 / 0.12);
+}
+
+.carouselArrow:disabled {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.carouselPrev {
+    left: 0;
+    border-radius: 0 8px 8px 0;
+}
+
+.carouselNext {
+    right: 0;
+    border-radius: 8px 0 0 8px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .carouselTrack {
+        scroll-behavior: auto;
+    }
+}
