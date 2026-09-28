@@ -3,12 +3,14 @@
 import {
     createContext,
     useCallback,
+    useContext,
     useEffect,
     useRef,
     useState,
     type ReactNode,
 } from "react";
 
+import { AuthContext } from "@/app/context/AuthContext";
 import type { Cart } from "@/types/cart";
 
 import {
@@ -131,7 +133,29 @@ export default function CartProvider(props: CartProviderProps) {
 
         const timers = timersRef.current;
         return () => timers.forEach(clearTimeout);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
+
+    // El carrito sigue al usuario: cuando cambia quién ha iniciado sesión
+    // (el login descarta el carrito de invitado y trae el guardado del
+    // usuario), se vuelve a leer. La primera vez que se sabe si hay
+    // sesión solo se apunta: el carrito ya se pidió al cargar.
+    const { user, isLoading } = useContext(AuthContext);
+    const userId = user?.id ?? null;
+    const lastUserId = useRef<number | null | undefined>(undefined);
+
+    useEffect(() => {
+        if (isLoading) {
+            return;
+        }
+
+        if (lastUserId.current !== undefined && lastUserId.current !== userId) {
+            refreshCart();
+        }
+
+        lastUserId.current = userId;
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [userId, isLoading]);
 
     async function refreshCart() {
         try {
