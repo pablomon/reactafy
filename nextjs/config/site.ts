@@ -1,5 +1,7 @@
 export const siteConfig = {
     PRODUCTS_PER_PAGE: 15,
+    // Pedidos por página en la zona de usuario (el plugin admite hasta 50)
+    ORDERS_PER_PAGE: 10,
     WORDPRESS_URL: process.env.NEXT_PUBLIC_WP_URL,
     WORDPRESS_SECRET: process.env.WP_SECRET,
 

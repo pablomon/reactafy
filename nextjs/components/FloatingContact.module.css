@@ -1,0 +1,49 @@
+/* Medidas de aguafy.com: pegados al borde derecho, a 10 px del fondo,
+   uno encima del otro con 5 px entre ellos. z-index por debajo de los
+   paneles (cesta, filtros, marcas: 50-61), que los tapan al abrirse. */
+.floating {
+    position: fixed;
+    right: 0;
+    bottom: 10px;
+    z-index: 40;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.button {
+    display: block;
+    box-sizing: border-box;
+    width: 60px;
+    height: 60px;
+    transition: transform 0.15s ease;
+}
+
+.button img {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+/* El círculo del teléfono ocupa todo su SVG; el de WhatsApp deja margen
+   alrededor (≈85 % del ancho). Con 4 px de relleno los dos círculos se
+   ven del mismo tamaño. */
+.phone {
+    padding: 4px;
+}
+
+.button:hover {
+    transform: scale(1.06);
+}
+
+.button:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+    border-radius: 50%;
+}
+
+@media print {
+    .floating {
+        display: none;
+    }
+}

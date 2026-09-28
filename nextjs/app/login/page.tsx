@@ -1,129 +1,37 @@
-"use client";
-
-import { useContext, useState } from "react";
+import type { Metadata } from "next";
 import Link from "next/link";
-import { AuthContext } from "@/app/context/AuthContext";
-import { CartContext } from "../context/CartContext";
 
-export default function LoginPage() {
-    const { user, login, logout } = useContext(AuthContext);
-    const { refreshCart } = useContext(CartContext);
+import AuthCard from "@/components/auth/AuthCard";
+import LoginForm from "@/components/auth/LoginForm";
+import { redirectIfLoggedIn } from "@/services/redirectIfLoggedIn";
+import { safeNext } from "@/utils/safeNext";
 
-    const [username, setUsername] = useState("");
-    const [password, setPassword] = useState("");
-    const [error, setError] = useState("");
+export const metadata: Metadata = {
+    title: "Iniciar sesión",
+    robots: { index: false, follow: false },
+};
 
-    async function handleSubmit(
-        event: React.FormEvent<HTMLFormElement>
-    ) {
-        event.preventDefault();
+type LoginPageProps = {
+    searchParams: Promise<{ next?: string }>;
+};
 
-        setError("");
-        try {
-            await login(username, password);
-            await refreshCart();
-        } catch (error) {
-            setError(
-                error instanceof Error
-                    ? error.message
-                    : "Error al iniciar sesión"
-            );
-        }
-    }
+// /login/?next=/zona-de-usuario/pedidos/ → tras entrar, vuelve ahí
+export default async function LoginPage({ searchParams }: LoginPageProps) {
+    const next = safeNext((await searchParams).next);
 
-    async function handleLogout() {
-        try {
-            await logout();
-            await refreshCart();
-        } catch (error) {
-            setError(
-                error instanceof Error
-                    ? error.message
-                    : "Error al cerrar sesión"
-            );
-        }
-    }
-
-    if (user) {
-        return (
-            <main>
-                <h1>Ya has iniciado sesión</h1>
-
-                <p>
-                    Usuario: {user.name}
-                </p>
-
-                <p>
-                    Email: {user.email}
-                </p>
-
-                <button
-                    type="button"
-                    onClick={handleLogout}
-                >
-                    Cerrar sesión
-                </button>
-
-                {error && (
-                    <p>
-                        {error}
-                    </p>
-                )}
-            </main>
-        );
-    }
+    await redirectIfLoggedIn(next);
 
     return (
-        <main>
-            <h1>Iniciar sesión</h1>
-
-            <form onSubmit={handleSubmit}>
-                <div>
-                    <label htmlFor="username">
-                        Usuario
-                    </label>
-
-                    <input
-                        id="username"
-                        type="text"
-                        value={username}
-                        onChange={(event) =>
-                            setUsername(event.target.value)
-                        }
-                    />
-                </div>
-
-                <div>
-                    <label htmlFor="password">
-                        Contraseña
-                    </label>
-
-                    <input
-                        id="password"
-                        type="password"
-                        value={password}
-                        onChange={(event) =>
-                            setPassword(event.target.value)
-                        }
-                    />
-                </div>
-
-                <button type="submit">
-                    Iniciar sesión
-                </button>
-            </form>
-
-            <p>
-                <Link href="/recuperar-contrasena">
-                    ¿Has olvidado tu contraseña?
-                </Link>
-            </p>
-
-            {error && (
+        <AuthCard
+            title="Iniciar sesión"
+            links={
                 <p>
-                    {error}
+                    ¿No tienes cuenta?{" "}
+                    <Link href={`/registro/?next=${encodeURIComponent(next)}`}>Crear una cuenta</Link>
                 </p>
-            )}
-        </main>
+            }
+        >
+            <LoginForm next={next} />
+        </AuthCard>
     );
 }

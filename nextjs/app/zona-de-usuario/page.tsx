@@ -1,65 +1,50 @@
-"use client";
+import Link from "next/link";
+import { redirect } from "next/navigation";
 
-import { useContext, useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import OrderStatus from "@/components/account/OrderStatus";
+import { getMyOrders } from "@/services/accountService";
+import { getStore } from "@/services/storeService";
+import { formatDate } from "@/utils/formatDate";
+import { formatPrice } from "@/utils/formatPrice";
+import styles from "./account.module.css";
+import { loginUrl } from "@/services/loginRedirect";
 
-import { AuthContext } from "@/app/context/AuthContext";
-import styles from "./page.module.css";
+// Resumen: el último pedido y accesos a cada sección.
+export default async function AccountHomePage() {
+    const [orders, store] = await Promise.all([getMyOrders(1, 1), getStore()]);
 
-// Zona de usuario provisional (misma URL que aguafy.com), a la espera
-// del diseño real con pedidos y direcciones.
-//
-// La redirección a /login/ es solo de interfaz: los datos protegidos
-// los protege la API en el servidor, no esta página.
-export default function ZonaDeUsuarioPage() {
-    const { user, isLoading, logout } = useContext(AuthContext);
-    const router = useRouter();
-    const [loggingOut, setLoggingOut] = useState(false);
-
-    // Sin sesión (y ya comprobado): al login.
-    useEffect(() => {
-        if (!isLoading && !user && !loggingOut) {
-            router.replace("/login/");
-        }
-    }, [isLoading, user, loggingOut, router]);
-
-    async function handleLogout() {
-        setLoggingOut(true);
-
-        try {
-            await logout();
-            router.replace("/");
-        } catch {
-            setLoggingOut(false);
-        }
+    if (!orders.ok) {
+        redirect(await loginUrl());
     }
 
-    if (isLoading || !user) {
-        return (
-            <main className={styles.container}>
-                <p>Cargando…</p>
-            </main>
-        );
-    }
+    const last = orders.data.orders[0];
 
     return (
-        <main className={styles.container}>
-            <h1 className={styles.title}>Hola, {user.name}</h1>
+        <>
+            <h1 className={styles.title}>Mi cuenta</h1>
 
-            <p className={styles.email}>{user.email}</p>
+            <section className={styles.card}>
+                <h2 className={styles.cardTitle}>Último pedido</h2>
 
-            <p className={styles.soon}>
-                Próximamente: mis pedidos y direcciones.
-            </p>
+                {last ? (
+                    <Link href={`/zona-de-usuario/pedidos/${last.id}/`} className={styles.lastOrder}>
+                        <span className={styles.orderNumber}>Pedido #{last.number}</span>
+                        <span className={styles.muted}>{formatDate(last.date, store.timezone)}</span>
+                        <OrderStatus status={last.status} label={last.statusLabel} />
+                        <span className={styles.orderTotal}>{formatPrice(last.total)}</span>
+                    </Link>
+                ) : (
+                    <p className={styles.muted}>
+                        Todavía no has hecho ningún pedido. <Link href="/tienda/">Ir a la tienda</Link>
+                    </p>
+                )}
 
-            <button
-                type="button"
-                className={styles.logout}
-                onClick={handleLogout}
-                disabled={loggingOut}
-            >
-                {loggingOut ? "Cerrando sesión…" : "Cerrar sesión"}
-            </button>
-        </main>
+                {orders.data.pagination.total > 1 && (
+                    <Link href="/zona-de-usuario/pedidos/" className={styles.moreLink}>
+                        Ver todos los pedidos ({orders.data.pagination.total})
+                    </Link>
+                )}
+            </section>
+        </>
     );
 }

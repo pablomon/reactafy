@@ -1,10 +1,37 @@
-import RegisterForm from "@/components/RegisterForm";
+import type { Metadata } from "next";
+import Link from "next/link";
 
-export default function RegisterPage() {
+import AuthCard from "@/components/auth/AuthCard";
+import RegisterForm from "@/components/auth/RegisterForm";
+import { redirectIfLoggedIn } from "@/services/redirectIfLoggedIn";
+import { safeNext } from "@/utils/safeNext";
+
+export const metadata: Metadata = {
+    title: "Crear cuenta",
+    robots: { index: false, follow: false },
+};
+
+type RegisterPageProps = {
+    searchParams: Promise<{ next?: string }>;
+};
+
+export default async function RegisterPage({ searchParams }: RegisterPageProps) {
+    const next = safeNext((await searchParams).next);
+
+    await redirectIfLoggedIn(next);
+
     return (
-        <main>
-            <h1>Crear cuenta</h1>
-            <RegisterForm />
-        </main>
+        <AuthCard
+            title="Crear cuenta"
+            intro="Guarda tus direcciones y consulta tus pedidos."
+            links={
+                <p>
+                    ¿Ya tienes cuenta?{" "}
+                    <Link href={`/login/?next=${encodeURIComponent(next)}`}>Iniciar sesión</Link>
+                </p>
+            }
+        >
+            <RegisterForm next={next} />
+        </AuthCard>
     );
 }

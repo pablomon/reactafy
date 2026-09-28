@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useContext } from "react";
 
 import styles from "./Header.module.css";
@@ -8,10 +9,14 @@ import { AuthContext } from "@/app/context/AuthContext";
 
 export default function HeaderAccount() {
     const { user } = useContext(AuthContext);
+    const pathname = usePathname();
+
+    // Sin sesión: al login, y tras entrar se vuelve a esta página
+    const loginHref = `/login/?next=${encodeURIComponent(pathname)}`;
 
     return (
         <Link
-            href={user ? "/zona-de-usuario" : "/login"}
+            href={user ? "/zona-de-usuario/" : loginHref}
             className={styles.iconLink}
             aria-label={user ? `Mi cuenta (${user.name})` : "Iniciar sesión"}
         >

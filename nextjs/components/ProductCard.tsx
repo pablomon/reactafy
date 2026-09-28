@@ -56,6 +56,25 @@ export default function ProductCard({
         setTimeout(() => setAddState("idle"), 1500);
     }
 
+    // Al abrir la ficha (o la marca) desde una tarjeta, la página nueva
+    // empieza arriba. Se salta si:
+    //  - otro manejador ya se encargó (defaultPrevented): el carrusel de
+    //    "Te puede interesar" hace su propio scroll suave;
+    //  - es Ctrl/Cmd/Shift o botón central: se abre en otra pestaña.
+    function scrollToTop(event: React.MouseEvent) {
+        if (
+            event.defaultPrevented ||
+            event.metaKey ||
+            event.ctrlKey ||
+            event.shiftKey ||
+            event.button !== 0
+        ) {
+            return;
+        }
+
+        window.scrollTo({ top: 0 });
+    }
+
     const addLabel = {
         idle: `Añadir ${product.title} al carrito`,
         adding: "Añadiendo…",
@@ -67,7 +86,13 @@ export default function ProductCard({
         <article className={styles.card}>
             <div className={styles.imageBox}>
                 {/* Enlace duplicado del nombre: fuera del orden de tabulación */}
-                <Link href={href} className={styles.imageLink} tabIndex={-1} aria-hidden="true">
+                <Link
+                    href={href}
+                    className={styles.imageLink}
+                    tabIndex={-1}
+                    aria-hidden="true"
+                    onClick={scrollToTop}
+                >
                     {product.image && (
                         <Image
                             className={styles.image}
@@ -109,7 +134,7 @@ export default function ProductCard({
                 )}
 
                 <h2 className={styles.name}>
-                    <Link href={href}>{product.title}</Link>
+                    <Link href={href} onClick={scrollToTop}>{product.title}</Link>
                 </h2>
 
                 {format && (
@@ -127,6 +152,7 @@ export default function ProductCard({
                     <Link
                         href={brandPath(product.brand.slug)}
                         className={styles.brand}
+                        onClick={scrollToTop}
                     >
                         {product.brand.name}
                     </Link>

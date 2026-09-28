@@ -6,6 +6,7 @@ import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import CartDrawer from "@/components/cart/CartDrawer";
+import FloatingContact from "@/components/FloatingContact";
 import { siteConfig } from "@/config/site";
 import { StoreProvider } from "@/app/context/StoreContext";
 import { getStore } from "@/services/storeService";
@@ -35,6 +36,7 @@ export default async function RootLayout({
                 {children}
                 <Footer />
                 <CartDrawer />
+                <FloatingContact store={store} />
             </CartProvider>
         </AuthProvider>
         </StoreProvider>

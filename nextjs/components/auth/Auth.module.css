@@ -1,0 +1,88 @@
+/* Páginas de acceso: login, registro, recuperar y nueva contraseña.
+   Una tarjeta centrada; los campos usan components/forms/Form.module.css */
+.page {
+    padding: var(--spacing-2xl) var(--spacing-md) 76px;
+    color: var(--color-main);
+}
+
+@media (min-width: 992px) {
+    .page {
+        padding-top: var(--spacing-3xl);
+    }
+}
+
+.card {
+    max-width: 440px;
+    margin: 0 auto;
+    padding: var(--spacing-xl);
+    border: 1px solid #e3e8f2;
+    border-radius: var(--radius-xl);
+    background: var(--color-background);
+}
+
+@media (min-width: 576px) {
+    .card {
+        padding: var(--spacing-2xl);
+    }
+}
+
+.title {
+    margin: 0 0 var(--spacing-sm);
+    font-size: var(--text-2xl);
+    line-height: var(--line-height-2xl);
+}
+
+.intro {
+    margin: 0 0 var(--spacing-xl);
+    color: var(--color-muted);
+    font-size: var(--text-sm);
+}
+
+/* Enlaces bajo el formulario ("¿Has olvidado tu contraseña?") */
+.links {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    margin: var(--spacing-xl) 0 0;
+    padding-top: var(--spacing-lg);
+    border-top: 1px solid #e3e8f2;
+    font-size: var(--text-sm);
+}
+
+.links a,
+.inlineLink {
+    color: var(--color-accent);
+    font-weight: 700;
+}
+
+/* Enlace pequeño junto a un campo ("¿Has olvidado…?") */
+.aside {
+    grid-column: 1 / -1;
+    margin: -6px 0 0;
+    font-size: var(--text-xs);
+    text-align: right;
+}
+
+.aside a {
+    color: var(--color-accent);
+}
+
+/* Error general del formulario */
+.alert {
+    grid-column: 1 / -1;
+    margin: 0;
+    padding: 10px 14px;
+    border-radius: var(--radius-lg);
+    background: #fdecec;
+    color: #b42323;
+    font-size: var(--text-sm);
+}
+
+/* Mensaje final ("te hemos enviado un enlace") */
+.done {
+    margin: 0 0 var(--spacing-lg);
+    padding: 12px 16px;
+    border-radius: var(--radius-lg);
+    background: var(--color-surface);
+    font-size: var(--text-sm);
+}

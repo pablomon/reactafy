@@ -1,5 +1,13 @@
+import type { Metadata } from "next";
 import Link from "next/link";
-import ResetPasswordForm from "@/components/ResetPasswordForm";
+
+import AuthCard from "@/components/auth/AuthCard";
+import ResetPasswordForm from "@/components/auth/ResetPasswordForm";
+
+export const metadata: Metadata = {
+    title: "Nueva contraseña",
+    robots: { index: false, follow: false },
+};
 
 type ResetPasswordPageProps = {
     searchParams: Promise<{
@@ -9,39 +17,26 @@ type ResetPasswordPageProps = {
 };
 
 // Llega desde el enlace del email de recuperación:
-// /nueva-contrasena?key=…&login=…
-// Los parámetros se leen aquí, en el servidor, y se pasan al
-// formulario; así el componente cliente no depende de useSearchParams.
-export default async function ResetPasswordPage(
-    props: ResetPasswordPageProps
-) {
-    const { key, login } = await props.searchParams;
+// /nueva-contrasena/?key=…&login=…
+// Los parámetros se leen aquí, en el servidor, y se pasan al formulario.
+export default async function ResetPasswordPage({ searchParams }: ResetPasswordPageProps) {
+    const { key, login } = await searchParams;
 
     if (!key || !login) {
         return (
-            <main>
-                <h1>Enlace no válido</h1>
-
-                <p>
-                    El enlace para restablecer la contraseña no es válido
-                    o está incompleto.
-                </p>
-
-                <Link href="/recuperar-contrasena">
-                    Solicitar un enlace nuevo
-                </Link>
-            </main>
+            <AuthCard
+                title="Enlace no válido"
+                intro="El enlace para elegir una contraseña nueva no es válido o está incompleto."
+                links={<Link href="/recuperar-contrasena/">Solicitar un enlace nuevo</Link>}
+            >
+                {null}
+            </AuthCard>
         );
     }
 
     return (
-        <main>
-            <h1>Elige una contraseña nueva</h1>
-
-            <ResetPasswordForm
-                resetKey={key}
-                login={login}
-            />
-        </main>
+        <AuthCard title="Elige una contraseña nueva">
+            <ResetPasswordForm resetKey={key} login={login} />
+        </AuthCard>
     );
 }

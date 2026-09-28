@@ -372,45 +372,35 @@ function reactafy_get_stock($product) {
  * 7. PRICING ADP
  * ============================================================
  *
- * Obtiene:
+ * price:     precio de 1 caja según ADP (con el rol del usuario).
+ * fromPrice: precio del último tramo, si es menor que price
+ *            (las tarjetas muestran "Desde X").
+ * tiers:     tramos de la regla de volumen, para la tabla de la
+ *            ficha. Vacío si el producto no tiene regla o solo
+ *            tiene un tramo.
+ *            [{ from: 1, to: 5, price }, { from: 6, to: null, price }]
  *
- * price
- * fromPrice
- *
- * price:
- * Precio efectivo para una unidad.
- *
- * fromPrice:
- * Precio del último tier de bulk pricing si es inferior
- * al precio unitario.
+ * Todos los precios salen de getDiscountedProductPrice(): son
+ * exactamente los que cobrará el carrito. Las reglas de Aguafy son
+ * de precio fijo y siempre empiezan en 1 caja.
  */
-
 function reactafy_get_product_pricing($product) {
 
     $currency = get_woocommerce_currency();
 
-    $minor_unit = wc_get_price_decimals();
+    $price = adp_functions()->getDiscountedProductPrice($product, 1, true);
 
-    $price =
-        adp_functions()->getDiscountedProductPrice(
-            $product,
-            1,
-            true
-        );
+    $tiers = [];
 
-    $from_price = null;
-
-    $rules =
-        adp_functions()->getActiveRulesForProduct(
-            $product->get_id(),
-            1,
-            true
-        );
+    $rules = adp_functions()->getActiveRulesForProduct(
+        $product->get_id(),
+        1,
+        true
+    );
 
     foreach ($rules as $rule) {
 
-        $handler =
-            $rule->getProductRangeAdjustmentHandler();
+        $handler = $rule->getProductRangeAdjustmentHandler();
 
         if (!$handler) {
             continue;
@@ -422,50 +412,56 @@ function reactafy_get_product_pricing($product) {
             continue;
         }
 
-        /*
-         * El último rango representa el precio más bajo
-         * del descuento por cantidad.
-         */
-        $last_range = end($ranges);
+        foreach ($ranges as $range) {
 
-        $from =
-            $last_range->getFrom();
+            $from = (int) $range->getFrom();
+            $to   = $range->getTo();
 
-        $tier_price =
-            adp_functions()->getDiscountedProductPrice(
-                $product,
-                $from,
-                true
-            );
+            // El último tramo es abierto ("6 o más"): ADP lo guarda
+            // vacío o como INF.
+            $to = is_numeric($to) && is_finite((float) $to)
+                ? (int) $to
+                : null;
 
-        /*
-         * Solo mostramos "Desde" si realmente supone
-         * un precio inferior al precio unitario.
-         */
-        if ($tier_price < $price) {
-            $from_price = $tier_price;
+            $tiers[] = [
+                'from'  => $from,
+                'to'    => $to,
+                'price' => reactafy_money(
+                    adp_functions()->getDiscountedProductPrice($product, $from, true),
+                    $currency
+                ),
+            ];
         }
 
-        /*
-         * Por ahora respetamos la primera regla aplicable.
-         */
+        // Por ahora respetamos la primera regla aplicable.
         break;
     }
 
-    return [
-        'price' => reactafy_money(
-            $price,
-            $currency
-        ),
+    // Un solo tramo no es una tabla.
+    if (count($tiers) < 2) {
+        $tiers = [];
+    }
 
-        'fromPrice' => $from_price !== null
-            ? reactafy_money(
-                $from_price,
-                $currency
-            )
-            : null,
+    // "Desde": el último tramo, solo si es más barato que 1 caja.
+    $from_price = null;
+
+    if ($tiers) {
+        $last = end($tiers);
+        $last_amount = adp_functions()->getDiscountedProductPrice($product, $last['from'], true);
+
+        if ($last_amount < $price) {
+            $from_price = reactafy_money($last_amount, $currency);
+        }
+    }
+
+    return [
+        'price'     => reactafy_money($price, $currency),
+        'fromPrice' => $from_price,
+        'tiers'     => $tiers,
     ];
 }
+
+
 /**
  * ============================================================
  * 8. PRODUCT SUMMARY
@@ -979,25 +975,45 @@ add_action('rest_api_init', function () {
 
 
 /**
- * Facetas: la marca y TODOS los atributos de Woo.
- * Clave pública => taxonomía:  'envase' => 'pa_envase'
+ * Facetas del listado, en el orden en que se muestran.
+ * Clave pública (el parámetro de la URL) => definición:
  *
- * Un atributo nuevo en Woo se convierte en faceta sin tocar código.
+ *   'tipo'           => ['taxonomy' => 'product_cat', 'depth' => 1, 'label' => 'Tipo']
+ *   'caracteristica' => ['taxonomy' => 'product_cat', 'depth' => 2, 'label' => 'Características']
+ *   'brand'          => ['taxonomy' => 'product_brand']
+ *   'envase'         => ['taxonomy' => 'pa_envase']   … (todos los atributos de Woo)
+ *
+ * Tipo y Características salen del árbol de categorías por NIVEL
+ * (0 = Bebidas / Alimentos, 1 = Agua / Cerveza / Vino…,
+ *  2 = Gasificada / Natural…): una categoría nueva en Woo aparece
+ * sola en su faceta. Sus nombres van aquí porque Woo no tiene dónde
+ * guardar el nombre de un nivel del árbol.
+ *
+ * Un atributo nuevo en Woo se convierte en faceta sin tocar código,
+ * salvo los de $hidden (decisión de diseño: no se filtra por ellos).
  * Se saltan nombres que chocarían con otros parámetros del endpoint.
  */
-function reactafy_facet_taxonomies() {
+function reactafy_facets() {
 
-    $reserved = ['brand', 'category', 'page', 'perPage', 'orderby'];
+    $reserved = ['brand', 'category', 'page', 'perPage', 'orderby', 'tipo', 'caracteristica'];
 
-    $facets = ['brand' => 'product_brand'];
+    $hidden = ['cantidad', 'sabor'];
+
+    $facets = [
+        'tipo'           => ['taxonomy' => 'product_cat', 'depth' => 1, 'label' => 'Tipo'],
+        'caracteristica' => ['taxonomy' => 'product_cat', 'depth' => 2, 'label' => 'Características'],
+        'brand'          => ['taxonomy' => 'product_brand'],
+    ];
 
     foreach (wc_get_attribute_taxonomies() as $attribute) {
 
-        if (in_array($attribute->attribute_name, $reserved, true)) {
+        $name = $attribute->attribute_name;
+
+        if (in_array($name, $reserved, true) || in_array($name, $hidden, true)) {
             continue;
         }
 
-        $facets[$attribute->attribute_name] = 'pa_' . $attribute->attribute_name;
+        $facets[$name] = ['taxonomy' => 'pa_' . $name];
     }
 
     return $facets;
@@ -1041,7 +1057,11 @@ function reactafy_facet_label($taxonomy) {
  */
 function reactafy_get_filter_index() {
 
-    $facets = reactafy_facet_taxonomies();
+    $facets = reactafy_facets();
+
+    // Facetas de taxonomía (marca, atributos) y de nivel de categoría
+    $term_facets = array_filter($facets, fn($facet) => !isset($facet['depth']));
+    $level_facets = array_filter($facets, fn($facet) => isset($facet['depth']));
 
     $group_ids = get_posts([
         'post_type'      => 'product',
@@ -1074,11 +1094,18 @@ function reactafy_get_filter_index() {
     // Términos de todos los grupos (categorías + facetas) en UNA consulta
     $terms = wp_get_object_terms(
         $group_ids,
-        array_merge(['product_cat'], array_values($facets)),
+        array_values(array_unique(array_merge(
+            ['product_cat'],
+            array_column($term_facets, 'taxonomy')
+        ))),
         ['fields' => 'all_with_object_id']
     );
 
-    $facet_of = array_flip($facets); // 'pa_envase' => 'envase'
+    $facet_of = []; // 'pa_envase' => 'envase'
+    foreach ($term_facets as $key => $facet) {
+        $facet_of[$facet['taxonomy']] = $key;
+    }
+
     $groups = [];
 
     if (!is_wp_error($terms)) {
@@ -1086,32 +1113,97 @@ function reactafy_get_filter_index() {
 
             if ($term->taxonomy === 'product_cat') {
                 $groups[$term->object_id]['categories'][] = (int) $term->term_id;
-            } else {
+            } elseif (isset($facet_of[$term->taxonomy])) {
                 $groups[$term->object_id][$facet_of[$term->taxonomy]][] = $term->slug;
             }
         }
     }
+
+    /*
+     * Árbol de categorías en UNA consulta, para saber de cada categoría
+     * sus antepasados: Gasificada → [Bebidas, Agua, Gasificada]. La
+     * posición en esa ruta es su nivel (0, 1, 2…).
+     */
+    $all_cats = get_terms(['taxonomy' => 'product_cat', 'hide_empty' => false]);
+
+    $parent_of = [];
+    $slug_of = [];
+
+    if (!is_wp_error($all_cats)) {
+        foreach ($all_cats as $cat) {
+            $parent_of[(int) $cat->term_id] = (int) $cat->parent;
+            $slug_of[(int) $cat->term_id] = $cat->slug;
+        }
+    }
+
+    $paths = [];
+
+    $path_of = function ($id) use (&$paths, $parent_of) {
+
+        if (!isset($paths[$id])) {
+
+            $path = [];
+            $current = $id;
+
+            // Límite de 10 niveles: por si un árbol mal formado hiciera un bucle
+            while ($current && isset($parent_of[$current]) && count($path) < 10) {
+                array_unshift($path, $current);
+                $current = $parent_of[$current];
+            }
+
+            $paths[$id] = $path;
+        }
+
+        return $paths[$id];
+    };
+
+    // Valores de Tipo / Características de un grupo: la categoría de ese
+    // nivel en la ruta de cada una de sus categorías (Gasificada → Agua)
+    $levels_of = function ($categories) use ($level_facets, $path_of, $slug_of) {
+
+        $values = [];
+
+        foreach ($level_facets as $key => $facet) {
+
+            $slugs = [];
+
+            foreach ($categories as $cat_id) {
+                $path = $path_of($cat_id);
+
+                if (isset($path[$facet['depth']])) {
+                    $slugs[] = $slug_of[$path[$facet['depth']]];
+                }
+            }
+
+            $values[$key] = array_values(array_unique($slugs));
+        }
+
+        return $values;
+    };
 
     $items = [];
 
     foreach ($variations as $variation) {
 
         $group = $groups[$variation->post_parent] ?? [];
+        $categories = $group['categories'] ?? [];
 
         $item = [
             'id'         => (int) $variation->ID,
             'price'      => (float) get_post_meta($variation->ID, '_price', true),
-            'categories' => $group['categories'] ?? [],
+            'categories' => $categories,
         ];
 
-        foreach ($facets as $facet => $taxonomy) {
+        $item += $levels_of($categories);
 
-            $item[$facet] = $group[$facet] ?? [];
+        foreach ($term_facets as $key => $facet) {
 
-            if (strpos($taxonomy, 'pa_') === 0) {
-                $own = get_post_meta($variation->ID, 'attribute_' . $taxonomy, true);
+            $item[$key] = $group[$key] ?? [];
+
+            if (strpos($facet['taxonomy'], 'pa_') === 0) {
+                $own = get_post_meta($variation->ID, 'attribute_' . $facet['taxonomy'], true);
                 if ($own !== '') {
-                    $item[$facet] = [$own];
+                    $item[$key] = [$own];
                 }
             }
         }
@@ -1163,7 +1255,7 @@ function reactafy_parse_filters(WP_REST_Request $request) {
 
     $filters = [];
 
-    foreach (array_keys(reactafy_facet_taxonomies()) as $facet) {
+    foreach (array_keys(reactafy_facets()) as $facet) {
 
         $raw = (string) $request->get_param($facet);
 
@@ -1213,7 +1305,7 @@ function reactafy_get_facets($items, $filters) {
 
     $result = [];
 
-    foreach (reactafy_facet_taxonomies() as $facet => $taxonomy) {
+    foreach (reactafy_facets() as $facet => $definition) {
 
         $counts = [];
 
@@ -1231,13 +1323,18 @@ function reactafy_get_facets($items, $filters) {
         }
 
         $args = [
-            'taxonomy'   => $taxonomy,
+            'taxonomy'   => $definition['taxonomy'],
             'slug'       => array_map('strval', array_keys($counts)),
             'hide_empty' => false,
         ];
 
         if ($facet === 'brand') {
             $args['orderby'] = 'name';
+        }
+
+        if ($definition['taxonomy'] === 'product_cat') {
+            // El orden de categorías que pones arrastrando en Woo
+            $args['menu_order'] = 'ASC';
         }
 
         $terms = get_terms($args);
@@ -1258,7 +1355,7 @@ function reactafy_get_facets($items, $filters) {
 
         $result[] = [
             'slug'    => $facet,
-            'name'    => reactafy_facet_label($taxonomy),
+            'name'    => $definition['label'] ?? reactafy_facet_label($definition['taxonomy']),
             'options' => $options,
         ];
     }

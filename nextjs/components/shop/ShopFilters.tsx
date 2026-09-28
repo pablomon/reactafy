@@ -178,6 +178,14 @@ export default function ShopFilters({
                             <fieldset key={facet.slug} className={styles.facet}>
                                 <legend className={styles.facetTitle}>
                                     {facet.name}
+                                    {selected.length > 0 && (
+                                        <span
+                                            className={styles.facetCount}
+                                            aria-label={`${selected.length} seleccionados`}
+                                        >
+                                            {selected.length}
+                                        </span>
+                                    )}
                                 </legend>
 
                                 {/* Chips: cada uno es un <label> con su casilla dentro.

@@ -196,11 +196,23 @@
 }
 
 /* Menú móvil (panel lateral) */
+/* Mismo movimiento que el panel de filtros (Shop.module.css): cerrado,
+   el fondo transparente y el panel fuera por la izquierda. visibility
+   cambia al FINAL de la transición al cerrar, así se ve salir. */
 .overlay {
     position: fixed;
     inset: 0;
     background: rgb(0 13 57 / 0.4);
     z-index: 50;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0s linear 0.3s;
+}
+
+.overlay[data-open="true"] {
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 0.3s ease;
 }
 
 .drawer {
@@ -216,6 +228,27 @@
     flex-direction: column;
     gap: var(--spacing-lg);
     box-shadow: 0 0 24px rgb(0 0 0 / 0.15);
+
+    transform: translateX(-100%);
+    visibility: hidden;
+    transition:
+        transform 0.35s cubic-bezier(0.32, 0.72, 0, 1),
+        visibility 0s linear 0.35s;
+}
+
+.drawer[data-open="true"] {
+    transform: none;
+    visibility: visible;
+    transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .overlay,
+    .drawer,
+    .overlay[data-open="true"],
+    .drawer[data-open="true"] {
+        transition: none;
+    }
 }
 
 .drawerClose {

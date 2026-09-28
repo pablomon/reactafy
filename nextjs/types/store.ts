@@ -10,4 +10,6 @@ export type Store = {
     minOrder: Money;
     maxOrder: Money | null; // null = sin máximo
     maxItems: number;
+    // Zona horaria de WordPress ("America/Mexico_City"): para mostrar fechas
+    timezone: string;
 };
