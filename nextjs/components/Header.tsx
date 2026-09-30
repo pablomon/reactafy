@@ -58,9 +58,12 @@ function SearchIcon() {
 export default async function Header() {
     // En paralelo: el header no tarda más por pedir también las marcas.
     // Si fallan las marcas, la web sigue funcionando (panel vacío).
+    // En la demo no hay buscador: ni se piden las marcas
+    const search = !siteConfig.DEMO_MODE;
+
     const [store, brands] = await Promise.all([
         getStore(),
-        getBrands().catch(() => []),
+        search ? getBrands().catch(() => []) : [],
     ]);
 
     return (
@@ -75,13 +78,15 @@ export default async function Header() {
             <div className={styles.bar}>
                 <div className={styles.mobileLeft}>
                     <MobileMenu items={MENU} />
-                    <SearchPanel
-                        brands={brands}
-                        triggerClassName={styles.iconButtonReset}
-                        triggerLabel="Buscar"
-                    >
-                        <SearchIcon />
-                    </SearchPanel>
+                    {search && (
+                        <SearchPanel
+                            brands={brands}
+                            triggerClassName={styles.iconButtonReset}
+                            triggerLabel="Buscar"
+                        >
+                            <SearchIcon />
+                        </SearchPanel>
+                    )}
                 </div>
 
                 <Link href="/" className={styles.logo}>
@@ -97,10 +102,12 @@ export default async function Header() {
                 <nav className={styles.nav} aria-label="Principal">
                     <HeaderNav items={MENU} />
 
-                    <SearchPanel brands={brands} triggerClassName={styles.searchButton}>
-                        <SearchIcon />
-                        Buscar
-                    </SearchPanel>
+                    {search && (
+                        <SearchPanel brands={brands} triggerClassName={styles.searchButton}>
+                            <SearchIcon />
+                            Buscar
+                        </SearchPanel>
+                    )}
                 </nav>
 
                 <div className={styles.actions}>

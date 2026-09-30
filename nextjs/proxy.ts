@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 
 import { siteConfig } from "@/config/site";
+import { DEMO_COOKIE, demoToken } from "@/services/demoAccess";
 
 // Proxy (antes "middleware"): se ejecuta ANTES de cada página o ruta
 // de API (no de los ficheros estáticos, ver `matcher`).
@@ -9,6 +10,7 @@ import { siteConfig } from "@/config/site";
 // Con NEXT_PUBLIC_DEMO_MODE=tienda solo se puede ver esto. Todo lo
 // demás redirige a /tienda/.
 const DEMO_ALLOWED = [
+    "/acceso",
     "/tienda",
     "/carrito",
     "/zona-de-usuario",
@@ -28,42 +30,16 @@ function isDemoAllowed(pathname: string): boolean {
 }
 
 // ---------- Contraseña de acceso ----------
-// Con DEMO_PASSWORD definida, toda la web pide contraseña (la ventana
-// nativa del navegador, "HTTP Basic Auth"). El usuario da igual: solo
-// se comprueba la contraseña. El navegador la recuerda hasta que se
-// cierra, y la manda sola en cada petición (páginas, APIs, acciones).
-// Sin el prefijo NEXT_PUBLIC_: se lee en el servidor al arrancar y
-// nunca llega al navegador.
-function passwordOk(request: NextRequest, password: string): boolean {
-    const header = request.headers.get("authorization") ?? "";
+// Con DEMO_PASSWORD definida, toda la web pide contraseña: sin la
+// cookie de acceso se va a /acceso/, una página con un único campo.
+// Sin el prefijo NEXT_PUBLIC_: se lee en el servidor y nunca llega al
+// navegador.
+const ACCESS_PAGE = "/acceso";
 
-    if (!header.startsWith("Basic ")) {
-        return false;
-    }
+async function hasAccess(request: NextRequest, password: string): Promise<boolean> {
+    const cookie = request.cookies.get(DEMO_COOKIE)?.value;
 
-    try {
-        // "usuario:contraseña" en base64
-        const decoded = atob(header.slice(6));
-        const given = decoded.slice(decoded.indexOf(":") + 1);
-
-        // Comparación sin cortar al primer carácter distinto (no da
-        // pistas por el tiempo de respuesta)
-        let diff = given.length ^ password.length;
-        for (let i = 0; i < password.length; i++) {
-            diff |= (given.charCodeAt(i) || 0) ^ password.charCodeAt(i);
-        }
-
-        return diff === 0;
-    } catch {
-        return false;
-    }
-}
-
-function askPassword(): Response {
-    return new Response("Contraseña necesaria.", {
-        status: 401,
-        headers: { "WWW-Authenticate": 'Basic realm="Aguafy", charset="UTF-8"' },
-    });
+    return cookie !== undefined && cookie === (await demoToken(password));
 }
 
 // ---------- Zona de usuario ----------
@@ -90,13 +66,21 @@ function accountArea(request: NextRequest) {
     return NextResponse.next({ request: { headers } });
 }
 
-export function proxy(request: NextRequest) {
-    const { pathname } = request.nextUrl;
+export async function proxy(request: NextRequest) {
+    const { pathname, search } = request.nextUrl;
 
     const password = process.env.DEMO_PASSWORD;
+    const onAccessPage = pathname === ACCESS_PAGE || pathname.startsWith(`${ACCESS_PAGE}/`);
 
-    if (password && !passwordOk(request, password)) {
-        return askPassword();
+    if (password && !onAccessPage && !(await hasAccess(request, password))) {
+        if (pathname.startsWith("/api/")) {
+            return Response.json({ message: "Contraseña necesaria." }, { status: 401 });
+        }
+
+        const url = new URL(`${ACCESS_PAGE}/`, request.url);
+        url.searchParams.set("next", pathname + search);
+
+        return NextResponse.redirect(url);
     }
 
     if (siteConfig.DEMO_MODE && !isDemoAllowed(pathname)) {
