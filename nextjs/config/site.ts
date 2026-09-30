@@ -11,11 +11,11 @@ export const siteConfig = {
     SITE_NAME: "Aguafy",
 
     // Modo demo para enseñar el trabajo al cliente en aguafy.space
-    // (NEXT_PUBLIC_DEMO_MODE=tienda): solo tienda, carrito sin pago y
+    // (NEXT_PUBLIC_DEMO_MODE=demo): solo tienda, carrito sin pago y
     // cuenta; el resto redirige a /tienda/ (ver proxy.ts).
     // NEXT_PUBLIC_: el botón de pago también lo necesita en el navegador.
     // Se fija al hacer el build: cambiarlo requiere volver a desplegar.
-    DEMO_MODE: process.env.NEXT_PUBLIC_DEMO_MODE === "tienda",
+    DEMO_MODE: process.env.NEXT_PUBLIC_DEMO_MODE === "demo",
 
     // Logo de la tienda (header, datos estructurados…).
     LOGO_URL: `${process.env.NEXT_PUBLIC_WP_URL}/wp-content/uploads/2025/03/logo_aguafy_h.webp`,

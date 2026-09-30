@@ -7,7 +7,7 @@ import { DEMO_COOKIE, demoToken } from "@/services/demoAccess";
 // de API (no de los ficheros estáticos, ver `matcher`).
 
 // ---------- Modo demo ----------
-// Con NEXT_PUBLIC_DEMO_MODE=tienda solo se puede ver esto. Todo lo
+// Con NEXT_PUBLIC_DEMO_MODE=demo solo se puede ver esto. Todo lo
 // demás redirige a /tienda/.
 const DEMO_ALLOWED = [
     "/acceso",

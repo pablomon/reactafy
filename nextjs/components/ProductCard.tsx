@@ -11,6 +11,7 @@ import Price from "@/components/Price";
 import { productFormat } from "@/utils/productFormat";
 import { productPath } from "@/utils/productPath";
 import { brandPath } from "@/utils/brandPath";
+import { siteConfig } from "@/config/site";
 import styles from "./ProductCard.module.css";
 
 type ProductCardProps = {
@@ -39,6 +40,10 @@ export default function ProductCard({
         ) ?? product.categories[0];
 
     const href = productPath(product);
+
+    // Modo demo: no se entra en fichas ni marcas; la tarjeta se ve igual
+    // pero sin enlaces (el proxy también las redirige a /tienda/)
+    const linked = !siteConfig.DEMO_MODE;
 
     async function handleAdd() {
         if (addState === "adding") return;
@@ -82,28 +87,34 @@ export default function ProductCard({
         error: "No se ha podido añadir. Inténtalo de nuevo",
     }[addState];
 
+    const image = product.image && (
+        <Image
+            className={styles.image}
+            src={product.image}
+            alt=""
+            width={300}
+            height={300}
+            sizes={IMAGE_SIZES}
+        />
+    );
+
     return (
         <article className={styles.card}>
             <div className={styles.imageBox}>
-                {/* Enlace duplicado del nombre: fuera del orden de tabulación */}
-                <Link
-                    href={href}
-                    className={styles.imageLink}
-                    tabIndex={-1}
-                    aria-hidden="true"
-                    onClick={scrollToTop}
-                >
-                    {product.image && (
-                        <Image
-                            className={styles.image}
-                            src={product.image}
-                            alt=""
-                            width={300}
-                            height={300}
-                            sizes={IMAGE_SIZES}
-                        />
-                    )}
-                </Link>
+                {linked ? (
+                    // Enlace duplicado del nombre: fuera del orden de tabulación
+                    <Link
+                        href={href}
+                        className={styles.imageLink}
+                        tabIndex={-1}
+                        aria-hidden="true"
+                        onClick={scrollToTop}
+                    >
+                        {image}
+                    </Link>
+                ) : (
+                    <div className={styles.imageLink}>{image}</div>
+                )}
 
                 <button
                     type="button"
@@ -134,7 +145,11 @@ export default function ProductCard({
                 )}
 
                 <h2 className={styles.name}>
-                    <Link href={href} onClick={scrollToTop}>{product.title}</Link>
+                    {linked ? (
+                        <Link href={href} onClick={scrollToTop}>{product.title}</Link>
+                    ) : (
+                        product.title
+                    )}
                 </h2>
 
                 {format && (
@@ -148,7 +163,7 @@ export default function ProductCard({
                     />
                 )}
 
-                {product.brand && (
+                {product.brand && (linked ? (
                     <Link
                         href={brandPath(product.brand.slug)}
                         className={styles.brand}
@@ -156,7 +171,9 @@ export default function ProductCard({
                     >
                         {product.brand.name}
                     </Link>
-                )}
+                ) : (
+                    <span className={styles.brand}>{product.brand.name}</span>
+                ))}
             </div>
         </article>
     );
