@@ -50,6 +50,15 @@ export default function CheckoutButton(props: CheckoutButtonProps) {
         window.location.href = data.checkoutUrl;
     }
 
+    // Modo demo: se ve el carrito, pero no se puede pagar
+    if (siteConfig.DEMO_MODE) {
+        return (
+            <button type="button" className={styles.button} disabled>
+                Pago desactivado en la demo
+            </button>
+        );
+    }
+
     const label = redirecting
         ? "Redirigiendo…"
         : props.syncing
