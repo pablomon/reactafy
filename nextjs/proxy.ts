@@ -23,6 +23,9 @@ const DEMO_ALLOWED = [
     "/api/products",
     "/api/cart",
     "/api/auth",
+    // Pago: crea la sesión de checkout y vuelve a la confirmación del pedido
+    "/api/checkout",
+    "/pedido",
 ];
 
 function isDemoAllowed(pathname: string): boolean {
