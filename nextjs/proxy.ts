@@ -69,6 +69,12 @@ function accountArea(request: NextRequest) {
 export async function proxy(request: NextRequest) {
     const { pathname, search } = request.nextUrl;
 
+    // El aviso de WordPress para vaciar la caché: tiene su propio
+    // secreto, no pasa por la contraseña ni por el filtro de la demo
+    if (pathname === "/api/revalidate" || pathname === "/api/revalidate/") {
+        return NextResponse.next();
+    }
+
     const password = process.env.DEMO_PASSWORD;
     const onAccessPage = pathname === ACCESS_PAGE || pathname.startsWith(`${ACCESS_PAGE}/`);
 

@@ -1,6 +1,7 @@
 import { cookies } from "next/headers";
 import {ProductPrice} from "@/types/productPrice";
 import {siteConfig} from "@/config/site";
+import { cached } from "@/services/wpCache";
 
 const API_URL =
     `${siteConfig.WORDPRESS_URL}/wp-json/reactafy/v1`;
@@ -8,8 +9,9 @@ const API_URL =
 // Solo para el servidor. Lee la sesión de la cookie:
 // - Con sesión: precios del usuario (según su rol en ADP). Nunca se
 //   cachean.
-// - Sin sesión: precio de invitado (guest=1), igual para todos, que
-//   LiteSpeed cachea. El endpoint ignora cualquier token con guest=1.
+// - Sin sesión: precio de invitado (guest=1), igual para todos, en la
+//   caché de Next con el catálogo. El endpoint ignora cualquier token
+//   con guest=1.
 export async function getProductPrices(
     productIds: number[]
 ): Promise<Record<number, ProductPrice>> {
@@ -35,8 +37,10 @@ export async function getProductPrices(
         headers: authToken
             ? { Authorization: `Bearer ${authToken}` }
             : {},
-        // La caché de invitado la hace LiteSpeed, no Next.
-        cache: "no-store",
+        // Con sesión: nunca en caché (precio de ese usuario). Sin
+        // sesión: el precio de invitado es igual para todos y se guarda
+        // con el catálogo.
+        ...(authToken ? { cache: "no-store" as const } : cached("catalogo")),
     });
 
     const fetchTime = performance.now() - start;
@@ -62,8 +66,7 @@ export async function getProductPrices(
 // Precio de INVITADO siempre, haya sesión o no. Para datos públicos,
 // como el JSON-LD de la ficha: Google rastrea sin sesión y no deben
 // salir en el código fuente los precios de un usuario concreto.
-// Misma URL que getProductPrices sin sesión: LiteSpeed la cachea y, si
-// ambas se piden en el mismo render, Next hace una sola petición.
+// Misma URL que getProductPrices sin sesión: comparten la caché.
 export async function getGuestProductPrices(
     productIds: number[]
 ): Promise<Record<number, ProductPrice>> {
@@ -73,7 +76,7 @@ export async function getGuestProductPrices(
 
     const response = await fetch(
         `${API_URL}/products/pricing?guest=1&ids=${productIds.join(",")}`,
-        { cache: "no-store" }
+        cached("catalogo")
     );
 
     if (!response.ok) {
