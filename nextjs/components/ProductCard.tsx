@@ -16,6 +16,8 @@ import styles from "./ProductCard.module.css";
 type ProductCardProps = {
     product: Product;
     pricesPromise?: Promise<Record<number, ProductPrice>>;
+    // Imagen por encima del pliegue: se pide ya y con prioridad alta.
+    eagerImage?: boolean;
 };
 
 type AddState = "idle" | "adding" | "added" | "error";
@@ -27,6 +29,7 @@ const IMAGE_SIZES =
 export default function ProductCard({
     product,
     pricesPromise,
+    eagerImage = false,
 }: ProductCardProps) {
     const { addItem } = useContext(CartContext);
     const [addState, setAddState] = useState<AddState>("idle");
@@ -90,6 +93,11 @@ export default function ProductCard({
             width={300}
             height={300}
             sizes={IMAGE_SIZES}
+            // undefined deja el comportamiento por defecto (lazy). Las
+            // imágenes que se ven sin hacer scroll no pueden esperar a que el
+            // navegador calcule el diseño para pedirse: es la LCP.
+            loading={eagerImage ? "eager" : undefined}
+            fetchPriority={eagerImage ? "high" : undefined}
         />
     );
 

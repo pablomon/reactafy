@@ -10,6 +10,11 @@ import SkeletonCards from "@/components/skeletons/SkeletonCards";
 // Lotes que se cargan solos con el scroll antes de mostrar el botón
 const AUTO_LOADS = 2;
 
+// Imágenes del primer lote que se piden con prioridad: las que se ven sin
+// hacer scroll (la primera fila en escritorio, las dos primeras en móvil).
+// Más no: cada imagen prioritaria compite con el CSS y el JavaScript.
+const EAGER_IMAGES = 4;
+
 type ProductBatchData = {
     page: number;
     products: Product[];
@@ -171,11 +176,14 @@ export default function ProductGrid({
     return (
         <>
             <div className={styles.grid} aria-busy={loading}>
-                {batches.map((batch) => (
+                {batches.map((batch, index) => (
                     <ProductBatch
                         key={batch.page}
                         products={batch.products}
                         pricesPromise={batch.pricesPromise}
+                        // Solo el primer lote mostrado; los de "Cargar más"
+                        // llegan debajo y siguen siendo lazy.
+                        eagerImages={index === 0 ? EAGER_IMAGES : 0}
                     />
                 ))}
 
