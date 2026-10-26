@@ -15,6 +15,11 @@ import { getStore } from "@/services/storeService";
 // "/producto/x/y" → "https://aguafy.com/producto/x/y".
 export const metadata: Metadata = {
     metadataBase: new URL(siteConfig.SITE_URL),
+
+    // Fuera de producción, noindex (ver app/robots.ts).
+    robots: siteConfig.INDEXABLE
+        ? undefined
+        : { index: false, follow: false },
 };
 
 export default async function RootLayout({

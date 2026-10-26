@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { siteConfig } from "@/config/site";
+import { cached } from "@/services/wpCache";
 
 const API_URL =
     `${siteConfig.WORDPRESS_URL}/wp-json/reactafy/v1`;
@@ -17,7 +18,7 @@ export async function GET(request: NextRequest) {
         query.set("perPage", siteConfig.PRODUCTS_PER_PAGE.toString());
     }
 
-    const response = await fetch(`${API_URL}/products?${query}`);
+    const response = await fetch(`${API_URL}/products?${query}`, cached("catalogo"));
 
     if (!response.ok) {
         return NextResponse.json(
