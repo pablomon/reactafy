@@ -1,49 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 
-import { siteConfig } from "@/config/site";
-import { DEMO_COOKIE, demoToken } from "@/services/demoAccess";
-
-// Proxy (antes "middleware"): se ejecuta ANTES de cada página o ruta
-// de API (no de los ficheros estáticos, ver `matcher`).
-
-// ---------- Modo demo ----------
-// Con NEXT_PUBLIC_DEMO_MODE=demo solo se puede ver esto. Todo lo
-// demás redirige a /tienda/.
-const DEMO_ALLOWED = [
-    "/acceso",
-    "/tienda",
-    "/carrito",
-    "/zona-de-usuario",
-    // Para poder entrar en la cuenta
-    "/login",
-    "/registro",
-    "/recuperar-contrasena",
-    "/nueva-contrasena",
-    // APIs que usan la tienda, el carrito y la cuenta
-    "/api/products",
-    "/api/cart",
-    "/api/auth",
-    // Pago: crea la sesión de checkout y vuelve a la confirmación del pedido
-    "/api/checkout",
-    "/pedido",
-];
-
-function isDemoAllowed(pathname: string): boolean {
-    return DEMO_ALLOWED.some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`));
-}
-
-// ---------- Contraseña de acceso ----------
-// Con DEMO_PASSWORD definida, toda la web pide contraseña: sin la
-// cookie de acceso se va a /acceso/, una página con un único campo.
-// Sin el prefijo NEXT_PUBLIC_: se lee en el servidor y nunca llega al
-// navegador.
-const ACCESS_PAGE = "/acceso";
-
-async function hasAccess(request: NextRequest, password: string): Promise<boolean> {
-    const cookie = request.cookies.get(DEMO_COOKIE)?.value;
-
-    return cookie !== undefined && cookie === (await demoToken(password));
-}
+// Proxy (antes "middleware"): se ejecuta ANTES de las rutas que indica
+// `matcher`, al final del fichero.
 
 // ---------- Zona de usuario ----------
 // 1. Sin cookie de sesión → al login directamente, con ?next= para
@@ -52,7 +10,7 @@ async function hasAccess(request: NextRequest, password: string): Promise<boolea
 // 2. Deja la ruta en la cabecera x-pathname, porque los layouts y las
 //    Server Actions no saben en qué URL están. loginUrl() la usa para
 //    construir el ?next= cuando el token ha caducado.
-function accountArea(request: NextRequest) {
+export function proxy(request: NextRequest) {
     const { pathname, search } = request.nextUrl;
     const path = pathname + search;
 
@@ -69,47 +27,9 @@ function accountArea(request: NextRequest) {
     return NextResponse.next({ request: { headers } });
 }
 
-export async function proxy(request: NextRequest) {
-    const { pathname, search } = request.nextUrl;
-
-    // El aviso de WordPress para vaciar la caché: tiene su propio
-    // secreto, no pasa por la contraseña ni por el filtro de la demo
-    if (pathname === "/api/revalidate" || pathname === "/api/revalidate/") {
-        return NextResponse.next();
-    }
-
-    const password = process.env.DEMO_PASSWORD;
-    const onAccessPage = pathname === ACCESS_PAGE || pathname.startsWith(`${ACCESS_PAGE}/`);
-
-    if (password && !onAccessPage && !(await hasAccess(request, password))) {
-        if (pathname.startsWith("/api/")) {
-            return Response.json({ message: "Contraseña necesaria." }, { status: 401 });
-        }
-
-        const url = new URL(`${ACCESS_PAGE}/`, request.url);
-        url.searchParams.set("next", pathname + search);
-
-        return NextResponse.redirect(url);
-    }
-
-    if (siteConfig.DEMO_MODE && !isDemoAllowed(pathname)) {
-        // Una API bloqueada (p. ej. /api/checkout) responde error, no una página
-        if (pathname.startsWith("/api/")) {
-            return Response.json({ message: "Proximamente." }, { status: 403 });
-        }
-
-        return NextResponse.redirect(new URL("/tienda/", request.url));
-    }
-
-    if (pathname === "/zona-de-usuario" || pathname.startsWith("/zona-de-usuario/")) {
-        return accountArea(request);
-    }
-
-    return NextResponse.next();
-}
-
 export const config = {
-    // Todo menos los ficheros de Next (_next/…) y los estáticos
-    // (cualquier ruta con extensión: .ico, .svg, .webp…)
-    matcher: ["/((?!_next/|.*\\..*).*)"],
+    // Solo la zona de usuario. Antes interceptaba toda la web, para la
+    // contraseña de acceso de la demo; al no haber nada que comprobar
+    // en el resto de rutas, no hace falta que pasen por aquí.
+    matcher: ["/zona-de-usuario", "/zona-de-usuario/:path*"],
 };

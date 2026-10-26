@@ -11,7 +11,6 @@ import Price from "@/components/Price";
 import { productFormat } from "@/utils/productFormat";
 import { productPath } from "@/utils/productPath";
 import { brandPath } from "@/utils/brandPath";
-import { siteConfig } from "@/config/site";
 import styles from "./ProductCard.module.css";
 
 type ProductCardProps = {
@@ -40,10 +39,6 @@ export default function ProductCard({
         ) ?? product.categories[0];
 
     const href = productPath(product);
-
-    // Modo demo: no se entra en fichas ni marcas; la tarjeta se ve igual
-    // pero sin enlaces (el proxy también las redirige a /tienda/)
-    const linked = !siteConfig.DEMO_MODE;
 
     async function handleAdd() {
         if (addState === "adding") return;
@@ -101,20 +96,16 @@ export default function ProductCard({
     return (
         <article className={styles.card}>
             <div className={styles.imageBox}>
-                {linked ? (
-                    // Enlace duplicado del nombre: fuera del orden de tabulación
-                    <Link
-                        href={href}
-                        className={styles.imageLink}
-                        tabIndex={-1}
-                        aria-hidden="true"
-                        onClick={scrollToTop}
-                    >
-                        {image}
-                    </Link>
-                ) : (
-                    <div className={styles.imageLink}>{image}</div>
-                )}
+                {/* Enlace duplicado del nombre: fuera del orden de tabulación */}
+                <Link
+                    href={href}
+                    className={styles.imageLink}
+                    tabIndex={-1}
+                    aria-hidden="true"
+                    onClick={scrollToTop}
+                >
+                    {image}
+                </Link>
 
                 <button
                     type="button"
@@ -145,11 +136,7 @@ export default function ProductCard({
                 )}
 
                 <h2 className={styles.name}>
-                    {linked ? (
-                        <Link href={href} onClick={scrollToTop}>{product.title}</Link>
-                    ) : (
-                        product.title
-                    )}
+                    <Link href={href} onClick={scrollToTop}>{product.title}</Link>
                 </h2>
 
                 {format && (
@@ -163,7 +150,7 @@ export default function ProductCard({
                     />
                 )}
 
-                {product.brand && (linked ? (
+                {product.brand && (
                     <Link
                         href={brandPath(product.brand.slug)}
                         className={styles.brand}
@@ -171,9 +158,7 @@ export default function ProductCard({
                     >
                         {product.brand.name}
                     </Link>
-                ) : (
-                    <span className={styles.brand}>{product.brand.name}</span>
-                ))}
+                )}
             </div>
         </article>
     );
