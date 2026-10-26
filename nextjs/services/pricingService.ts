@@ -1,6 +1,7 @@
 import { cookies } from "next/headers";
 import {ProductPrice} from "@/types/productPrice";
 import {siteConfig} from "@/config/site";
+import { cached, CacheTag } from "@/services/wpCache";
 
 const API_URL =
     `${siteConfig.WORDPRESS_URL}/wp-json/reactafy/v1`;
@@ -8,8 +9,10 @@ const API_URL =
 // Solo para el servidor. Lee la sesión de la cookie:
 // - Con sesión: precios del usuario (según su rol en ADP). Nunca se
 //   cachean.
-// - Sin sesión: precio de invitado (guest=1), igual para todos, que
-//   LiteSpeed cachea. El endpoint ignora cualquier token con guest=1.
+// - Sin sesión: precio de invitado (guest=1), igual para todos. Se
+//   guarda en la caché de Next (etiqueta "precios") y además LiteSpeed
+//   la cachea en WordPress. El endpoint ignora cualquier token con
+//   guest=1.
 export async function getProductPrices(
     productIds: number[]
 ): Promise<Record<number, ProductPrice>> {
@@ -31,13 +34,17 @@ export async function getProductPrices(
         ? `${API_URL}/products/pricing?guest=0&ids=${ids}`
         : `${API_URL}/products/pricing?guest=1&ids=${ids}`;
 
-    const response = await fetch(url, {
-        headers: authToken
-            ? { Authorization: `Bearer ${authToken}` }
-            : {},
-        // La caché de invitado la hace LiteSpeed, no Next.
-        cache: "no-store",
-    });
+    // El token y la caché se deciden JUNTOS, en una sola expresión: así
+    // no existe forma de mandar el token de un usuario en una petición
+    // que se guarda, que serviría su precio a otros visitantes.
+    const request: RequestInit = authToken
+        ? {
+            headers: { Authorization: `Bearer ${authToken}` },
+            cache: "no-store",
+        }
+        : cached(CacheTag.Precios);
+
+    const response = await fetch(url, request);
 
     const fetchTime = performance.now() - start;
 
@@ -62,8 +69,8 @@ export async function getProductPrices(
 // Precio de INVITADO siempre, haya sesión o no. Para datos públicos,
 // como el JSON-LD de la ficha: Google rastrea sin sesión y no deben
 // salir en el código fuente los precios de un usuario concreto.
-// Misma URL que getProductPrices sin sesión: LiteSpeed la cachea y, si
-// ambas se piden en el mismo render, Next hace una sola petición.
+// Misma URL y mismas opciones que getProductPrices sin sesión, así que
+// comparten entrada en la caché.
 export async function getGuestProductPrices(
     productIds: number[]
 ): Promise<Record<number, ProductPrice>> {
@@ -73,7 +80,7 @@ export async function getGuestProductPrices(
 
     const response = await fetch(
         `${API_URL}/products/pricing?guest=1&ids=${productIds.join(",")}`,
-        { cache: "no-store" }
+        cached(CacheTag.Precios)
     );
 
     if (!response.ok) {

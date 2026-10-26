@@ -1,5 +1,6 @@
 import { siteConfig } from "@/config/site";
 import type { Store } from "@/types/store";
+import { cached, CacheTag } from "@/services/wpCache";
 
 const API_URL = `${siteConfig.WORDPRESS_URL}/wp-json/reactafy/v1`;
 
@@ -9,14 +10,11 @@ const API_URL = `${siteConfig.WORDPRESS_URL}/wp-json/reactafy/v1`;
 // pie, ficha): Next memoiza los fetch idénticos dentro de una misma
 // petición, así que a WordPress solo le llega uno por página.
 //
-// Además se guarda una hora en la caché de datos de Next: son ajustes
-// que casi nunca cambian, y así no se pregunta a WordPress en cada
-// visita. Si cambias el teléfono en WP, tarda como mucho una hora en
-// verse (o al volver a desplegar).
+// Además se guarda en la caché de datos de Next con la etiqueta
+// "tienda": son ajustes que casi nunca cambian, y WordPress avisa
+// cuando los tocas (ver services/wpCache.ts).
 export async function getStore(): Promise<Store> {
-    const response = await fetch(`${API_URL}/store`, {
-        next: { revalidate: 3600 },
-    });
+    const response = await fetch(`${API_URL}/store`, cached(CacheTag.Tienda));
 
     if (!response.ok) {
         throw new Error("Failed to fetch store settings");

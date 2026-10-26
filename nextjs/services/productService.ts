@@ -1,4 +1,5 @@
 import { siteConfig } from "@/config/site";
+import { cached, CacheTag } from "@/services/wpCache";
 import type { ProductDetail, ProductsResponse } from "@/types/product";
 import type { Brand, BrandSummary } from "@/types/brand";
 import type { Category } from "@/types/category";
@@ -28,7 +29,10 @@ export async function getProducts(
         query.set("category", category);
     }
 
-    const response = await fetch(`${API_URL}/products?${query}`);
+    const response = await fetch(
+        `${API_URL}/products?${query}`,
+        cached(CacheTag.Catalogo)
+    );
 
     if (!response.ok) {
         throw new Error("Failed to fetch products");
@@ -51,7 +55,8 @@ export async function resolveProduct(
     }
 
     const response = await fetch(
-        `${API_URL}/products/resolve?${query}`
+        `${API_URL}/products/resolve?${query}`,
+        cached(CacheTag.Catalogo)
     );
 
     if (response.status === 404) {
@@ -68,7 +73,8 @@ export async function resolveProduct(
 // Datos de una marca. null si no existe (404 de WordPress).
 export async function getBrand(slug: string): Promise<Brand | null> {
     const response = await fetch(
-        `${API_URL}/brands/${encodeURIComponent(slug)}`
+        `${API_URL}/brands/${encodeURIComponent(slug)}`,
+        cached(CacheTag.Catalogo)
     );
 
     if (response.status === 404) {
@@ -84,7 +90,10 @@ export async function getBrand(slug: string): Promise<Brand | null> {
 
 // Todas las marcas con productos, por nombre (panel "Buscar").
 export async function getBrands(): Promise<BrandSummary[]> {
-    const response = await fetch(`${API_URL}/brands`);
+    const response = await fetch(
+        `${API_URL}/brands`,
+        cached(CacheTag.Catalogo)
+    );
 
     if (!response.ok) {
         throw new Error("Failed to fetch brands");
@@ -96,7 +105,8 @@ export async function getBrands(): Promise<BrandSummary[]> {
 // Datos de una categoría. null si no existe (404 de WordPress).
 export async function getCategory(slug: string): Promise<Category | null> {
     const response = await fetch(
-        `${API_URL}/categories/${encodeURIComponent(slug)}`
+        `${API_URL}/categories/${encodeURIComponent(slug)}`,
+        cached(CacheTag.Catalogo)
     );
 
     if (response.status === 404) {
