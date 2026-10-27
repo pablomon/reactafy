@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { cookies } from "next/headers";
 
@@ -8,6 +9,11 @@ import { formatOrderStatus } from "@/utils/formatOrderStatus";
 
 import styles from "./page.module.css";
 import CartRefresh from "./CaretRefresh";
+
+// Página privada de un pedido: fuera de Google.
+export const metadata: Metadata = {
+    robots: { index: false, follow: false },
+};
 
 type OrderPageProps = {
     params: Promise<{
