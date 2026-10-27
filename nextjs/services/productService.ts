@@ -2,7 +2,7 @@ import { siteConfig } from "@/config/site";
 import { cached, CacheTag } from "@/services/wpCache";
 import type {Product, ProductDetail, ProductsResponse} from "@/types/product";
 import type { Brand, BrandSummary } from "@/types/brand";
-import type { Category } from "@/types/category";
+import type { Category, CategorySummary } from "@/types/category";
 
 const API_URL =
     `${siteConfig.WORDPRESS_URL}/wp-json/reactafy/v1`;
@@ -115,6 +115,20 @@ export async function getCategory(slug: string): Promise<Category | null> {
 
     if (!response.ok) {
         throw new Error("Failed to fetch category");
+    }
+
+    return response.json();
+}
+
+// Todas las categorías con productos, de una vez (para el sitemap).
+export async function getAllCategories(): Promise<CategorySummary[]> {
+    const response = await fetch(
+        `${API_URL}/categories`,
+        cached(CacheTag.Catalogo)
+    );
+
+    if (!response.ok) {
+        throw new Error("Failed to fetch categories");
     }
 
     return response.json();
