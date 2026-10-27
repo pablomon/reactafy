@@ -1,6 +1,6 @@
 import { siteConfig } from "@/config/site";
 import { cached, CacheTag } from "@/services/wpCache";
-import type { ProductDetail, ProductsResponse } from "@/types/product";
+import type {Product, ProductDetail, ProductsResponse} from "@/types/product";
 import type { Brand, BrandSummary } from "@/types/brand";
 import type { Category } from "@/types/category";
 
@@ -118,4 +118,34 @@ export async function getCategory(slug: string): Promise<Category | null> {
     }
 
     return response.json();
+}
+
+// Todos los productos publicados, página a página (la API da 100 como máximo).
+//
+// Se pagina por totalPages y se acaba cuando se agotan, NO se cuenta contra
+// "total": la API cuenta productos que luego no puede pintar y el bucle
+// esperaría productos que no llegan.
+export async function getAllProducts(): Promise<Product[]> {
+    const all: Product[] = [];
+    let page = 1;
+    let totalPages = 1;
+
+    do {
+        const response = await fetch(
+            `${API_URL}/products?page=${page}&perPage=100`,
+            cached(CacheTag.Catalogo)
+        );
+
+        if (!response.ok) {
+            throw new Error("Failed to fetch all products");
+        }
+
+        const data: ProductsResponse = await response.json();
+
+        all.push(...data.products);
+        totalPages = data.pagination.totalPages;
+        page++;
+    } while (page <= totalPages);
+
+    return all;
 }
