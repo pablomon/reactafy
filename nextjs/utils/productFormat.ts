@@ -88,6 +88,17 @@ export function productUnits(product: Product): string {
     });
 }
 
+// Solo el número de unidades de la caja (24), para la insignia de la
+// tarjeta. null si el producto no tiene cantidad.
+export function productQuantity(product: Product): number | null {
+    const quantity = Number(
+        product.attributes.find((attribute) => attribute.slug === "cantidad")
+            ?.value
+    );
+
+    return Number.isFinite(quantity) && quantity > 0 ? quantity : null;
+}
+
 // Líneas del carrito (Store API de Woo: los atributos llegan como
 // "attribute_pa_cantidad" / "pa_cantidad").
 export function cartLineFormat(line: CartLine): string {

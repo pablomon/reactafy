@@ -73,6 +73,13 @@
     line-height: 1.15;
 }
 
+/* En móvil el título queda sobre la imagen: la sombra clara lo mantiene legible */
+@media (max-width: 767px) {
+    .heroTitle {
+        text-shadow: 0 1px 1px rgba(255, 255, 255, 0.9);
+    }
+}
+
 .heroText p:last-child {
     margin: 0;
     font-size: var(--text-sm);

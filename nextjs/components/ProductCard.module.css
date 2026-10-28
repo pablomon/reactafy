@@ -28,6 +28,26 @@
     object-fit: contain;
 }
 
+/* Unidades de la caja: círculo blanco con el número, arriba a la derecha */
+.quantity {
+    position: absolute;
+    top: 13px;
+    right: 13px;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 29px;
+    height: 29px;
+    padding: 0 6px;
+    border-radius: 9990px;
+    background: #fff;
+    color: var(--color-main);
+    font-size: var(--text-xs);
+    font-weight: 600;
+    line-height: 1;
+}
+
 .addButton {
     position: absolute;
     right: 13px;

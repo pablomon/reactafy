@@ -8,7 +8,7 @@ import type { Product } from "@/types/product";
 import type { ProductPrice } from "@/types/productPrice";
 import { CartContext } from "@/app/context/CartContext";
 import Price from "@/components/Price";
-import { productFormat } from "@/utils/productFormat";
+import { productFormat, productQuantity, productUnits } from "@/utils/productFormat";
 import { productPath } from "@/utils/productPath";
 import { brandPath } from "@/utils/brandPath";
 import styles from "./ProductCard.module.css";
@@ -35,6 +35,7 @@ export default function ProductCard({
     const [addState, setAddState] = useState<AddState>("idle");
 
     const format = productFormat(product);
+    const quantity = productQuantity(product);
 
     const category =
         product.categories.find(
@@ -115,6 +116,19 @@ export default function ProductCard({
                     {image}
                 </Link>
 
+                {quantity && (
+                    // Solo el número a la vista; el lector de pantalla lee
+                    // "La caja contiene 24 latas"
+                    <span
+                        className={styles.quantity}
+                        role="img"
+                        aria-label={`La caja contiene ${productUnits(product)}`}
+                        title={`La caja contiene ${productUnits(product)}`}
+                    >
+                        {quantity}
+                    </span>
+                )}
+
                 <button
                     type="button"
                     className={styles.addButton}
@@ -155,6 +169,7 @@ export default function ProductCard({
                     <Price
                         productId={product.id}
                         pricesPromise={pricesPromise}
+                        showTax={false}
                     />
                 )}
 

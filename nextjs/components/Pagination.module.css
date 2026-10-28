@@ -1,5 +1,6 @@
 .pagination {
     display: flex;
+    flex-wrap: wrap;
     justify-content: center;
     align-items: center;
     gap: var(--spacing-sm);
@@ -8,11 +9,13 @@
 
 /* Círculos: números y flechas */
 .link {
+    flex: none; /* nunca se estrechan: siempre círculos */
     display: flex;
     align-items: center;
     justify-content: center;
     width: 32px;
     height: 32px;
+    padding: 0;
 
     border-radius: 50%;
     background-color: var(--color-surface);

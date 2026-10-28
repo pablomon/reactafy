@@ -28,7 +28,7 @@ export default function Pagination({
         <nav className={styles.pagination} aria-label="Paginación">
             {currentPage > 1 && (
                 <Link
-                    className={`${styles.link} ${styles.previous}`}
+                    className={styles.link}
                     href={pageHref(basePath, currentPage - 1)}
                     aria-label="Página anterior"
                 >
@@ -54,7 +54,7 @@ export default function Pagination({
 
             {currentPage < totalPages && (
                 <Link
-                    className={`${styles.link} ${styles.next}`}
+                    className={styles.link}
                     href={pageHref(basePath, currentPage + 1)}
                     aria-label="Página siguiente"
                 >

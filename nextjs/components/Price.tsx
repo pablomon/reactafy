@@ -15,11 +15,13 @@ type PriceProps = {
     showFrom?: boolean;
     // Badge "Hasta -20%" si hay descuento por volumen (ficha)
     showSaving?: boolean;
+    // "(IVA inc.)" bajo el precio: sí en la ficha, no en las tarjetas.
+    showTax?: boolean;
 };
 
 export default function Price(props: PriceProps) {
     return (
-        <Suspense fallback={<PriceSkeleton />}>
+        <Suspense fallback={<PriceSkeleton showTax={props.showTax} />}>
             <PriceContent {...props} />
         </Suspense>
     );
@@ -30,6 +32,7 @@ function PriceContent({
     pricesPromise,
     showFrom = true,
     showSaving = false,
+    showTax = true,
 }: PriceProps) {
     const prices = use(pricesPromise);
     const price = prices[productId];
@@ -53,16 +56,14 @@ function PriceContent({
                 )}
             </p>
 
-            <p className={styles.tax}>
-                (IVA inc.)
-            </p>
+            {showTax && <p className={styles.tax}>(IVA inc.)</p>}
         </>
     );
 }
 
-// Mientras llegan los precios: las mismas dos líneas (precio e "IVA
+// Mientras llegan los precios: las mismas líneas (precio y, si toca, "IVA
 // inc.") con sus clases reales, así la tarjeta no cambia de alto.
-function PriceSkeleton() {
+function PriceSkeleton({ showTax = true }: { showTax?: boolean }) {
     return (
         // Fragmento, no <div>: igual que el precio real, son dos hijos
         // directos del padre (en la ficha, el gap del flex los separa)
@@ -70,9 +71,11 @@ function PriceSkeleton() {
             <p className={styles.price} aria-hidden="true">
                 <SkeletonText width="6em" />
             </p>
-            <p className={styles.tax} aria-hidden="true">
-                <SkeletonText width="5em" />
-            </p>
+            {showTax && (
+                <p className={styles.tax} aria-hidden="true">
+                    <SkeletonText width="5em" />
+                </p>
+            )}
         </>
     );
 }
