@@ -33,6 +33,9 @@ export const CacheTag = {
     Precios: "precios",
     // Banners de la home. Aparte porque los edita otra gente y por otros motivos.
     Banners: "banners",
+    // Artículos del blog y sus categorías. Aparte del catálogo: se editan por
+    // otros motivos y con otro ritmo.
+    Blog: "blog",
 } as const;
 
 export type CacheTag = (typeof CacheTag)[keyof typeof CacheTag];
