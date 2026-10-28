@@ -1,7 +1,9 @@
 import type { MetadataRoute} from "next";
 
 import { siteConfig} from "@/config/site";
+import { getAllPosts, getPostCategories } from "@/services/blogService";
 import { getAllCategories, getAllProducts, getBrands } from "@/services/productService";
+import { BLOG_PATH, postCategoryPath, postPath } from "@/utils/blogPath";
 import { brandPath } from "@/utils/brandPath";
 import { categoryPath } from "@/utils/categoryPath";
 import { productPath } from "@/utils/productPath";
@@ -10,14 +12,17 @@ import { productPath } from "@/utils/productPath";
 // indexarse (contacto, legales…) se añade aquí: WordPress no sabe que existe.
 // Las privadas (carrito, login, cuenta, pedido) no entran nunca y llevan
 // noindex en su metadata.
-const STATIC_PATHS = ["/", "/tienda/", "/about/", "/contacto/", "/faq/"];
+const STATIC_PATHS = ["/", "/tienda/", "/about/", "/contacto/", "/faq/", BLOG_PATH];
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-    const [products, brands, categories] = await Promise.all([
-        getAllProducts(),
-        getBrands(),
-        getAllCategories(),
-    ]);
+    const [products, brands, categories, posts, postCategories] =
+        await Promise.all([
+            getAllProducts(),
+            getBrands(),
+            getAllCategories(),
+            getAllPosts(),
+            getPostCategories(),
+        ]);
 
     const paths = [
         ...STATIC_PATHS,
@@ -27,9 +32,19 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         ...categories
             .filter((category) => !category.noindex)
             .map((category) => categoryPath(category.path)),
+        ...postCategories.map((category) => postCategoryPath(category.slug)),
     ];
 
-    return [...new Set(paths)].map((path) => ({
-        url: `${siteConfig.SITE_URL}${path}`,
+    // Los artículos llevan su fecha real de modificación
+    const postEntries = posts.map((post) => ({
+        url: `${siteConfig.SITE_URL}${postPath(post.slug)}`,
+        lastModified: post.modified,
     }));
+
+    return [
+        ...[...new Set(paths)].map((path) => ({
+            url: `${siteConfig.SITE_URL}${path}`,
+        })),
+        ...postEntries,
+    ];
 }

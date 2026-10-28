@@ -30,8 +30,9 @@ export default function Pagination({
                 <Link
                     className={`${styles.link} ${styles.previous}`}
                     href={pageHref(basePath, currentPage - 1)}
+                    aria-label="Página anterior"
                 >
-                    Anterior
+                    ←
                 </Link>
             )}
 
@@ -55,8 +56,9 @@ export default function Pagination({
                 <Link
                     className={`${styles.link} ${styles.next}`}
                     href={pageHref(basePath, currentPage + 1)}
+                    aria-label="Página siguiente"
                 >
-                    Siguiente
+                    →
                 </Link>
             )}
         </nav>
