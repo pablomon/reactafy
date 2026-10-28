@@ -56,6 +56,13 @@ async function blogRedirects() {
 const nextConfig: NextConfig = {
     redirects: blogRedirects,
 
+    experimental: {
+        // El CSS (~13 KB) va dentro del HTML en vez de en dos archivos que
+        // bloqueaban el pintado (PageSpeed: ~430 ms). Solo en producción.
+        // Si algo se ve raro o no mejora, se quita esta opción.
+        inlineCss: true,
+    },
+
     // URLs con barra final, igual que WordPress (/producto/x/y/): las
     // URLs que Google ya tiene indexadas no cambian. Sin barra → 308 a
     // la versión con barra. <Link> la añade solo; fetch("/api/…") no,
