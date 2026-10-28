@@ -24,8 +24,8 @@ import styles from "./Shop.module.css";
 // Los valores son los que acepta el endpoint /products (orderby)
 const SORT_OPTIONS = [
     { value: "", label: "Destacados" },
-    { value: "price", label: "Precio: menor a mayor" },
-    { value: "price-desc", label: "Precio: mayor a menor" },
+    { value: "price", label: "Menor precio" },
+    { value: "price-desc", label: "Mayor precio" },
 ];
 
 type ShopFiltersProps = {
