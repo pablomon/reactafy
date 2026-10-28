@@ -19,9 +19,9 @@ const VALUE_BLOCKS = [
 // aguafy.com, WordPress las servirá en estas mismas rutas.
 const HELP_LINKS = [
     { label: "Contacto", href: "/contacto/" },
-    { label: "Preguntas frecuentes", href: "/faq/" },
-    { label: "Política de privacidad", href: "/faq/" },
-    { label: "Política de devolución", href: "/faq/" },
+    { label: "Preguntas frecuentes", href: "/faq/#preguntas-frecuentes" },
+    { label: "Política de privacidad", href: "/faq/#politica-de-privacidad" },
+    { label: "Política de devolución", href: "/faq/#politica-de-devolucion" },
 ];
 
 // Pie provisional. Server Component: sin estado ni JavaScript.

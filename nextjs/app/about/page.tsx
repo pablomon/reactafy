@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 
-import AboutTabs from "./AboutTabs";
+import Tabs from "@/components/Tabs";
 import styles from "./page.module.css";
 
 import history from "./images/history.webp";
@@ -132,7 +132,7 @@ export default function AboutPage() {
                 </div>
             </section>
 
-            <AboutTabs tabs={TABS} />
+            <Tabs tabs={TABS} />
 
             <ul className={styles.highlights}>
                 {HIGHLIGHTS.map((item) => (

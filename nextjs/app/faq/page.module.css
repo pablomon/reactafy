@@ -1,0 +1,60 @@
+.page {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: var(--spacing-3xl) var(--spacing-lg);
+}
+
+.page h1 {
+    margin: 0 0 var(--spacing-xl);
+    font-size: var(--text-xl);
+    text-align: center;
+}
+
+/* Las preguntas se abren y se cierran con <details>: no necesitan JavaScript
+   y todas las respuestas están en la página para que Google las lea. */
+.questions {
+    display: grid;
+}
+
+.question {
+    border-bottom: 1px solid var(--color-surface);
+}
+
+.question summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-lg);
+    padding: var(--spacing-lg) 0;
+    font-weight: 600;
+    cursor: pointer;
+    list-style: none;
+}
+
+/* Quita el triángulo de serie y pone una flecha propia */
+.question summary::-webkit-details-marker {
+    display: none;
+}
+
+.question summary::after {
+    content: "";
+    flex: none;
+    width: 0.6rem;
+    height: 0.6rem;
+    border-right: 2px solid currentColor;
+    border-bottom: 2px solid currentColor;
+    transform: rotate(45deg);
+    transition: transform 0.2s;
+}
+
+.question[open] summary::after {
+    transform: rotate(-135deg);
+}
+
+.answer {
+    padding-bottom: var(--spacing-lg);
+}
+
+.answer p {
+    margin: 0 0 var(--spacing-md);
+}

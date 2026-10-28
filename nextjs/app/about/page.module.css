@@ -59,39 +59,6 @@
     text-decoration: none;
 }
 
-/* ---------- Pestañas ---------- */
-.tabList {
-    display: flex;
-    justify-content: center;
-    gap: var(--spacing-2xl);
-}
-
-.tab {
-    padding: var(--spacing-sm) 0;
-    border: 0;
-    border-bottom: 2px solid transparent;
-    background: none;
-    color: var(--color-muted);
-    font: inherit;
-    font-weight: 600;
-    cursor: pointer;
-}
-
-.tab[aria-selected="true"] {
-    border-bottom-color: var(--color-main);
-    color: var(--color-main);
-}
-
-.tabPanel {
-    max-width: 70ch;
-    margin: var(--spacing-xl) auto 0;
-    line-height: 1.6;
-}
-
-.tabPanel p {
-    margin: 0 0 var(--spacing-md);
-}
-
 /* ---------- Las tres tarjetas ---------- */
 .highlights {
     display: grid;
