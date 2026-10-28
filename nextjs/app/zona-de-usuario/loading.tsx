@@ -7,8 +7,8 @@ import styles from "./account.module.css";
 // Va DENTRO del layout: el menú lateral se queda quieto y solo la
 // zona de contenido pasa a "cargando".
 //
-// Sirve para todas las secciones (resumen, pedidos, entrega,
-// facturación): un loading.tsx cubre a todas las rutas que cuelgan
+// Sirve para todas las secciones (pedidos, entrega,
+// facturación, cuenta): un loading.tsx cubre a todas las rutas que cuelgan
 // de su carpeta. Es genérico a propósito: título + una tarjeta.
 export default function AccountLoading() {
     return (

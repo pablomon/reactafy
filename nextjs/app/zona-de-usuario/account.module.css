@@ -148,7 +148,6 @@
     color: var(--color-accent);
 }
 
-.moreLink,
 .backLink {
     display: inline-block;
     margin-top: var(--spacing-md);
@@ -189,16 +188,7 @@
     color: #b42323;
 }
 
-/* ============ Resumen ============ */
-.lastOrder {
-    display: grid;
-    grid-template-columns: 1fr auto;
-    gap: var(--spacing-xs) var(--spacing-md);
-    align-items: center;
-    color: var(--color-main);
-    text-decoration: none;
-}
-
+/* ============ Pedidos ============ */
 .orderNumber {
     font-weight: 700;
 }

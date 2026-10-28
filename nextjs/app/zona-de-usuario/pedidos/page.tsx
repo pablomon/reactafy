@@ -32,7 +32,7 @@ export default async function OrdersPage({ searchParams }: OrdersPageProps) {
 
             {orders.length === 0 ? (
                 <p className={styles.muted}>
-                    Todavía no has hecho ningún pedido. <Link href="/tienda/">Ir a la tienda</Link>
+                    Todavía no tienes ningún pedido. <Link href="/tienda/">Ir a la tienda</Link>
                 </p>
             ) : (
                 <ul className={styles.orderList}>

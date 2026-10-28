@@ -9,11 +9,10 @@ import styles from "@/app/zona-de-usuario/account.module.css";
 
 // Secciones de la zona de usuario
 const SECTIONS = [
-    { href: "/zona-de-usuario/", label: "Resumen", exact: true },
-    { href: "/zona-de-usuario/pedidos/", label: "Pedidos", exact: false },
-    { href: "/zona-de-usuario/entrega/", label: "Entrega", exact: false },
-    { href: "/zona-de-usuario/facturacion/", label: "Facturación", exact: false },
-    { href: "/zona-de-usuario/cuenta/", label: "Cuenta", exact: false },
+    { href: "/zona-de-usuario/pedidos/", label: "Pedidos" },
+    { href: "/zona-de-usuario/entrega/", label: "Entrega" },
+    { href: "/zona-de-usuario/facturacion/", label: "Facturación" },
+    { href: "/zona-de-usuario/cuenta/", label: "Cuenta" },
 ];
 
 // Menú de la zona de usuario. Es componente de cliente solo por dos
@@ -42,9 +41,7 @@ export default function AccountNav() {
         <nav aria-label="Mi cuenta">
             <ul className={styles.navList}>
                 {SECTIONS.map((section) => {
-                    const active = section.exact
-                        ? pathname === section.href
-                        : pathname.startsWith(section.href);
+                    const active = pathname.startsWith(section.href);
 
                     return (
                         <li key={section.href}>

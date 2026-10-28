@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 import type { AuthFormState } from "@/services/authActions";
+import { DEFAULT_AFTER_LOGIN } from "@/utils/safeNext";
 
 // Tras abrir sesión (status "session"), ir a `next`.
 //
@@ -20,7 +21,7 @@ export function useSessionStarted(state: AuthFormState) {
 
     useEffect(() => {
         if (state.status === "session") {
-            router.replace(state.next ?? "/zona-de-usuario/");
+            router.replace(state.next ?? DEFAULT_AFTER_LOGIN);
         }
     }, [state, router]);
 }

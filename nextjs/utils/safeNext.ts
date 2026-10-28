@@ -1,7 +1,7 @@
 // Adónde volver tras iniciar sesión (?next=…). Solo rutas de esta web:
 // si alguien fabrica un enlace /login/?next=https://otra-web.com, se
 // ignora y se va a la zona de usuario ("open redirect").
-export const DEFAULT_AFTER_LOGIN = "/zona-de-usuario/";
+export const DEFAULT_AFTER_LOGIN = "/zona-de-usuario/pedidos/";
 
 export function safeNext(value: unknown): string {
     if (typeof value !== "string") {

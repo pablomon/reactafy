@@ -16,7 +16,7 @@ export default function HeaderAccount() {
 
     return (
         <Link
-            href={user ? "/zona-de-usuario/" : loginHref}
+            href={user ? "/zona-de-usuario/pedidos/" : loginHref}
             className={styles.iconLink}
             aria-label={user ? `Mi cuenta (${user.name})` : "Iniciar sesión"}
         >
