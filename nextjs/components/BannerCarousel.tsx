@@ -59,7 +59,7 @@ function BannerSlide({ banner, first }: { banner: Banner; first: boolean }) {
     const picture = (
         <picture>
             <source media={DESKTOP_MEDIA} srcSet={desktopProps.srcSet} sizes={SIZES} />
-            <img {...mobileProps} alt={alt} className={styles.image} />
+            <img {...mobileProps} alt={alt} className={styles.image} draggable={false} />
         </picture>
     );
 
