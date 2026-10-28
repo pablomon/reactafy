@@ -1,0 +1,128 @@
+.page {
+    display: grid;
+    gap: var(--spacing-3xl);
+    max-width: var(--container-main);
+    margin: 0 auto;
+    padding: var(--spacing-3xl) var(--spacing-lg);
+}
+
+/* ---------- Título ---------- */
+.intro {
+    text-align: center;
+}
+
+.intro h1 {
+    margin: 0 0 var(--spacing-lg);
+    font-size: var(--text-2xl);
+    text-wrap: balance;
+}
+
+.tagline {
+    margin: 0 auto;
+    max-width: 40ch;
+    font-size: var(--text-lg);
+    text-wrap: balance;
+}
+
+/* ---------- Imagen y texto ---------- */
+.story {
+    display: grid;
+    gap: var(--spacing-2xl);
+    align-items: center;
+}
+
+.storyImage {
+    width: 100%;
+    height: auto;
+    border-radius: var(--radius-xl);
+}
+
+.storyText p {
+    margin: 0 0 var(--spacing-lg);
+    line-height: 1.6;
+}
+
+@media (min-width: 768px) {
+    .story {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+/* El botón azul, igual que "Tienda" en la cabecera */
+.button {
+    display: inline-block;
+    padding: 10px 28px;
+    border-radius: 9999px;
+    background: var(--color-accent);
+    color: #fff;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+/* ---------- Pestañas ---------- */
+.tabList {
+    display: flex;
+    justify-content: center;
+    gap: var(--spacing-2xl);
+}
+
+.tab {
+    padding: var(--spacing-sm) 0;
+    border: 0;
+    border-bottom: 2px solid transparent;
+    background: none;
+    color: var(--color-muted);
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.tab[aria-selected="true"] {
+    border-bottom-color: var(--color-main);
+    color: var(--color-main);
+}
+
+.tabPanel {
+    max-width: 70ch;
+    margin: var(--spacing-xl) auto 0;
+    line-height: 1.6;
+}
+
+.tabPanel p {
+    margin: 0 0 var(--spacing-md);
+}
+
+/* ---------- Las tres tarjetas ---------- */
+.highlights {
+    display: grid;
+    gap: var(--spacing-xl);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+@media (min-width: 768px) {
+    .highlights {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+.card {
+    display: grid;
+    justify-items: center;
+    gap: var(--spacing-lg);
+    padding: var(--spacing-3xl) var(--spacing-xl);
+    border-radius: var(--radius-xl);
+    background: var(--color-surface);
+    text-align: center;
+}
+
+.card p {
+    margin: 0;
+    font-weight: 600;
+    text-wrap: balance;
+}
+
+.cta {
+    text-align: center;
+}

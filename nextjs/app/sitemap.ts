@@ -10,7 +10,7 @@ import { productPath } from "@/utils/productPath";
 // indexarse (contacto, legales…) se añade aquí: WordPress no sabe que existe.
 // Las privadas (carrito, login, cuenta, pedido) no entran nunca y llevan
 // noindex en su metadata.
-const STATIC_PATHS = ["/", "/tienda/"];
+const STATIC_PATHS = ["/", "/tienda/", "/about/"];
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const [products, brands, categories] = await Promise.all([
