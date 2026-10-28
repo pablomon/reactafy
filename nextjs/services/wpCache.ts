@@ -31,6 +31,8 @@ export const CacheTag = {
     // descuento de ADP cambia precios sin tocar ningún producto, y
     // viceversa. Con etiquetas separadas se puede tirar una sin la otra.
     Precios: "precios",
+    // Banners de la home. Aparte porque los edita otra gente y por otros motivos.
+    Banners: "banners",
 } as const;
 
 export type CacheTag = (typeof CacheTag)[keyof typeof CacheTag];
