@@ -1,0 +1,64 @@
+.card {
+    display: grid;
+    align-content: start;
+    gap: var(--spacing-lg);
+}
+
+/* Todas las imágenes con la misma forma (16:9), se recorten como se recorten:
+   así las tarjetas quedan alineadas aunque las fotos no midan igual. */
+.imageLink {
+    display: block;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    border-radius: var(--radius-xl);
+    background: var(--color-surface);
+}
+
+.image {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.body {
+    display: grid;
+    gap: var(--spacing-sm);
+}
+
+.category {
+    color: var(--color-accent);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.title {
+    margin: 0;
+    font-size: var(--text-lg);
+    line-height: 1.3;
+}
+
+.title a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.title a:hover {
+    text-decoration: underline;
+}
+
+/* Tres líneas como máximo: los extractos no miden todos lo mismo */
+.excerpt {
+    display: -webkit-box;
+    margin: 0;
+    overflow: hidden;
+    color: var(--color-muted);
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+}
+
+.date {
+    color: var(--color-muted);
+    font-size: var(--text-sm);
+}

@@ -4,18 +4,32 @@ import styles from "./Pagination.module.css";
 type PaginationProps = {
     currentPage: number;
     totalPages: number;
+    // Dirección del listado, con barra final: "/blog/" o "/tienda/".
+    basePath: string;
 };
+
+// La primera página es la propia dirección del listado, sin "?page=1":
+// así no hay dos direcciones para la misma página.
+function pageHref(basePath: string, page: number) {
+    return page === 1 ? basePath : `${basePath}?page=${page}`;
+}
 
 export default function Pagination({
     currentPage,
     totalPages,
+    basePath,
 }: PaginationProps) {
+    // Con una sola página no hay nada que paginar
+    if (totalPages <= 1) {
+        return null;
+    }
+
     return (
-        <nav className={styles.pagination}>
+        <nav className={styles.pagination} aria-label="Paginación">
             {currentPage > 1 && (
                 <Link
                     className={`${styles.link} ${styles.previous}`}
-                    href={`/tienda?page=${currentPage - 1}`}
+                    href={pageHref(basePath, currentPage - 1)}
                 >
                     Anterior
                 </Link>
@@ -23,16 +37,14 @@ export default function Pagination({
 
             {Array.from({ length: totalPages }, (_, index) => {
                 const page = index + 1;
+                const isCurrent = page === currentPage;
 
                 return (
                     <Link
                         key={page}
-                        className={`${styles.link} ${
-                            page === currentPage
-                                ? styles.active
-                                : ""
-                        }`}
-                        href={`/tienda?page=${page}`}
+                        className={`${styles.link} ${isCurrent ? styles.active : ""}`}
+                        href={pageHref(basePath, page)}
+                        aria-current={isCurrent ? "page" : undefined}
                     >
                         {page}
                     </Link>
@@ -42,7 +54,7 @@ export default function Pagination({
             {currentPage < totalPages && (
                 <Link
                     className={`${styles.link} ${styles.next}`}
-                    href={`/tienda?page=${currentPage + 1}`}
+                    href={pageHref(basePath, currentPage + 1)}
                 >
                     Siguiente
                 </Link>

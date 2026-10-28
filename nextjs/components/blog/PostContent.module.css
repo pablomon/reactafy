@@ -1,0 +1,97 @@
+.content {
+    max-width: 70ch;
+    margin: 0 auto;
+    color: var(--color-text);
+    font-size: var(--text-base);
+    line-height: 1.7;
+}
+
+/* ---------- Texto corrido ---------- */
+.content h2 {
+    margin: var(--spacing-3xl) 0 var(--spacing-lg);
+    font-size: var(--text-xl);
+    line-height: 1.3;
+}
+
+.content h3 {
+    margin: var(--spacing-2xl) 0 var(--spacing-md);
+    font-size: var(--text-lg);
+    line-height: 1.3;
+}
+
+.content p {
+    margin: 0 0 var(--spacing-lg);
+}
+
+.content ul,
+.content ol {
+    margin: 0 0 var(--spacing-lg);
+    padding-left: var(--spacing-xl);
+}
+
+.content li {
+    margin-bottom: var(--spacing-sm);
+}
+
+.content a {
+    color: var(--color-accent);
+}
+
+/* ---------- La caja "En este artículo" ---------- */
+.content :global(.resumen-ia) {
+    margin: 0 0 var(--spacing-3xl);
+    padding: var(--spacing-xl);
+    border-radius: var(--radius-xl);
+    background: var(--color-surface);
+}
+
+/* El título de la caja es su primer párrafo */
+.content :global(.resumen-ia) p {
+    margin: 0 0 var(--spacing-md);
+    font-weight: 700;
+}
+
+.content :global(.resumen-ia) ol,
+.content :global(.resumen-ia) ul {
+    margin: 0;
+}
+
+/* ---------- La frase destacada ---------- */
+.content :global(.callout) {
+    padding: var(--spacing-lg) var(--spacing-xl);
+    border-left: 4px solid var(--color-accent);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface);
+    font-weight: 600;
+}
+
+/* ---------- Preguntas frecuentes (bloque de Yoast) ---------- */
+.content :global(.schema-faq-section) {
+    margin-bottom: var(--spacing-lg);
+}
+
+.content :global(.schema-faq-question) {
+    display: block;
+    margin-bottom: var(--spacing-sm);
+    font-weight: 700;
+}
+
+.content :global(.schema-faq-answer) {
+    margin: 0;
+}
+
+/* ---------- El botón "Ver catálogo" ---------- */
+.content :global(.wp-block-buttons) {
+    margin-top: var(--spacing-3xl);
+}
+
+/* El mismo botón azul que el resto de la web */
+.content :global(.wp-block-button__link) {
+    display: inline-block;
+    padding: 10px 28px;
+    border-radius: 9999px;
+    background: var(--color-accent);
+    color: #fff;
+    font-weight: 600;
+    text-decoration: none;
+}
