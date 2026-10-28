@@ -65,6 +65,8 @@
     color: var(--color-main);
     font: inherit;
     cursor: pointer;
+    /* Sin la flecha que pone el navegador */
+    appearance: none;
 }
 
 @media (max-width: 575px) {
